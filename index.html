@@ -11,113 +11,81 @@
             --bg-body: #0f172a; --bg-card: #1e293b; --bg-log: #020617;
             --text-main: #f8fafc; --text-dim: #94a3b8; --border: rgba(255,255,255,0.05);
             --accent-blue: #3b82f6; --accent-green: #10b981; --accent-red: #ef4444;
-            --accent-purple: #8b5cf6; --shadow-card: 0 10px 15px -3px rgba(0,0,0,0.3);
+            --accent-purple: #8b5cf6;
         }
         .light-mode {
             --bg-body: #f1f5f9; --bg-card: #ffffff; --bg-log: #f8fafc;
             --text-main: #1e293b; --text-dim: #64748b; --border: rgba(0,0,0,0.08);
-            --shadow-card: 0 4px 6px rgba(0,0,0,0.05);
         }
-        body { font-family: 'Inter', system-ui, sans-serif; background: var(--bg-body); color: var(--text-main); margin: 0; padding: 20px; transition: background 0.3s, color 0.3s; overflow-x: hidden; }
+        body { font-family: system-ui, sans-serif; background: var(--bg-body); color: var(--text-main); margin: 0; padding: 20px; }
         .container { max-width: 1400px; margin: 0 auto; }
-
-        /* ACCESS SCREEN */
-        #access-screen { display: flex; flex-direction: column; align-items: center; justify-content: center; min-height: 100vh; text-align: center; }
-        #access-screen h1 { font-size: 2em; margin-bottom: 10px; }
-        #access-screen p { color: var(--text-dim); margin-bottom: 30px; }
-        .access-icon { font-size: 4em; margin-bottom: 20px; }
-
-        /* HEADER */
-        .header-section { display: grid; grid-template-columns: 150px 1fr 150px; align-items: center; margin-bottom: 35px; padding: 10px 0; border-bottom: 1px solid var(--border); }
-        .header-logo { text-align: left; }
-        .header-logo img { height: 70px; }
-        .header-info { text-align: center; }
-        .header-info h1 { font-size: 2em; margin: 0; font-weight: 800; letter-spacing: -1px; background: linear-gradient(90deg, #fff, #94a3b8); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
-        .light-mode .header-info h1 { background: none; -webkit-text-fill-color: initial; color: #1e293b; }
-        .status-badge { display: inline-block; padding: 5px 15px; border-radius: 20px; background: rgba(16,185,129,0.1); border: 1px solid var(--accent-green); color: var(--accent-green); font-size: 0.8em; font-weight: 700; margin-top: 10px; text-transform: uppercase; letter-spacing: 1px; }
-        .status-badge.offline { background: rgba(239,68,68,0.1); border-color: var(--accent-red); color: var(--accent-red); }
-        .header-controls { text-align: right; display: flex; flex-direction: column; align-items: flex-end; gap: 8px; }
-        .theme-toggle { background: #334155; color: white; border: none; padding: 12px; border-radius: 50%; cursor: pointer; font-size: 1.3em; line-height: 1; transition: background 0.3s, transform 0.2s; }
-        .theme-toggle:hover { background: #475569; transform: scale(1.1); }
-        .light-mode .theme-toggle { background: #e2e8f0; color: #1e293b; }
-        .mqtt-status { font-size: 0.75em; color: var(--text-dim); }
-        .mqtt-status.connected { color: var(--accent-green); }
-        .mqtt-status.connecting { color: #fbbf24; }
-
-        /* WIDGETS */
-        .widgets-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 20px; margin-bottom: 30px; }
-        .widget-card { background: var(--bg-card); padding: 25px; border-radius: 16px; box-shadow: var(--shadow-card); border: 1px solid var(--border); text-align: center; position: relative; transition: background 0.3s, border 0.3s; }
-        .widget-card::after { content: ''; position: absolute; bottom: 0; left: 10%; width: 80%; height: 4px; border-radius: 4px 4px 0 0; }
-        .c-temp::after { background: var(--accent-red); }
-        .c-ph::after { background: var(--accent-blue); }
-        .c-orp::after { background: var(--accent-purple); }
-        .c-do::after { background: var(--accent-green); }
-        .widget-card h3 { margin: 0; font-size: 0.75em; text-transform: uppercase; color: var(--text-dim); letter-spacing: 1.5px; }
-        .value { font-size: 2.8em; font-weight: 800; margin: 10px 0; color: var(--text-main); display: flex; align-items: baseline; justify-content: center; }
-        .unit { font-size: 0.45em; color: var(--text-dim); margin-left: 8px; font-weight: 400; }
-        .last-update { font-size: 0.7em; color: var(--text-dim); margin-top: 5px; }
-        .alarm-active { background: rgba(239,68,68,0.1) !important; border: 1px solid var(--accent-red) !important; animation: blink 2s infinite; }
-        @keyframes blink { 50% { opacity: 0.7; } }
-        .source-badge { display: inline-block; padding: 2px 8px; border-radius: 10px; font-size: 0.65em; font-weight: 700; margin-top: 5px; }
-        .source-real { background: rgba(16,185,129,0.15); color: var(--accent-green); }
-        .source-sim { background: rgba(148,163,184,0.15); color: var(--text-dim); }
-
-        /* CONTROL PANEL */
-        .control-panel { background: var(--bg-card); padding: 15px 25px; border-radius: 12px; display: flex; justify-content: space-between; align-items: center; margin-bottom: 30px; border: 1px solid var(--border); }
-        .btn-group { display: flex; gap: 10px; align-items: center; }
-        .btn { padding: 9px 18px; border: 1px solid var(--border); background: transparent; color: var(--text-dim); border-radius: 8px; cursor: pointer; font-weight: 600; transition: 0.2s; }
-        .btn.active { background: var(--accent-blue); color: white; border-color: var(--accent-blue); }
-        .btn:hover:not(.active) { border-color: var(--text-dim); color: var(--text-main); }
-        .btn-download { background: var(--accent-green); color: #000; border: none; font-weight: bold; padding: 10px 25px; border-radius: 8px; cursor: pointer; transition: 0.3s; }
-        .btn-download:hover { transform: translateY(-2px); }
-
-        /* LAYOUT */
-        .main-layout { display: grid; grid-template-columns: 3fr 1fr; gap: 25px; }
-        .charts-container { display: flex; flex-direction: column; gap: 25px; }
-        .chart-card { background: var(--bg-card); padding: 25px; border-radius: 16px; border: 1px solid var(--border); }
-        .chart-card h4 { margin: 0 0 15px 0; font-size: 0.85em; color: var(--text-dim); text-transform: uppercase; letter-spacing: 1px; }
-        .chart-wrapper { height: 200px; }
-        .log-card { background: var(--bg-log); border-radius: 16px; border: 1px solid var(--border); display: flex; flex-direction: column; overflow: hidden; }
-        .log-header { padding: 18px; background: var(--bg-card); font-size: 0.85em; font-weight: bold; color: #fbbf24; border-bottom: 1px solid var(--border); letter-spacing: 1px; }
-        .log-messages { padding: 15px; overflow-y: auto; flex-grow: 1; height: 850px; font-family: 'Consolas', monospace; font-size: 0.85em; }
-        .log-entry { margin-bottom: 12px; border-bottom: 1px solid var(--border); padding-bottom: 6px; line-height: 1.5; color: #d2dae2; }
-        .log-time { color: var(--accent-blue); margin-right: 8px; font-weight: bold; }
-        .log-msg-alarm { color: #ff6b6b; font-weight: bold; }
-        .log-msg-mqtt { color: var(--accent-green); }
-
-        @media (max-width: 1100px) {
-            .header-section { grid-template-columns: 1fr; gap: 15px; text-align: center; }
-            .header-logo, .header-controls { text-align: center; align-items: center; }
-            .main-layout { grid-template-columns: 1fr; }
-            .log-messages { height: 350px; }
-        }
+        #access-screen { display:flex; flex-direction:column; align-items:center; justify-content:center; min-height:100vh; text-align:center; }
+        .header-section { display:grid; grid-template-columns:150px 1fr 150px; align-items:center; margin-bottom:35px; padding:10px 0; border-bottom:1px solid var(--border); }
+        .header-info { text-align:center; }
+        .header-info h1 { font-size:2em; margin:0; font-weight:800; }
+        .header-controls { text-align:right; display:flex; flex-direction:column; align-items:flex-end; gap:8px; }
+        .status-badge { display:inline-block; padding:5px 15px; border-radius:20px; background:rgba(16,185,129,0.1); border:1px solid var(--accent-green); color:var(--accent-green); font-size:0.8em; font-weight:700; margin-top:10px; text-transform:uppercase; letter-spacing:1px; }
+        .theme-toggle { background:#334155; color:white; border:none; padding:12px; border-radius:50%; cursor:pointer; font-size:1.3em; }
+        .light-mode .theme-toggle { background:#e2e8f0; color:#1e293b; }
+        .mqtt-status { font-size:0.75em; color:var(--text-dim); }
+        .mqtt-status.connected { color:var(--accent-green); }
+        .mqtt-status.connecting { color:#fbbf24; }
+        .widgets-grid { display:grid; grid-template-columns:repeat(auto-fit, minmax(260px,1fr)); gap:20px; margin-bottom:30px; }
+        .widget-card { background:var(--bg-card); padding:25px; border-radius:16px; border:1px solid var(--border); text-align:center; position:relative; }
+        .widget-card::after { content:''; position:absolute; bottom:0; left:10%; width:80%; height:4px; border-radius:4px 4px 0 0; }
+        .c-temp::after { background:var(--accent-red); }
+        .c-ph::after { background:var(--accent-blue); }
+        .c-orp::after { background:var(--accent-purple); }
+        .c-do::after { background:var(--accent-green); }
+        .widget-card h3 { margin:0; font-size:0.75em; text-transform:uppercase; color:var(--text-dim); letter-spacing:1.5px; }
+        .value { font-size:2.8em; font-weight:800; margin:10px 0; display:flex; align-items:baseline; justify-content:center; }
+        .unit { font-size:0.45em; color:var(--text-dim); margin-left:8px; font-weight:400; }
+        .last-update { font-size:0.7em; color:var(--text-dim); margin-top:5px; }
+        .alarm-active { background:rgba(239,68,68,0.1)!important; border:1px solid var(--accent-red)!important; animation:blink 2s infinite; }
+        @keyframes blink { 50%{opacity:0.7;} }
+        .source-badge { display:inline-block; padding:2px 8px; border-radius:10px; font-size:0.65em; font-weight:700; margin-top:5px; }
+        .source-real { background:rgba(16,185,129,0.15); color:var(--accent-green); }
+        .source-sim { background:rgba(148,163,184,0.15); color:var(--text-dim); }
+        .control-panel { background:var(--bg-card); padding:15px 25px; border-radius:12px; display:flex; justify-content:space-between; align-items:center; margin-bottom:30px; border:1px solid var(--border); }
+        .btn-group { display:flex; gap:10px; align-items:center; }
+        .btn { padding:9px 18px; border:1px solid var(--border); background:transparent; color:var(--text-dim); border-radius:8px; cursor:pointer; font-weight:600; }
+        .btn.active { background:var(--accent-blue); color:white; border-color:var(--accent-blue); }
+        .btn-download { background:var(--accent-green); color:#000; border:none; font-weight:bold; padding:10px 25px; border-radius:8px; cursor:pointer; }
+        .main-layout { display:grid; grid-template-columns:3fr 1fr; gap:25px; }
+        .charts-container { display:flex; flex-direction:column; gap:25px; }
+        .chart-card { background:var(--bg-card); padding:25px; border-radius:16px; border:1px solid var(--border); }
+        .chart-card h4 { margin:0 0 15px 0; font-size:0.85em; color:var(--text-dim); text-transform:uppercase; letter-spacing:1px; }
+        .chart-wrapper { height:200px; }
+        .log-card { background:var(--bg-log); border-radius:16px; border:1px solid var(--border); display:flex; flex-direction:column; overflow:hidden; }
+        .log-header { padding:18px; background:var(--bg-card); font-size:0.85em; font-weight:bold; color:#fbbf24; border-bottom:1px solid var(--border); }
+        .log-messages { padding:15px; overflow-y:auto; flex-grow:1; height:850px; font-family:monospace; font-size:0.85em; }
+        .log-entry { margin-bottom:12px; border-bottom:1px solid var(--border); padding-bottom:6px; line-height:1.5; color:#d2dae2; }
+        .log-time { color:var(--accent-blue); margin-right:8px; font-weight:bold; }
+        .log-alarm { color:#ff6b6b; font-weight:bold; }
+        .log-mqtt { color:var(--accent-green); }
+        @media(max-width:1100px){ .header-section{grid-template-columns:1fr;text-align:center;} .main-layout{grid-template-columns:1fr;} .log-messages{height:350px;} }
     </style>
 </head>
 <body>
 
-<!-- PANTALLA DE ACCESO DENEGADO -->
 <div id="access-screen" style="display:none;">
-    <div class="access-icon">🔒</div>
+    <div style="font-size:4em;margin-bottom:20px">🔒</div>
     <h1>Acceso Restringido</h1>
-    <p>Este dashboard requiere un enlace de acceso autorizado.<br>Contacta con el administrador del sistema.</p>
-    <p style="font-size:0.8em; color: var(--text-dim);">Universidad de Valladolid — TFM Biorreactor</p>
+    <p style="color:var(--text-dim)">Este dashboard requiere un enlace autorizado.<br>Contacta con el administrador del sistema.</p>
+    <p style="font-size:0.8em;color:var(--text-dim)">Universidad de Valladolid — TFM Biorreactor</p>
 </div>
 
-<!-- DASHBOARD PRINCIPAL -->
 <div id="dashboard" style="display:none;">
 <div class="container">
-
     <div class="header-section">
-        <div class="header-logo">
-            <span style="font-size:1.2em; font-weight:800; color:var(--text-dim)">UVa</span>
-        </div>
+        <div style="text-align:left;font-size:1.2em;font-weight:800;color:var(--text-dim)">UVa</div>
         <div class="header-info">
             <h1>Monitorización Biorreactor</h1>
-            <div class="status-badge" id="main-status">● UVa ONLINE - ESP32-C3</div>
+            <div class="status-badge">● UVa ONLINE - ESP32-C3</div>
         </div>
         <div class="header-controls">
-            <button class="theme-toggle" onclick="toggleTheme()" title="Cambiar tema">🌓</button>
-            <span class="mqtt-status" id="mqtt-indicator">⬤ Conectando MQTT...</span>
+            <button class="theme-toggle" onclick="toggleTheme()">🌓</button>
+            <span class="mqtt-status" id="mqtt-indicator">⬤ Conectando...</span>
         </div>
     </div>
 
@@ -150,11 +118,11 @@
 
     <div class="control-panel">
         <div class="btn-group">
-            <span style="font-size:0.85em; font-weight:700; color:var(--text-dim); margin-right:8px;">RANGO:</span>
-            <button class="btn active" onclick="setPeriod(20, this)">Tiempo Real</button>
-            <button class="btn" onclick="setPeriod(100, this)">1 Hora</button>
-            <button class="btn" onclick="setPeriod(500, this)">6 Horas</button>
-            <button class="btn" onclick="setPeriod(1500, this)">24 Horas</button>
+            <span style="font-size:0.85em;font-weight:700;color:var(--text-dim);margin-right:8px">RANGO:</span>
+            <button class="btn active" onclick="setPeriod(20,this)">Tiempo Real</button>
+            <button class="btn" onclick="setPeriod(100,this)">1 Hora</button>
+            <button class="btn" onclick="setPeriod(500,this)">6 Horas</button>
+            <button class="btn" onclick="setPeriod(1500,this)">24 Horas</button>
         </div>
         <button class="btn-download" onclick="downloadCSV()">Exportar CSV</button>
     </div>
@@ -173,254 +141,175 @@
             </div>
         </div>
     </div>
-
 </div>
 </div>
 
 <script>
-    // ─── CONTROL DE ACCESO POR TOKEN ───────────────────────────────────────────
-    const SECRET_TOKEN = 'uva2024tfm';
-    const params = new URLSearchParams(window.location.search);
-    const token = params.get('token');
+var SECRET_TOKEN = 'uva2024tfm';
+var params = new URLSearchParams(window.location.search);
+var token = params.get('token');
 
-    if (token === SECRET_TOKEN) {
-        document.getElementById('dashboard').style.display = 'block';
-        initDashboard();
-    } else {
-        document.getElementById('access-screen').style.display = 'flex';
-        document.body.style.minHeight = '100vh';
-    }
+if (token === SECRET_TOKEN) {
+    document.getElementById('dashboard').style.display = 'block';
+} else {
+    document.getElementById('access-screen').style.display = 'flex';
+}
 
-    // ─── VARIABLES GLOBALES ────────────────────────────────────────────────────
-    let maxDataPoints = 20;
-    let dataHistory = [];
-    let mqttConnected = false;
-    let realDataReceived = { temp: false, ph: false, orp: false, do: false };
-    let simulatorInterval = null;
+var maxDataPoints = 20;
+var dataHistory = [];
+var realDataReceived = { temp: false, ph: false, orp: false, do: false };
 
-    const chartConfigs = {
-        temp: { label: 'Temp', color: '#ef4444', min: 20, max: 45, unit: '°C' },
-        ph:   { label: 'pH',   color: '#3b82f6', min: 0,  max: 14, unit: 'pH' },
-        orp:  { label: 'ORP',  color: '#8b5cf6', min: -200, max: 800, unit: 'mV' },
-        do:   { label: 'DO',   color: '#10b981', min: 0,  max: 15, unit: 'mg/L' }
-    };
-    const charts = {};
+var chartConfigs = {
+    temp: { label: 'Temp', color: '#ef4444', min: 20, max: 45, unit: '°C' },
+    ph:   { label: 'pH',   color: '#3b82f6', min: 0,  max: 14, unit: 'pH' },
+    orp:  { label: 'ORP',  color: '#8b5cf6', min: -200, max: 800, unit: 'mV' },
+    do:   { label: 'DO',   color: '#10b981', min: 0,  max: 15,  unit: 'mg/L' }
+};
 
-    // ─── CONFIGURACIÓN MQTT ────────────────────────────────────────────────────
-    // Topics que debe publicar el ESP32:
-    // biorreactor/temperatura  → valor numérico ej: "36.8"
-    // biorreactor/ph           → valor numérico ej: "7.20"
-    // biorreactor/orp          → valor numérico ej: "265"
-    // biorreactor/do           → valor numérico ej: "7.8"
-    const MQTT_BROKER = 'wss://broker.hivemq.com:8884/mqtt';
-    const MQTT_TOPICS = {
-        temp: 'biorreactor/temperatura',
-        ph:   'biorreactor/ph',
-        orp:  'biorreactor/orp',
-        do:   'biorreactor/do'
-    };
+var charts = {};
 
-    function initDashboard() {
-        Chart.defaults.color = '#94a3b8';
-        Chart.defaults.borderColor = 'rgba(255,255,255,0.05)';
-        initCharts();
-        connectMQTT();
-        startSimulator();
-        loadSavedTheme();
-    }
+Chart.defaults.color = '#94a3b8';
+Chart.defaults.borderColor = 'rgba(255,255,255,0.05)';
 
-    // ─── CHARTS ────────────────────────────────────────────────────────────────
-    function initCharts() {
-        Object.keys(chartConfigs).forEach(key => {
-            const cfg = chartConfigs[key];
-            charts[key] = new Chart(document.getElementById(`chart-${key}`), {
-                type: 'line',
-                data: { labels: [], datasets: [{ label: cfg.label, data: [], borderColor: cfg.color, backgroundColor: cfg.color + '15', fill: true, tension: 0.4, borderWidth: 3, pointRadius: 0 }] },
-                options: {
-                    responsive: true, maintainAspectRatio: false,
-                    plugins: { legend: { display: false } },
-                    scales: {
-                        y: { min: cfg.min, max: cfg.max, grid: { color: 'rgba(255,255,255,0.05)' }, title: { display: true, text: cfg.unit, font: { size: 11 } } },
-                        x: { ticks: { display: false }, grid: { display: false } }
-                    }
-                }
-            });
-        });
-    }
-
-    // ─── MQTT ──────────────────────────────────────────────────────────────────
-    function connectMQTT() {
-        const indicator = document.getElementById('mqtt-indicator');
-        indicator.textContent = '⬤ Conectando...';
-        indicator.className = 'mqtt-status connecting';
-
-        try {
-            const client = mqtt.connect(MQTT_BROKER, {
-                clientId: 'dashboard_uva_' + Math.random().toString(16).substr(2, 8),
-                reconnectPeriod: 5000,
-                connectTimeout: 10000
-            });
-
-            client.on('connect', () => {
-                mqttConnected = true;
-                indicator.textContent = '⬤ ESP32 Conectado';
-                indicator.className = 'mqtt-status connected';
-                addLog('Conexión MQTT establecida con HiveMQ', false, 'mqtt');
-
-                Object.values(MQTT_TOPICS).forEach(topic => {
-                    client.subscribe(topic, err => {
-                        if (!err) addLog(`Suscrito a: ${topic}`, false, 'mqtt');
-                    });
-                });
-            });
-
-            client.on('message', (topic, message) => {
-                const value = parseFloat(message.toString());
-                if (isNaN(value)) return;
-
-                const key = Object.keys(MQTT_TOPICS).find(k => MQTT_TOPICS[k] === topic);
-                if (!key) return;
-
-                if (!realDataReceived[key]) {
-                    realDataReceived[key] = true;
-                    addLog(`Primeros datos reales recibidos: ${key.toUpperCase()}`, false, 'mqtt');
-                }
-
-                updateWidget(key, value, true);
-            });
-
-            client.on('error', (err) => {
-                indicator.textContent = '⬤ Error MQTT';
-                indicator.className = 'mqtt-status';
-                addLog(`Error MQTT: ${err.message}`);
-            });
-
-            client.on('offline', () => {
-                mqttConnected = false;
-                indicator.textContent = '⬤ Sin conexión';
-                indicator.className = 'mqtt-status';
-            });
-
-            client.on('reconnect', () => {
-                indicator.textContent = '⬤ Reconectando...';
-                indicator.className = 'mqtt-status connecting';
-            });
-
-        } catch(e) {
-            indicator.textContent = '⬤ MQTT no disponible';
-            addLog('MQTT no disponible — usando simulador');
-        }
-    }
-
-    // ─── SIMULADOR (fallback cuando no hay ESP32 conectado) ───────────────────
-    function startSimulator() {
-        simulatorInterval = setInterval(() => {
-            Object.keys(realDataReceived).forEach(key => {
-                if (!realDataReceived[key]) {
-                    const simValues = {
-                        temp: (36.8 + Math.random() * 0.4).toFixed(1),
-                        ph:   (6.5  + Math.random() * 1.8).toFixed(2),
-                        orp:  (255  + Math.random() * 15).toFixed(0),
-                        do:   (7.8  + Math.random() * 0.3).toFixed(1)
-                    };
-                    updateWidget(key, parseFloat(simValues[key]), false);
-                }
-            });
-        }, 2000);
-    }
-
-    // ─── ACTUALIZAR WIDGET Y GRÁFICA ──────────────────────────────────────────
-    function updateWidget(key, value, isReal) {
-        const now = new Date().toLocaleTimeString();
-        const widgetVal = document.getElementById(`val-${key}`);
-        const updateEl = document.getElementById(`upd-${key}`);
-        const srcEl = document.getElementById(`src-${key}`);
-
-        if (widgetVal) widgetVal.childNodes[0].nodeValue = value;
-        if (updateEl) updateEl.textContent = `Actualizado: ${now}`;
-        if (srcEl) {
-            srcEl.textContent = isReal ? 'ESP32 REAL' : 'SIMULADO';
-            srcEl.className = `source-badge ${isReal ? 'source-real' : 'source-sim'}`;
-        }
-
-        // Alarma pH
-        if (key === 'ph') {
-            const card = document.getElementById('card-ph');
-            if (value < 6.5 || value > 8.0) {
-                if (!card.classList.contains('alarm-active')) addLog(`ALERTA: pH fuera de rango (${value})`, true);
-                card.classList.add('alarm-active');
-            } else {
-                card.classList.remove('alarm-active');
+Object.keys(chartConfigs).forEach(function(key) {
+    var cfg = chartConfigs[key];
+    charts[key] = new Chart(document.getElementById('chart-' + key), {
+        type: 'line',
+        data: {
+            labels: [],
+            datasets: [{
+                label: cfg.label, data: [],
+                borderColor: cfg.color, backgroundColor: cfg.color + '15',
+                fill: true, tension: 0.4, borderWidth: 3, pointRadius: 0
+            }]
+        },
+        options: {
+            responsive: true, maintainAspectRatio: false,
+            plugins: { legend: { display: false } },
+            scales: {
+                y: { min: cfg.min, max: cfg.max, grid: { color: 'rgba(255,255,255,0.05)' }, title: { display: true, text: cfg.unit, font: { size: 11 } } },
+                x: { ticks: { display: false }, grid: { display: false } }
             }
         }
+    });
+});
 
-        // Actualizar gráfica
-        const chart = charts[key];
-        if (chart) {
-            if (chart.data.labels.length > maxDataPoints) {
-                chart.data.labels.shift();
-                chart.data.datasets[0].data.shift();
-            }
-            chart.data.labels.push(now);
-            chart.data.datasets[0].data.push(value);
-            chart.update('none');
-        }
-
-        // Historial
-        const entry = dataHistory.find(d => d.time === now) || { time: now };
-        entry[key] = value;
-        if (!dataHistory.includes(entry)) dataHistory.push(entry);
-        if (dataHistory.length > 5000) dataHistory.shift();
-    }
-
-    // ─── UTILIDADES ───────────────────────────────────────────────────────────
-    function addLog(message, isAlarm = false, type = '') {
-        const logContainer = document.getElementById('event-log');
-        const time = new Date().toLocaleTimeString();
-        const entry = document.createElement('div');
-        entry.className = 'log-entry';
-        const msgClass = isAlarm ? 'log-msg-alarm' : (type === 'mqtt' ? 'log-msg-mqtt' : '');
-        entry.innerHTML = `<span class="log-time">[${time}]</span> <span class="${msgClass}">${message}</span>`;
-        logContainer.prepend(entry);
-    }
-
-    function setPeriod(points, btn) {
-        maxDataPoints = points;
-        document.querySelectorAll('.btn').forEach(b => b.classList.remove('active'));
-        btn.classList.add('active');
-        addLog(`Escala ajustada: ${btn.innerText}`);
-    }
-
-    function downloadCSV() {
-        let csv = "Hora,Temp,pH,ORP,DO\n";
-        dataHistory.forEach(r => csv += `${r.time || ''},${r.temp || ''},${r.ph || ''},${r.orp || ''},${r.do || ''}\n`);
-        const blob = new Blob([csv], { type: 'text/csv' });
-        const url = window.URL.createObjectURL(blob);
-        const a = document.createElement('a');
-        a.href = url;
-        a.download = 'historico_biorreactor_uva.csv';
-        a.click();
-        addLog('Datos exportados a CSV.');
-    }
-
-    function toggleTheme() {
-        document.body.classList.toggle('light-mode');
-        const isLight = document.body.classList.contains('light-mode');
-        const textColor = isLight ? '#1e293b' : '#94a3b8';
-        const gridColor = isLight ? 'rgba(0,0,0,0.08)' : 'rgba(255,255,255,0.05)';
-        Object.values(charts).forEach(c => {
-            c.options.scales.y.title.color = textColor;
-            c.options.scales.y.ticks.color = textColor;
-            c.options.scales.y.grid.color = gridColor;
-            c.update('none');
+function connectMQTT() {
+    var indicator = document.getElementById('mqtt-indicator');
+    indicator.textContent = '⬤ Conectando...';
+    indicator.className = 'mqtt-status connecting';
+    try {
+        var client = mqtt.connect('wss://broker.hivemq.com:8884/mqtt', {
+            clientId: 'dashboard_uva_' + Math.random().toString(16).substr(2, 8),
+            reconnectPeriod: 5000,
+            connectTimeout: 10000
         });
-        localStorage.setItem('theme', isLight ? 'light' : 'dark');
-        addLog(`Tema cambiado: ${isLight ? 'Claro' : 'Oscuro'}`);
+        var topics = { temp: 'biorreactor/temperatura', ph: 'biorreactor/ph', orp: 'biorreactor/orp', do: 'biorreactor/do' };
+        client.on('connect', function() {
+            indicator.textContent = '⬤ ESP32 Conectado';
+            indicator.className = 'mqtt-status connected';
+            addLog('Conexión MQTT establecida', false, 'mqtt');
+            Object.values(topics).forEach(function(t) { client.subscribe(t); });
+        });
+        client.on('message', function(topic, message) {
+            var value = parseFloat(message.toString());
+            if (isNaN(value)) return;
+            var key = Object.keys(topics).find(function(k) { return topics[k] === topic; });
+            if (!key) return;
+            if (!realDataReceived[key]) {
+                realDataReceived[key] = true;
+                addLog('Datos reales recibidos: ' + key.toUpperCase(), false, 'mqtt');
+            }
+            updateWidget(key, value, true);
+        });
+        client.on('offline', function() {
+            indicator.textContent = '⬤ Sin conexión';
+            indicator.className = 'mqtt-status';
+        });
+    } catch(e) {
+        indicator.textContent = '⬤ Sin MQTT';
+        addLog('MQTT no disponible — simulador activo');
     }
+}
 
-    function loadSavedTheme() {
-        if (localStorage.getItem('theme') === 'light') toggleTheme();
+setInterval(function() {
+    Object.keys(realDataReceived).forEach(function(key) {
+        if (!realDataReceived[key]) {
+            var sim = { temp: (36.8 + Math.random()*0.4).toFixed(1), ph: (6.5 + Math.random()*1.8).toFixed(2), orp: (255 + Math.random()*15).toFixed(0), do: (7.8 + Math.random()*0.3).toFixed(1) };
+            updateWidget(key, parseFloat(sim[key]), false);
+        }
+    });
+}, 2000);
+
+connectMQTT();
+
+function updateWidget(key, value, isReal) {
+    var now = new Date().toLocaleTimeString();
+    var valEl = document.getElementById('val-' + key);
+    var updEl = document.getElementById('upd-' + key);
+    var srcEl = document.getElementById('src-' + key);
+    if (valEl) valEl.childNodes[0].nodeValue = value;
+    if (updEl) updEl.textContent = 'Actualizado: ' + now;
+    if (srcEl) { srcEl.textContent = isReal ? 'ESP32 REAL' : 'SIMULADO'; srcEl.className = 'source-badge ' + (isReal ? 'source-real' : 'source-sim'); }
+    if (key === 'ph') {
+        var card = document.getElementById('card-ph');
+        if (value < 6.5 || value > 8.0) {
+            if (!card.classList.contains('alarm-active')) addLog('ALERTA: pH fuera de rango (' + value + ')', true);
+            card.classList.add('alarm-active');
+        } else { card.classList.remove('alarm-active'); }
     }
+    var chart = charts[key];
+    if (chart) {
+        if (chart.data.labels.length > maxDataPoints) { chart.data.labels.shift(); chart.data.datasets[0].data.shift(); }
+        chart.data.labels.push(now);
+        chart.data.datasets[0].data.push(value);
+        chart.update('none');
+    }
+    var entry = { time: now }; entry[key] = value;
+    dataHistory.push(entry);
+    if (dataHistory.length > 5000) dataHistory.shift();
+}
+
+function addLog(message, isAlarm, type) {
+    var log = document.getElementById('event-log');
+    var time = new Date().toLocaleTimeString();
+    var div = document.createElement('div');
+    div.className = 'log-entry';
+    var cls = isAlarm ? 'log-alarm' : (type === 'mqtt' ? 'log-mqtt' : '');
+    div.innerHTML = '<span class="log-time">[' + time + ']</span> <span class="' + cls + '">' + message + '</span>';
+    log.prepend(div);
+}
+
+function setPeriod(points, btn) {
+    maxDataPoints = points;
+    document.querySelectorAll('.btn').forEach(function(b) { b.classList.remove('active'); });
+    btn.classList.add('active');
+    addLog('Escala ajustada: ' + btn.innerText);
+}
+
+function downloadCSV() {
+    var csv = "Hora,Temp,pH,ORP,DO\n";
+    dataHistory.forEach(function(r) { csv += (r.time||'') + ',' + (r.temp||'') + ',' + (r.ph||'') + ',' + (r.orp||'') + ',' + (r.do||'') + '\n'; });
+    var blob = new Blob([csv], { type: 'text/csv' });
+    var url = window.URL.createObjectURL(blob);
+    var a = document.createElement('a');
+    a.href = url; a.download = 'historico_biorreactor_uva.csv'; a.click();
+    addLog('Datos exportados a CSV.');
+}
+
+function toggleTheme() {
+    document.body.classList.toggle('light-mode');
+    var isLight = document.body.classList.contains('light-mode');
+    var textColor = isLight ? '#1e293b' : '#94a3b8';
+    var gridColor = isLight ? 'rgba(0,0,0,0.08)' : 'rgba(255,255,255,0.05)';
+    Object.values(charts).forEach(function(c) {
+        c.options.scales.y.title.color = textColor;
+        c.options.scales.y.ticks.color = textColor;
+        c.options.scales.y.grid.color = gridColor;
+        c.update('none');
+    });
+    addLog('Tema cambiado: ' + (isLight ? 'Claro' : 'Oscuro'));
+}
 </script>
 </body>
 </html>
