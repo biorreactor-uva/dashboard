@@ -280,7 +280,7 @@
         <div class="hero">
             <div class="hero-text">
                 <h2>Laboratorio de Ingeniería Química - UVa</h2>
-                <p>Monitorización en tiempo real · Temperatura · pH · Potencial Redox · Oxígeno Disuelto</p>
+                <p>Monitorización en tiempo real · Temperatura · pH · Potencial Redox · Oxígeno Disuelto ·</p>
             </div>
             <div class="hero-right">
                 <div class="hero-stat">
@@ -466,7 +466,7 @@ function connectMQTT() {
     try {
         var client = mqtt.connect(MQTT_BROKER, { clientId:'uva_'+Math.random().toString(16).substr(2,8), reconnectPeriod:5000, connectTimeout:10000 });
         client.on('connect', function() {
-            addLog('Conexión establecida - esperando dispositivo...','mqtt');
+            addLog('Conexión establecida - esperando dispositivo ...','mqtt');
             Object.values(MQTT_TOPICS).forEach(function(t){ client.subscribe(t); });
         });
         client.on('message', function(topic,msg) {
