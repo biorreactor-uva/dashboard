@@ -47,7 +47,7 @@
         .topbar-sep { width:1px; height:28px; background:var(--border); }
         .topbar-title { display:flex; flex-direction:column; }
         .topbar-title b { font-size:0.95rem; font-weight:600; color:var(--gray-900); }
-        .topbar-title span { font-size:0.7rem; color:#0f2347; font-weight:500; letter-spacing:0.05em; text-transform:uppercase; }
+        .topbar-title span { font-size:0.7rem; color:#9b1c6e; font-weight:500; letter-spacing:0.05em; text-transform:uppercase; }
         .topbar-right { display:flex; align-items:center; gap:12px; }
         .mqtt-pill {
             display:flex; align-items:center; gap:6px;
@@ -114,7 +114,7 @@
             box-shadow:var(--shadow);
         }
         .period-btns { display:flex; gap:3px; align-items:center; }
-        .period-lbl { font-size:0.72rem; color:#475569; font-weight:500; margin-right:8px; text-transform:uppercase; letter-spacing:0.06em; }
+        .period-lbl { font-size:0.72rem; color:#ffffff; font-weight:600; margin-right:8px; text-transform:uppercase; letter-spacing:0.06em; background:#0f2347; padding:5px 12px; border-radius:7px; }
         .period-btn { padding:5px 13px; border-radius:8px; border:1px solid transparent; background:transparent; color:#475569; font-size:0.8rem; font-weight:500; cursor:pointer; font-family:var(--font); transition:0.15s; }
         .period-btn:hover { background:#f1f5f9; color:#0f172a; }
         .period-btn.active { background:#0f2347; color:#fff; border-color:#0f2347; }
@@ -124,7 +124,7 @@
         .bottom-grid { display:grid; grid-template-columns:1fr 300px; gap:14px; }
         .charts-col { display:flex; flex-direction:column; gap:14px; }
         .chart-card { background:#ffffff; border:1px solid #e2e8f0; border-radius:var(--r2); padding:18px 20px; box-shadow:var(--shadow); }
-        .chart-label { font-size:0.7rem; font-weight:600; text-transform:uppercase; letter-spacing:0.08em; color:#475569; margin-bottom:12px; }
+        .chart-label { font-size:0.7rem; font-weight:700; text-transform:uppercase; letter-spacing:0.08em; color:#1e293b; margin-bottom:12px; }
         .chart-wrap { height:110px; }
 
         .log-card { background:#ffffff; border:2px solid #0f2347; border-radius:var(--r2); overflow:hidden; display:flex; flex-direction:column; box-shadow:var(--shadow2); }
@@ -132,10 +132,10 @@
         .log-body { flex:1; overflow-y:auto; padding:10px 14px; font-family:var(--mono); font-size:0.72rem; max-height:560px; background:#ffffff; }
         .log-body::-webkit-scrollbar { width:3px; }
         .log-body::-webkit-scrollbar-thumb { background:#cbd5e1; border-radius:4px; }
-        .log-entry { padding:5px 0; border-bottom:1px solid #f1f5f9; line-height:1.5; color:#334155; }
+        .log-entry { padding:5px 0; border-bottom:1px solid #f1f5f9; line-height:1.5; color:#0f172a; }
         .log-t { color:#0f2347; margin-right:7px; font-weight:600; }
         .log-alarm { color:#dc2626; font-weight:600; }
-        .log-mqtt  { color:#059669; }
+        .log-mqtt  { color:#059669; font-weight:700; }
 
         @media (max-width:1100px) { .sensor-grid { grid-template-columns:repeat(2,1fr); } .bottom-grid { grid-template-columns:1fr; } .log-body { max-height:280px; } }
         @media (max-width:640px) { .page { padding:14px; } .topbar { padding:0 14px; } .hero { flex-direction:column; align-items:flex-start; gap:16px; padding:20px; } .hero-right { flex-wrap:wrap; } }
@@ -286,7 +286,7 @@ function initCharts() {
             type:'line',
             data:{ labels:[], datasets:[{ data:[], borderColor:cfg.color, backgroundColor:cfg.color+'18', fill:true, tension:0.4, borderWidth:2, pointRadius:0 }]},
             options:{ responsive:true, maintainAspectRatio:false, plugins:{ legend:{ display:false } },
-                scales:{ y:{ min:cfg.min, max:cfg.max, grid:{ color:'rgba(0,0,0,0.05)' }, ticks:{ font:{ size:10, family:"'JetBrains Mono'" }, color:'#475569' }, title:{ display:true, text:cfg.unit, font:{ size:10 }, color:'#475569' } }, x:{ ticks:{ display:false }, grid:{ display:false } } }
+                scales:{ y:{ min:cfg.min, max:cfg.max, grid:{ color:'rgba(0,0,0,0.05)' }, ticks:{ font:{ size:10, family:"'JetBrains Mono'", weight:'600' }, color:'#334155' }, title:{ display:true, text:cfg.unit, font:{ size:10, weight:'700' }, color:'#1e293b' } }, x:{ ticks:{ display:false }, grid:{ display:false } } }
             }
         });
     });
