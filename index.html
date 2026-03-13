@@ -45,9 +45,8 @@
         .topbar-title span { font-size:0.7rem; color:#9b1c6e; font-weight:500; letter-spacing:0.05em; text-transform:uppercase; }
         .topbar-right { display:flex; align-items:center; gap:12px; }
         .mqtt-pill { display:flex; align-items:center; gap:6px; background:var(--bg3); border:1px solid var(--border); padding:5px 12px; border-radius:20px; font-size:0.72rem; font-family:var(--mono); color:var(--gray-500); }
-        .mqtt-pill .dot { width:7px; height:7px; border-radius:50%; background:var(--gray-400); flex-shrink:0; transition:background 0.3s; }
-        .mqtt-pill.connected .dot { background:var(--green); box-shadow:0 0 5px var(--green); }
-        .mqtt-pill.connecting .dot { background:var(--amber); animation:blink 1s infinite; }
+        .mqtt-pill .dot { width:7px; height:7px; border-radius:50%; background:var(--red); box-shadow:0 0 5px var(--red); flex-shrink:0; animation:blink 1.2s infinite; }
+        .mqtt-pill.device-connected .dot { background:var(--green); box-shadow:0 0 5px var(--green); animation:blink 2s infinite; }
         @keyframes blink { 50% { opacity:0.2; } }
 
         .page { max-width:1440px; margin:0 auto; padding:24px 28px; }
@@ -176,7 +175,7 @@
             <p class="modal-desc" style="display:none;" id="modal-info-text">Define los umbrales mínimo y máximo para cada variable. Si el valor medido supera algún límite se registrará una alerta. Deja los campos vacíos para desactivar la alerta de esa variable.</p>
 
             <div class="alert-section">
-                <div class="alert-section-title"><span class="alert-dot" style="background:#dc2626;"></span>Temperatura</div>
+                <div class="alert-section-title"><span class="alert-dot" style="background:#dc2626;"></span>Temperatura (°C)</div>
                 <div class="alert-inputs">
                     <div class="alert-field"><label>Mínimo (°C)</label><input type="number" id="al-temp-min" placeholder="Sin límite" step="0.1"></div>
                     <div class="alert-field"><label>Máximo (°C)</label><input type="number" id="al-temp-max" placeholder="Sin límite" step="0.1"></div>
@@ -192,7 +191,7 @@
             </div>
 
             <div class="alert-section">
-                <div class="alert-section-title"><span class="alert-dot" style="background:#7c3aed;"></span>Potencial Redox</div>
+                <div class="alert-section-title"><span class="alert-dot" style="background:#7c3aed;"></span>Potencial Redox (mV)</div>
                 <div class="alert-inputs">
                     <div class="alert-field"><label>Mínimo (mV)</label><input type="number" id="al-orp-min" placeholder="Sin límite" step="1"></div>
                     <div class="alert-field"><label>Máximo (mV)</label><input type="number" id="al-orp-max" placeholder="Sin límite" step="1"></div>
@@ -200,7 +199,7 @@
             </div>
 
             <div class="alert-section">
-                <div class="alert-section-title"><span class="alert-dot" style="background:#059669;"></span>Oxígeno Disuelto</div>
+                <div class="alert-section-title"><span class="alert-dot" style="background:#059669;"></span>Oxígeno Disuelto (mg/L)</div>
                 <div class="alert-inputs">
                     <div class="alert-field"><label>Mínimo (mg/L)</label><input type="number" id="al-do-min" placeholder="Sin límite" step="0.1" min="0"></div>
                     <div class="alert-field"><label>Máximo (mg/L)</label><input type="number" id="al-do-max" placeholder="Sin límite" step="0.1" min="0"></div>
@@ -235,7 +234,7 @@
         <div class="topbar-right">
             <div class="mqtt-pill" id="mqtt-pill">
                 <span class="dot"></span>
-                <span id="mqtt-label">Conectando...</span>
+                <span id="mqtt-label">Esperando dispositivo...</span>
             </div>
         </div>
     </nav>
@@ -244,7 +243,7 @@
         <div class="hero">
             <div class="hero-text">
                 <h2>Laboratorio de Ingeniería Química - UVa</h2>
-                <p>Monitorización en tiempo real · Temperatura · pH · Potencial Redox · Oxígeno Disuelto ·</p>
+                <p>Monitorización en tiempo real · Temperatura · pH · Potencial Redox · Oxígeno Disuelto</p>
             </div>
             <div class="hero-right">
                 <div class="hero-stat">
@@ -394,7 +393,7 @@ function startRecording() {
         btn.style.background = 'rgba(239,68,68,0.25)';
         btn.style.borderColor = 'rgba(239,68,68,0.6)';
         btn.style.color = '#fca5a5';
-        addLog('Registro de datos iniciado.', 'mqtt');
+        addLog('Registro de datos iniciado', 'mqtt');
     } else {
         recordingEnd = Date.now();
         var elapsed = Math.floor((recordingEnd - recordingStart) / 1000);
@@ -407,7 +406,7 @@ function startRecording() {
         btn.style.background = 'rgba(255,255,255,0.12)';
         btn.style.borderColor = 'rgba(255,255,255,0.3)';
         btn.style.color = '#fff';
-        addLog('Registro finalizado - Tiempo activo: ' + tiempoStr, 'alarm');
+        addLog('Registro finalizado — Tiempo activo: ' + tiempoStr, 'alarm');
     }
 }
 
@@ -427,12 +426,9 @@ function initCharts() {
 }
 
 function connectMQTT() {
-    var pill = document.getElementById('mqtt-pill'), label = document.getElementById('mqtt-label');
-    pill.className = 'mqtt-pill connecting'; label.textContent = 'Conectando...';
     try {
         var client = mqtt.connect(MQTT_BROKER, { clientId:'uva_'+Math.random().toString(16).substr(2,8), reconnectPeriod:5000, connectTimeout:10000 });
         client.on('connect', function() {
-            pill.className='mqtt-pill connected'; label.textContent='En línea';
             addLog('Conexión establecida - esperando dispositivo...','mqtt');
             Object.values(MQTT_TOPICS).forEach(function(t){ client.subscribe(t); });
         });
@@ -440,12 +436,21 @@ function connectMQTT() {
             var value=parseFloat(msg.toString()); if(isNaN(value)) return;
             var key=Object.keys(MQTT_TOPICS).find(function(k){ return MQTT_TOPICS[k]===topic; });
             if(!key) return;
-            if(!realDataReceived[key]){ realDataReceived[key]=true; addLog('Datos reales: '+key.toUpperCase(),'mqtt'); }
+            if(!realDataReceived[key]){
+                realDataReceived[key]=true;
+                addLog('Datos reales recibidos: '+sensorNames[key],'mqtt');
+                var anyReal=Object.values(realDataReceived).some(function(v){ return v; });
+                if(anyReal){
+                    var pill=document.getElementById('mqtt-pill'), label=document.getElementById('mqtt-label');
+                    pill.className='mqtt-pill device-connected';
+                    label.textContent='Dispositivo conectado';
+                }
+            }
             updateWidget(key,value,true);
         });
-        client.on('offline', function(){ pill.className='mqtt-pill'; label.textContent='Sin conexión'; });
-        client.on('reconnect', function(){ pill.className='mqtt-pill connecting'; label.textContent='Reconectando...'; });
-    } catch(e){ label.textContent='MQTT no disponible'; }
+        client.on('offline', function(){});
+        client.on('reconnect', function(){});
+    } catch(e){ document.getElementById('mqtt-label').textContent='MQTT no disponible'; }
 }
 
 function startSimulator() {
@@ -488,10 +493,10 @@ function checkThreshold(key, value) {
     var msg = '';
 
     if (th.min !== null && value < th.min) {
-        msg = 'ALERTA: '+sensorNames[key]+' fuera de rango ('+value+' '+sensorUnits[key]+' < '+th.min+' '+sensorUnits[key]+')';
+        msg = 'ALERTA: '+sensorNames[key]+' bajo el mínimo ('+value+' '+sensorUnits[key]+' < '+th.min+' '+sensorUnits[key]+')';
         triggered = true;
     } else if (th.max !== null && value > th.max) {
-        msg = 'ALERTA: '+sensorNames[key]+' fuera de rango ('+value+' '+sensorUnits[key]+' > '+th.max+' '+sensorUnits[key]+')';
+        msg = 'ALERTA: '+sensorNames[key]+' sobre el máximo ('+value+' '+sensorUnits[key]+' > '+th.max+' '+sensorUnits[key]+')';
         triggered = true;
     }
 
@@ -550,7 +555,7 @@ function downloadCSV() {
     var a=document.createElement('a');
     a.href=URL.createObjectURL(new Blob([csv],{type:'text/csv'}));
     a.download='biorreactor_uva.csv'; a.click();
-    addLog('Datos exportados'+(recordingEnd?' (registro completo).':'')+'.', '');
+    addLog('Datos exportados'+(recordingEnd?' (registro completo)':'')+'.', '');
 }
 
 // ── MODAL ALERTAS ──
@@ -592,7 +597,7 @@ function saveAlerts() {
         btn.classList.remove('active');
     }
     closeAlertModal();
-    addLog('Configuración de alertas actualizada.', 'mqtt');
+    addLog('Configuración de alertas actualizada', 'mqtt');
 }
 
 function resetAlertInputs() {
