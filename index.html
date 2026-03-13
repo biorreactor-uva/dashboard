@@ -259,6 +259,9 @@ var startTime = Date.now();
 var recordingStart = null;
 var recordingEnd = null;
 var currentPeriodMs = 0;
+var realtimeHistory = [];
+var recordingHistory = [];
+var dataHistory = recordingHistory; // alias para downloadCSV
 var chartConfigs = {
     temp:{ color:'#dc2626', min:20,   max:45,  unit:'°C'   },
     ph:  { color:'#2563eb', min:0,    max:14,  unit:'pH'   },
@@ -299,7 +302,8 @@ function startRecording() {
         // INICIAR
         recordingStart = Date.now();
         recordingEnd = null;
-        dataHistory = [];
+        recordingHistory = [];
+        dataHistory = recordingHistory;
         Object.keys(charts).forEach(function(key) {
             charts[key].data.labels = [];
             charts[key].data.datasets[0].data = [];
@@ -331,7 +335,7 @@ function initCharts() {
         charts[key] = new Chart(document.getElementById('chart-'+key), {
             type:'line',
             data:{ labels:[], datasets:[
-                { data:[], borderColor:cfg.color, backgroundColor:cfg.color+'18', fill:true, tension:0.4, borderWidth:2, pointRadius:3, pointHoverRadius:5, pointBackgroundColor:cfg.color, label:'Valor' },
+                { data:[], borderColor:cfg.color, backgroundColor:cfg.color+'18', fill:true, tension:0.4, borderWidth:2, pointRadius:3, pointHoverRadius:5, pointBackgroundColor:cfg.color, pointBorderColor:cfg.color, label:'Valor' },
                 { data:[], borderColor:cfg.color+'99', backgroundColor:'transparent', fill:false, tension:0, borderWidth:1.5, pointRadius:0, borderDash:[6,4], label:'Tendencia', segment:{ borderDash:[6,4] } }
             ]},
             options:{ responsive:true, maintainAspectRatio:false, plugins:{ legend:{ display:false } },
@@ -382,14 +386,19 @@ function updateWidget(key,value,isReal) {
         if(value<6.5||value>8.0){ if(!card.classList.contains('alarm')) addLog('ALERTA: pH fuera de rango ('+value+')','alarm'); card.classList.add('alarm'); }
         else card.classList.remove('alarm');
     }
-    // Solo graba si el registro está activo y no finalizado
-    if (!recordingStart || recordingEnd) return;
+    // Historial de tiempo real: siempre activo, últimos 50 puntos
+    var rtEntry = realtimeHistory[realtimeHistory.length-1];
+    if (!rtEntry || rtEntry.time !== nowStr) { rtEntry = {time:nowStr, ts:now.getTime()}; realtimeHistory.push(rtEntry); }
+    rtEntry[key] = value;
+    if(realtimeHistory.length > 50) realtimeHistory.shift();
 
-    var entry = { time: nowStr, ts: now.getTime() };
-    entry[key] = value;
-    dataHistory.push(entry);
-    if(dataHistory.length > 50000) dataHistory.shift();
-
+    // Historial de registro: solo cuando hay registro activo
+    if (recordingStart && !recordingEnd) {
+        var entry = recordingHistory[recordingHistory.length-1];
+        if (!entry || entry.time !== nowStr) { entry = {time:nowStr, ts:now.getTime()}; recordingHistory.push(entry); }
+        entry[key] = value;
+        if(recordingHistory.length > 50000) recordingHistory.shift();
+    }
     refreshChart(key);
 }
 
@@ -398,13 +407,14 @@ function refreshChart(key) {
     if (!chart) return;
     var filtered;
     if (currentPeriodMs === 0) {
-        // Tiempo real: últimos 20 puntos
-        filtered = dataHistory.slice(-20);
+        // Tiempo real: siempre los últimos puntos del historial en tiempo real
+        filtered = realtimeHistory.slice(-30);
     } else {
-        // Ventana de tiempo desde el inicio del registro
-        var windowEnd = recordingStart + currentPeriodMs;
-        filtered = dataHistory.filter(function(d) {
-            return d.ts >= recordingStart && d.ts <= windowEnd;
+        // Modos con ventana: usa historial de registro, corta en recordingEnd si finalizó
+        var cutoff = recordingEnd ? recordingEnd : Date.now();
+        var windowStart = cutoff - currentPeriodMs;
+        filtered = recordingHistory.filter(function(d) {
+            return d.ts >= windowStart && d.ts <= cutoff;
         });
     }
     var labels = filtered.map(function(d){ return d.time; });
@@ -447,8 +457,8 @@ function setPeriod(ms, btn) {
 
 function downloadCSV() {
     var exportData = recordingEnd
-        ? dataHistory.filter(function(r){ return r.ts <= recordingEnd; })
-        : dataHistory;
+        ? recordingHistory.filter(function(r){ return r.ts <= recordingEnd; })
+        : recordingHistory;
     var csv='Hora,Temp,pH,ORP,DO\n';
     exportData.forEach(function(r){ csv+=(r.time||'')+','+(r.temp||'')+','+(r.ph||'')+','+(r.orp||'')+','+(r.do||'')+'\n'; });
     var a=document.createElement('a');
