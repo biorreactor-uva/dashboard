@@ -12,7 +12,7 @@
         :root {
             --bg:#f8fafc; --bg2:#ffffff; --bg3:#f1f5f9;
             --border:#e2e8f0; --border2:#cbd5e1;
-            --purple:#7c3aed; --purple2:#9d5ff5; --purple3:#6d28d9;
+            --purple:#7c3aed; --purple2:#9d5ff5;
             --purple-lt:#ede9fe;
             --blue:#2563eb; --blue-lt:#dbeafe;
             --green:#059669; --green-lt:#d1fae5;
@@ -36,12 +36,7 @@
         #access-screen h1 { font-size:1.5rem; font-weight:600; color:#f1f5f9; }
         #access-screen p { color:#94a3b8; font-size:0.88rem; line-height:1.6; }
 
-        .topbar {
-            background:var(--white); border-bottom:3px solid #0f2347;
-            padding:0 28px; height:64px;
-            display:flex; align-items:center; justify-content:space-between;
-            box-shadow:var(--shadow); position:sticky; top:0; z-index:100;
-        }
+        .topbar { background:var(--white); border-bottom:3px solid #0f2347; padding:0 28px; height:64px; display:flex; align-items:center; justify-content:space-between; box-shadow:var(--shadow); position:sticky; top:0; z-index:100; }
         .topbar-left { display:flex; align-items:center; gap:14px; }
         .logo-img { height:40px; width:auto; }
         .topbar-sep { width:1px; height:28px; background:var(--border); }
@@ -49,12 +44,7 @@
         .topbar-title b { font-size:0.95rem; font-weight:600; color:var(--gray-900); }
         .topbar-title span { font-size:0.7rem; color:#9b1c6e; font-weight:500; letter-spacing:0.05em; text-transform:uppercase; }
         .topbar-right { display:flex; align-items:center; gap:12px; }
-        .mqtt-pill {
-            display:flex; align-items:center; gap:6px;
-            background:var(--bg3); border:1px solid var(--border);
-            padding:5px 12px; border-radius:20px;
-            font-size:0.72rem; font-family:var(--mono); color:var(--gray-500);
-        }
+        .mqtt-pill { display:flex; align-items:center; gap:6px; background:var(--bg3); border:1px solid var(--border); padding:5px 12px; border-radius:20px; font-size:0.72rem; font-family:var(--mono); color:var(--gray-500); }
         .mqtt-pill .dot { width:7px; height:7px; border-radius:50%; background:var(--gray-400); flex-shrink:0; transition:background 0.3s; }
         .mqtt-pill.connected .dot { background:var(--green); box-shadow:0 0 5px var(--green); }
         .mqtt-pill.connecting .dot { background:var(--amber); animation:blink 1s infinite; }
@@ -62,12 +52,7 @@
 
         .page { max-width:1440px; margin:0 auto; padding:24px 28px; }
 
-        .hero {
-            background:linear-gradient(135deg, #0a1628 0%, #0f2347 60%, #102a52 100%);
-            border-radius:var(--r2); padding:24px 32px; margin-bottom:24px;
-            display:flex; align-items:center; justify-content:space-between;
-            position:relative; overflow:hidden; box-shadow:var(--shadow2);
-        }
+        .hero { background:linear-gradient(135deg, #0a1628 0%, #0f2347 60%, #102a52 100%); border-radius:var(--r2); padding:24px 32px; margin-bottom:24px; display:flex; align-items:center; justify-content:space-between; position:relative; overflow:hidden; box-shadow:var(--shadow2); }
         .hero::before { content:''; position:absolute; top:-50px; right:-50px; width:200px; height:200px; border-radius:50%; background:rgba(255,255,255,0.06); pointer-events:none; }
         .hero-text h2 { font-size:1.25rem; font-weight:600; color:#fff; margin-bottom:5px; }
         .hero-text p { font-size:0.82rem; color:rgba(255,255,255,0.65); }
@@ -79,12 +64,7 @@
         .live-dot { width:7px; height:7px; border-radius:50%; background:#4ade80; box-shadow:0 0 8px #4ade80; animation:blink 2s infinite; }
 
         .sensor-grid { display:grid; grid-template-columns:repeat(4,1fr); gap:14px; margin-bottom:24px; }
-        .sensor-card {
-            background:var(--white); border:1px solid var(--border);
-            border-radius:var(--r2); padding:22px 20px;
-            position:relative; overflow:hidden; box-shadow:var(--shadow);
-            transition:box-shadow 0.2s,transform 0.2s,border-color 0.2s;
-        }
+        .sensor-card { background:var(--white); border:1px solid var(--border); border-radius:var(--r2); padding:22px 20px; position:relative; overflow:hidden; box-shadow:var(--shadow); transition:box-shadow 0.2s,transform 0.2s,border-color 0.2s; }
         .sensor-card:hover { box-shadow:var(--shadow2); transform:translateY(-2px); border-color:var(--border2); }
         .sensor-card::before { content:''; position:absolute; top:0; left:0; right:0; height:4px; border-radius:var(--r2) var(--r2) 0 0; }
         .c-temp::before { background:linear-gradient(90deg,var(--red),#f87171); }
@@ -107,12 +87,7 @@
         .sensor-card.alarm { border-color:var(--red) !important; animation:alarm 2s infinite; }
         @keyframes alarm { 50% { background:var(--red-lt); } }
 
-        .toolbar {
-            display:flex; align-items:center; justify-content:space-between;
-            background:#ffffff; border:2px solid #0f2347;
-            border-radius:var(--r); padding:10px 14px; margin-bottom:24px;
-            box-shadow:var(--shadow);
-        }
+        .toolbar { display:flex; align-items:center; justify-content:space-between; background:#ffffff; border:2px solid #0f2347; border-radius:var(--r); padding:10px 14px; margin-bottom:24px; box-shadow:var(--shadow); }
         .period-btns { display:flex; gap:3px; align-items:center; }
         .period-lbl { font-size:0.72rem; color:#0f2347; font-weight:600; margin-right:12px; text-transform:uppercase; letter-spacing:0.06em; }
         .period-btn { padding:5px 13px; border-radius:8px; border:1px solid transparent; background:transparent; color:#475569; font-size:0.8rem; font-weight:500; cursor:pointer; font-family:var(--font); transition:0.15s; }
@@ -120,6 +95,10 @@
         .period-btn.active { background:#0f2347; color:#fff; border-color:#0f2347; }
         .export-btn { display:flex; align-items:center; gap:7px; padding:7px 16px; border-radius:8px; background:#0f2347; color:#fff; border:none; font-size:0.8rem; font-weight:500; cursor:pointer; font-family:var(--font); transition:background 0.15s; }
         .export-btn:hover { background:#0a1628; }
+        .alert-cfg-btn { display:flex; align-items:center; gap:7px; padding:7px 16px; border-radius:8px; background:#ffffff; color:#0f2347; border:2px solid #0f2347; font-size:0.8rem; font-weight:500; cursor:pointer; font-family:var(--font); transition:all 0.15s; }
+        .alert-cfg-btn:hover { background:#0f2347; color:#fff; }
+        .alert-cfg-btn.active { background:#fef3c7; border-color:#d97706; color:#92400e; }
+        .alert-cfg-btn.active:hover { background:#d97706; color:#fff; border-color:#d97706; }
 
         .bottom-grid { display:grid; grid-template-columns:1fr 300px; gap:14px; align-items:start; }
         .charts-col { display:flex; flex-direction:column; gap:14px; }
@@ -137,6 +116,32 @@
         .log-alarm { color:#dc2626; font-weight:600; }
         .log-mqtt  { color:#059669; font-weight:700; }
 
+        /* ── MODAL ── */
+        .modal-overlay { display:none; position:fixed; inset:0; background:rgba(0,0,0,0.55); z-index:999; align-items:center; justify-content:center; }
+        .modal-overlay.open { display:flex; }
+        .modal { background:#fff; border-radius:var(--r2); box-shadow:0 20px 60px rgba(0,0,0,0.2); width:540px; max-width:95vw; animation:modalIn 0.2s ease; }
+        @keyframes modalIn { from { opacity:0; transform:translateY(-14px); } to { opacity:1; transform:translateY(0); } }
+        .modal-header { background:#0f2347; padding:18px 24px; display:flex; align-items:center; justify-content:space-between; border-radius:var(--r2) var(--r2) 0 0; }
+        .modal-header h3 { color:#fff; font-size:0.95rem; font-weight:600; display:flex; align-items:center; gap:8px; }
+        .modal-close { background:none; border:none; color:rgba(255,255,255,0.55); cursor:pointer; font-size:1.4rem; line-height:1; padding:0 2px; transition:color 0.15s; }
+        .modal-close:hover { color:#fff; }
+        .modal-body { padding:22px 24px; }
+        .modal-desc { font-size:0.8rem; color:#64748b; margin-bottom:20px; line-height:1.55; padding:10px 12px; background:#f8fafc; border-radius:8px; border-left:3px solid #0f2347; }
+        .alert-section { margin-bottom:16px; }
+        .alert-section:last-child { margin-bottom:0; }
+        .alert-section-title { font-size:0.72rem; font-weight:700; text-transform:uppercase; letter-spacing:0.08em; color:#1e293b; margin-bottom:9px; display:flex; align-items:center; gap:7px; }
+        .alert-dot { width:9px; height:9px; border-radius:50%; flex-shrink:0; }
+        .alert-inputs { display:grid; grid-template-columns:1fr 1fr; gap:10px; }
+        .alert-field label { display:block; font-size:0.71rem; color:#64748b; font-weight:500; margin-bottom:4px; }
+        .alert-field input { width:100%; padding:8px 10px; border:1.5px solid #e2e8f0; border-radius:8px; font-family:var(--mono); font-size:0.85rem; color:#0f172a; background:#f8fafc; transition:border-color 0.15s, background 0.15s; }
+        .alert-field input:focus { outline:none; border-color:#0f2347; background:#fff; }
+        .alert-field input::placeholder { color:#cbd5e1; }
+        .modal-footer { padding:14px 24px; background:#f8fafc; border-top:1px solid #e2e8f0; display:flex; gap:8px; justify-content:flex-end; border-radius:0 0 var(--r2) var(--r2); }
+        .btn-secondary { padding:7px 16px; border-radius:8px; border:1.5px solid #cbd5e1; background:#fff; color:#64748b; font-size:0.8rem; font-weight:500; cursor:pointer; font-family:var(--font); transition:all 0.15s; }
+        .btn-secondary:hover { border-color:#0f2347; color:#0f2347; }
+        .btn-primary { padding:7px 20px; border-radius:8px; border:none; background:#0f2347; color:#fff; font-size:0.8rem; font-weight:600; cursor:pointer; font-family:var(--font); transition:background 0.15s; }
+        .btn-primary:hover { background:#0a1628; }
+
         @media (max-width:1100px) { .sensor-grid { grid-template-columns:repeat(2,1fr); } .bottom-grid { grid-template-columns:1fr; } .log-body { max-height:280px; } }
         @media (max-width:640px) { .page { padding:14px; } .topbar { padding:0 14px; } .hero { flex-direction:column; align-items:flex-start; gap:16px; padding:20px; } .hero-right { flex-wrap:wrap; } }
     </style>
@@ -150,6 +155,58 @@
     <h1>Acceso restringido</h1>
     <p>Este sistema requiere un enlace de acceso autorizado.<br>Contacta con el responsable del laboratorio.</p>
     <p style="font-size:0.75rem;color:#94a3b8;margin-top:8px;">Universidad de Valladolid</p>
+</div>
+
+<!-- MODAL CONFIGURACIÓN DE ALERTAS -->
+<div class="modal-overlay" id="modal-alerts">
+    <div class="modal">
+        <div class="modal-header">
+            <h3>
+                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M18 8A6 6 0 006 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 01-3.46 0"/></svg>
+                Configuración de alertas
+            </h3>
+            <button class="modal-close" onclick="closeAlertModal()">×</button>
+        </div>
+        <div class="modal-body">
+            <p class="modal-desc">Define los umbrales mínimo y máximo para cada variable. Si el valor medido supera algún límite se registrará una alerta. Deja los campos vacíos para desactivar la alerta de esa variable.</p>
+
+            <div class="alert-section">
+                <div class="alert-section-title"><span class="alert-dot" style="background:#dc2626;"></span>Temperatura (°C)</div>
+                <div class="alert-inputs">
+                    <div class="alert-field"><label>Mínimo (°C)</label><input type="number" id="al-temp-min" placeholder="Sin límite" step="0.1"></div>
+                    <div class="alert-field"><label>Máximo (°C)</label><input type="number" id="al-temp-max" placeholder="Sin límite" step="0.1"></div>
+                </div>
+            </div>
+
+            <div class="alert-section">
+                <div class="alert-section-title"><span class="alert-dot" style="background:#2563eb;"></span>pH</div>
+                <div class="alert-inputs">
+                    <div class="alert-field"><label>Mínimo (pH)</label><input type="number" id="al-ph-min" placeholder="Sin límite" step="0.01" min="0" max="14"></div>
+                    <div class="alert-field"><label>Máximo (pH)</label><input type="number" id="al-ph-max" placeholder="Sin límite" step="0.01" min="0" max="14"></div>
+                </div>
+            </div>
+
+            <div class="alert-section">
+                <div class="alert-section-title"><span class="alert-dot" style="background:#7c3aed;"></span>Potencial Redox (mV)</div>
+                <div class="alert-inputs">
+                    <div class="alert-field"><label>Mínimo (mV)</label><input type="number" id="al-orp-min" placeholder="Sin límite" step="1"></div>
+                    <div class="alert-field"><label>Máximo (mV)</label><input type="number" id="al-orp-max" placeholder="Sin límite" step="1"></div>
+                </div>
+            </div>
+
+            <div class="alert-section">
+                <div class="alert-section-title"><span class="alert-dot" style="background:#059669;"></span>Oxígeno Disuelto (mg/L)</div>
+                <div class="alert-inputs">
+                    <div class="alert-field"><label>Mínimo (mg/L)</label><input type="number" id="al-do-min" placeholder="Sin límite" step="0.1" min="0"></div>
+                    <div class="alert-field"><label>Máximo (mg/L)</label><input type="number" id="al-do-max" placeholder="Sin límite" step="0.1" min="0"></div>
+                </div>
+            </div>
+        </div>
+        <div class="modal-footer">
+            <button class="btn-secondary" onclick="resetAlertInputs()">Limpiar todo</button>
+            <button class="btn-primary" onclick="saveAlerts()">Guardar alertas</button>
+        </div>
+    </div>
 </div>
 
 <div id="dashboard" style="display:none;">
@@ -174,7 +231,7 @@
         <div class="hero">
             <div class="hero-text">
                 <h2>Laboratorio de Ingeniería Química - UVa</h2>
-                <p>Monitorización en tiempo real · Temperatura · pH · Potencial Redox · Oxígeno Disuelto ·</p>
+                <p>Monitorización en tiempo real · Temperatura · pH · Potencial Redox · Oxígeno Disuelto</p>
             </div>
             <div class="hero-right">
                 <div class="hero-stat">
@@ -221,6 +278,10 @@
                 <button class="period-btn" onclick="setPeriod(86400000,this)">24 horas</button>
             </div>
             <div style="display:flex;gap:8px;align-items:center;">
+                <button class="alert-cfg-btn" id="btn-alerts" onclick="openAlertModal()">
+                    <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M18 8A6 6 0 006 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 01-3.46 0"/></svg>
+                    Configurar alertas
+                </button>
                 <button class="export-btn" onclick="downloadCSV()">
                     <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
                     Exportar datos CSV
@@ -251,23 +312,32 @@
 
 <script>
 var SECRET_TOKEN = 'uvalab';
-var maxDataPoints = 20;
-var dataHistory = [];
 var realDataReceived = { temp:false, ph:false, orp:false, do:false };
 var charts = {};
-var startTime = Date.now();
 var recordingStart = null;
 var recordingEnd = null;
 var currentPeriodMs = 0;
 var realtimeHistory = [];
 var recordingHistory = [];
-var dataHistory = recordingHistory; // alias para downloadCSV
+
+// Umbrales: null = sin límite (sin alertas por defecto)
+var alertThresholds = {
+    temp: { min:null, max:null },
+    ph:   { min:null, max:null },
+    orp:  { min:null, max:null },
+    do:   { min:null, max:null }
+};
+var alertCooldown = {}; // evita spam de alertas repetidas (30 s cooldown)
+
 var chartConfigs = {
     temp:{ color:'#dc2626', min:20,   max:45,  unit:'°C'   },
     ph:  { color:'#2563eb', min:0,    max:14,  unit:'pH'   },
     orp: { color:'#7c3aed', min:-200, max:800, unit:'mV'   },
     do:  { color:'#059669', min:0,    max:15,  unit:'mg/L' }
 };
+var sensorNames = { temp:'Temperatura', ph:'pH', orp:'Potencial Redox', do:'Oxígeno Disuelto' };
+var sensorUnits = { temp:'°C', ph:'pH', orp:'mV', do:'mg/L' };
+
 var MQTT_BROKER = 'wss://broker.hivemq.com:8884/mqtt';
 var MQTT_TOPICS = { temp:'biorreactor/temperatura', ph:'biorreactor/ph', orp:'biorreactor/orp', do:'biorreactor/do' };
 
@@ -299,11 +369,9 @@ function pad(n) { return n<10?'0'+n:''+n; }
 function startRecording() {
     var btn = document.getElementById('btn-start');
     if (!recordingStart) {
-        // INICIAR
         recordingStart = Date.now();
         recordingEnd = null;
         recordingHistory = [];
-        dataHistory = recordingHistory;
         Object.keys(charts).forEach(function(key) {
             charts[key].data.labels = [];
             charts[key].data.datasets[0].data = [];
@@ -315,7 +383,6 @@ function startRecording() {
         btn.style.color = '#fca5a5';
         addLog('Registro de datos iniciado', 'mqtt');
     } else {
-        // FINALIZAR
         recordingEnd = Date.now();
         var elapsed = Math.floor((recordingEnd - recordingStart) / 1000);
         var hh = Math.floor(elapsed/3600), mm = Math.floor((elapsed%3600)/60), ss = elapsed%60;
@@ -382,18 +449,14 @@ function updateWidget(key,value,isReal) {
     if(valEl) valEl.childNodes[0].nodeValue=value;
     if(updEl) updEl.textContent=nowStr;
     if(srcEl){ srcEl.textContent=isReal?'EN VIVO':'SIM'; srcEl.className='src-badge '+(isReal?'real':'sim'); }
-    if(key==='ph'){
-        var card=document.getElementById('card-ph');
-        if(value<6.5||value>8.0){ if(!card.classList.contains('alarm')) addLog('ALERTA: pH fuera de rango ('+value+')','alarm'); card.classList.add('alarm'); }
-        else card.classList.remove('alarm');
-    }
-    // Historial de tiempo real: siempre activo, últimos 50 puntos
+
+    checkThreshold(key, value);
+
     var rtEntry = realtimeHistory[realtimeHistory.length-1];
     if (!rtEntry || rtEntry.time !== nowStr) { rtEntry = {time:nowStr, ts:now.getTime()}; realtimeHistory.push(rtEntry); }
     rtEntry[key] = value;
     if(realtimeHistory.length > 50) realtimeHistory.shift();
 
-    // Historial de registro: solo cuando hay registro activo
     if (recordingStart && !recordingEnd) {
         var entry = recordingHistory[recordingHistory.length-1];
         if (!entry || entry.time !== nowStr) { entry = {time:nowStr, ts:now.getTime()}; recordingHistory.push(entry); }
@@ -403,20 +466,43 @@ function updateWidget(key,value,isReal) {
     refreshChart(key);
 }
 
+function checkThreshold(key, value) {
+    var th = alertThresholds[key];
+    var card = document.getElementById('card-'+key);
+    var now = Date.now();
+    var COOLDOWN = 30000;
+    var triggered = false;
+    var msg = '';
+
+    if (th.min !== null && value < th.min) {
+        msg = 'ALERTA: '+sensorNames[key]+' bajo el mínimo ('+value+' '+sensorUnits[key]+' < '+th.min+' '+sensorUnits[key]+')';
+        triggered = true;
+    } else if (th.max !== null && value > th.max) {
+        msg = 'ALERTA: '+sensorNames[key]+' sobre el máximo ('+value+' '+sensorUnits[key]+' > '+th.max+' '+sensorUnits[key]+')';
+        triggered = true;
+    }
+
+    if (triggered) {
+        if (!alertCooldown[key] || now - alertCooldown[key] > COOLDOWN) {
+            alertCooldown[key] = now;
+            addLog(msg, 'alarm');
+        }
+        if (card) card.classList.add('alarm');
+    } else {
+        if (card) card.classList.remove('alarm');
+    }
+}
+
 function refreshChart(key) {
     var chart = charts[key];
     if (!chart) return;
     var filtered;
     if (currentPeriodMs === 0) {
-        // Tiempo real: siempre los últimos puntos del historial en tiempo real
         filtered = realtimeHistory.slice(-30);
     } else {
-        // Modos con ventana: usa historial de registro, corta en recordingEnd si finalizó
         var cutoff = recordingEnd ? recordingEnd : Date.now();
         var windowStart = cutoff - currentPeriodMs;
-        filtered = recordingHistory.filter(function(d) {
-            return d.ts >= windowStart && d.ts <= cutoff;
-        });
+        filtered = recordingHistory.filter(function(d) { return d.ts >= windowStart && d.ts <= cutoff; });
     }
     var labels = filtered.map(function(d){ return d.time; });
     var data = filtered.map(function(d){ return d[key] !== undefined ? d[key] : null; });
@@ -439,7 +525,6 @@ function setPeriod(ms, btn) {
     currentPeriodMs = ms;
     document.querySelectorAll('.period-btn').forEach(function(b){ b.classList.remove('active'); });
     btn.classList.add('active');
-    // Refresca todas las gráficas con el nuevo filtro
     Object.keys(charts).forEach(function(key){ refreshChart(key); });
 }
 
@@ -454,6 +539,53 @@ function downloadCSV() {
     a.download='biorreactor_uva.csv'; a.click();
     addLog('Datos exportados'+(recordingEnd?' (registro completo)':'')+'.', '');
 }
+
+// ── MODAL ALERTAS ──
+function openAlertModal() {
+    var keys = ['temp','ph','orp','do'];
+    keys.forEach(function(k) {
+        document.getElementById('al-'+k+'-min').value = alertThresholds[k].min !== null ? alertThresholds[k].min : '';
+        document.getElementById('al-'+k+'-max').value = alertThresholds[k].max !== null ? alertThresholds[k].max : '';
+    });
+    document.getElementById('modal-alerts').classList.add('open');
+}
+
+function closeAlertModal() {
+    document.getElementById('modal-alerts').classList.remove('open');
+}
+
+function saveAlerts() {
+    var keys = ['temp','ph','orp','do'];
+    var hasAny = false;
+    keys.forEach(function(k) {
+        var minVal = document.getElementById('al-'+k+'-min').value.trim();
+        var maxVal = document.getElementById('al-'+k+'-max').value.trim();
+        alertThresholds[k].min = minVal !== '' ? parseFloat(minVal) : null;
+        alertThresholds[k].max = maxVal !== '' ? parseFloat(maxVal) : null;
+        if (alertThresholds[k].min !== null || alertThresholds[k].max !== null) hasAny = true;
+    });
+    alertCooldown = {}; // reset cooldowns al cambiar config
+    var btn = document.getElementById('btn-alerts');
+    if (hasAny) {
+        btn.classList.add('active');
+    } else {
+        btn.classList.remove('active');
+    }
+    closeAlertModal();
+    addLog('Configuración de alertas actualizada', 'mqtt');
+}
+
+function resetAlertInputs() {
+    ['temp','ph','orp','do'].forEach(function(k) {
+        document.getElementById('al-'+k+'-min').value = '';
+        document.getElementById('al-'+k+'-max').value = '';
+    });
+}
+
+// Cerrar modal al hacer clic fuera
+document.getElementById('modal-alerts').addEventListener('click', function(e) {
+    if (e.target === this) closeAlertModal();
+});
 </script>
 </body>
 </html>
