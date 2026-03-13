@@ -433,7 +433,7 @@ function connectMQTT() {
         var client = mqtt.connect(MQTT_BROKER, { clientId:'uva_'+Math.random().toString(16).substr(2,8), reconnectPeriod:5000, connectTimeout:10000 });
         client.on('connect', function() {
             pill.className='mqtt-pill connected'; label.textContent='En línea';
-            addLog('Conexión establecida - esperando dispositivo.','mqtt');
+            addLog('Conexión establecida - esperando dispositivo...','mqtt');
             Object.values(MQTT_TOPICS).forEach(function(t){ client.subscribe(t); });
         });
         client.on('message', function(topic,msg) {
