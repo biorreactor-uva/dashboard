@@ -10,189 +10,136 @@
     <style>
         *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
         :root {
-            --bg:        #0d0f1a;
-            --bg2:       #13162a;
-            --bg3:       #1a1e35;
-            --bg4:       #212540;
-            --border:    rgba(255,255,255,0.07);
-            --border2:   rgba(255,255,255,0.12);
-            --purple:    #7c3aed;
-            --purple2:   #9d5ff5;
-            --purple3:   #c4b5fd;
-            --purple-bg: rgba(124,58,237,0.12);
-            --blue:      #3b82f6;
-            --green:     #10b981;
-            --red:       #ef4444;
-            --amber:     #f59e0b;
-            --teal:      #06b6d4;
-            --text:      #f1f5f9;
-            --text2:     #94a3b8;
-            --text3:     #64748b;
-            --font:      'Inter', system-ui, sans-serif;
-            --mono:      'JetBrains Mono', monospace;
-            --r:         12px;
-            --r2:        20px;
+            --bg:#f8fafc; --bg2:#ffffff; --bg3:#f1f5f9;
+            --border:#e2e8f0; --border2:#cbd5e1;
+            --purple:#7c3aed; --purple2:#9d5ff5; --purple3:#6d28d9;
+            --purple-lt:#ede9fe;
+            --blue:#2563eb; --blue-lt:#dbeafe;
+            --green:#059669; --green-lt:#d1fae5;
+            --red:#dc2626; --red-lt:#fee2e2;
+            --amber:#d97706;
+            --gray-900:#0f172a; --gray-700:#334155; --gray-500:#64748b;
+            --gray-400:#94a3b8; --gray-300:#cbd5e1;
+            --white:#ffffff;
+            --font:'Inter',system-ui,sans-serif;
+            --mono:'JetBrains Mono',monospace;
+            --r:10px; --r2:16px;
+            --shadow:0 1px 3px rgba(0,0,0,0.08),0 1px 2px rgba(0,0,0,0.04);
+            --shadow2:0 4px 16px rgba(0,0,0,0.08),0 2px 4px rgba(0,0,0,0.04);
         }
-        body { font-family: var(--font); background: var(--bg); color: var(--text); min-height: 100vh; }
+        body { font-family:var(--font); background:var(--bg); color:var(--gray-900); min-height:100vh; }
 
-        /* ACCESS */
         #access-screen {
-            display: flex; flex-direction: column; align-items: center; justify-content: center;
-            min-height: 100vh; background: var(--bg); text-align: center; gap: 16px;
+            display:flex; flex-direction:column; align-items:center; justify-content:center;
+            min-height:100vh; background:var(--bg); text-align:center; gap:16px;
         }
-        .access-lock { width: 64px; height: 64px; background: var(--purple-bg); border: 1px solid var(--purple); border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 8px; }
-        #access-screen h1 { font-size: 1.5rem; font-weight: 600; color: var(--text); }
-        #access-screen p { color: var(--text2); font-size: 0.88rem; line-height: 1.6; }
+        .access-lock { width:64px; height:64px; background:var(--purple-lt); border:1px solid #c4b5fd; border-radius:50%; display:flex; align-items:center; justify-content:center; margin:0 auto 8px; }
+        #access-screen h1 { font-size:1.5rem; font-weight:600; }
+        #access-screen p { color:var(--gray-500); font-size:0.88rem; line-height:1.6; }
 
-        /* TOPBAR */
         .topbar {
-            background: var(--bg2); border-bottom: 1px solid var(--border);
-            padding: 0 28px; height: 60px;
-            display: flex; align-items: center; justify-content: space-between;
-            position: sticky; top: 0; z-index: 100;
+            background:var(--white); border-bottom:3px solid var(--purple);
+            padding:0 28px; height:64px;
+            display:flex; align-items:center; justify-content:space-between;
+            box-shadow:var(--shadow); position:sticky; top:0; z-index:100;
         }
-        .topbar-left { display: flex; align-items: center; gap: 16px; }
-        .topbar-logo-text { display: flex; flex-direction: column; }
-        .topbar-logo-text b { font-size: 0.92rem; font-weight: 600; color: var(--text); }
-        .topbar-logo-text span { font-size: 0.7rem; color: var(--text3); letter-spacing: 0.06em; text-transform: uppercase; }
-        .topbar-sep { width: 1px; height: 24px; background: var(--border2); }
+        .topbar-left { display:flex; align-items:center; gap:14px; }
+        .logo-img { height:40px; width:auto; }
+        .topbar-sep { width:1px; height:28px; background:var(--border); }
+        .topbar-title { display:flex; flex-direction:column; }
+        .topbar-title b { font-size:0.95rem; font-weight:600; color:var(--gray-900); }
+        .topbar-title span { font-size:0.7rem; color:var(--purple); font-weight:500; letter-spacing:0.05em; text-transform:uppercase; }
+        .topbar-right { display:flex; align-items:center; gap:12px; }
         .mqtt-pill {
-            display: flex; align-items: center; gap: 6px;
-            background: var(--bg3); border: 1px solid var(--border2);
-            padding: 4px 12px; border-radius: 20px;
-            font-size: 0.72rem; font-family: var(--mono); color: var(--text3);
+            display:flex; align-items:center; gap:6px;
+            background:var(--bg3); border:1px solid var(--border);
+            padding:5px 12px; border-radius:20px;
+            font-size:0.72rem; font-family:var(--mono); color:var(--gray-500);
         }
-        .mqtt-pill .dot { width: 7px; height: 7px; border-radius: 50%; background: var(--text3); flex-shrink: 0; }
-        .mqtt-pill.connected .dot { background: var(--green); box-shadow: 0 0 6px var(--green); }
-        .mqtt-pill.connecting .dot { background: var(--amber); animation: blink 1s infinite; }
-        @keyframes blink { 50% { opacity: 0.2; } }
-        .topbar-right { display: flex; align-items: center; }
-        .logo-img { height: 32px; filter: brightness(0) invert(1); opacity: 0.7; }
+        .mqtt-pill .dot { width:7px; height:7px; border-radius:50%; background:var(--gray-400); flex-shrink:0; transition:background 0.3s; }
+        .mqtt-pill.connected .dot { background:var(--green); box-shadow:0 0 5px var(--green); }
+        .mqtt-pill.connecting .dot { background:var(--amber); animation:blink 1s infinite; }
+        @keyframes blink { 50% { opacity:0.2; } }
 
-        /* PAGE */
-        .page { max-width: 1440px; margin: 0 auto; padding: 24px 28px; }
+        .page { max-width:1440px; margin:0 auto; padding:24px 28px; }
 
-        /* HERO */
         .hero {
-            background: var(--bg2);
-            border: 1px solid var(--border);
-            border-radius: var(--r2);
-            padding: 24px 32px;
-            margin-bottom: 20px;
-            display: flex; align-items: center; justify-content: space-between;
-            position: relative; overflow: hidden;
+            background:linear-gradient(135deg, var(--purple3) 0%, var(--purple) 60%, #5b21b6 100%);
+            border-radius:var(--r2); padding:24px 32px; margin-bottom:24px;
+            display:flex; align-items:center; justify-content:space-between;
+            position:relative; overflow:hidden; box-shadow:var(--shadow2);
         }
-        .hero::before {
-            content: ''; position: absolute; top: -60px; right: -60px;
-            width: 260px; height: 260px; border-radius: 50%;
-            background: radial-gradient(circle, rgba(124,58,237,0.15) 0%, transparent 70%);
-            pointer-events: none;
-        }
-        .hero-text h2 { font-size: 1.25rem; font-weight: 600; color: var(--text); margin-bottom: 4px; }
-        .hero-text p { font-size: 0.82rem; color: var(--text2); }
-        .hero-right { display: flex; align-items: center; gap: 12px; }
-        .hero-stat { text-align: center; padding: 8px 16px; background: var(--bg3); border: 1px solid var(--border2); border-radius: var(--r); }
-        .hero-stat-val { font-size: 1.3rem; font-weight: 300; color: var(--purple3); font-family: var(--mono); }
-        .hero-stat-lbl { font-size: 0.65rem; color: var(--text3); text-transform: uppercase; letter-spacing: 0.08em; }
-        .live-badge {
-            display: flex; align-items: center; gap: 7px;
-            background: rgba(16,185,129,0.1); border: 1px solid rgba(16,185,129,0.3);
-            color: #6ee7b7; padding: 7px 16px; border-radius: 20px;
-            font-size: 0.78rem; font-weight: 500;
-        }
-        .live-badge .dot { width: 7px; height: 7px; border-radius: 50%; background: var(--green); box-shadow: 0 0 8px var(--green); animation: blink 2s infinite; }
+        .hero::before { content:''; position:absolute; top:-50px; right:-50px; width:200px; height:200px; border-radius:50%; background:rgba(255,255,255,0.06); pointer-events:none; }
+        .hero-text h2 { font-size:1.25rem; font-weight:600; color:#fff; margin-bottom:5px; }
+        .hero-text p { font-size:0.82rem; color:rgba(255,255,255,0.65); }
+        .hero-right { display:flex; align-items:center; gap:10px; }
+        .hero-stat { text-align:center; padding:8px 18px; background:rgba(255,255,255,0.12); border:1px solid rgba(255,255,255,0.2); border-radius:var(--r); }
+        .hero-stat-val { font-size:1.25rem; font-weight:400; color:#fff; font-family:var(--mono); }
+        .hero-stat-lbl { font-size:0.62rem; color:rgba(255,255,255,0.6); text-transform:uppercase; letter-spacing:0.08em; margin-top:2px; }
+        .live-badge { display:flex; align-items:center; gap:7px; background:rgba(255,255,255,0.12); border:1px solid rgba(255,255,255,0.25); color:#fff; padding:8px 16px; border-radius:20px; font-size:0.78rem; font-weight:500; }
+        .live-dot { width:7px; height:7px; border-radius:50%; background:#4ade80; box-shadow:0 0 8px #4ade80; animation:blink 2s infinite; }
 
-        /* SENSOR CARDS */
-        .sensor-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 14px; margin-bottom: 20px; }
+        .sensor-grid { display:grid; grid-template-columns:repeat(4,1fr); gap:14px; margin-bottom:24px; }
         .sensor-card {
-            background: var(--bg2); border: 1px solid var(--border);
-            border-radius: var(--r2); padding: 20px;
-            position: relative; overflow: hidden;
-            transition: border-color 0.2s, transform 0.2s;
+            background:var(--white); border:1px solid var(--border);
+            border-radius:var(--r2); padding:22px 20px;
+            position:relative; overflow:hidden; box-shadow:var(--shadow);
+            transition:box-shadow 0.2s,transform 0.2s,border-color 0.2s;
         }
-        .sensor-card:hover { border-color: var(--border2); transform: translateY(-2px); }
-        .sensor-glow {
-            position: absolute; top: -30px; right: -30px;
-            width: 100px; height: 100px; border-radius: 50%;
-            opacity: 0.12; pointer-events: none;
-        }
-        .c-temp .sensor-glow { background: var(--red); }
-        .c-ph   .sensor-glow { background: var(--blue); }
-        .c-orp  .sensor-glow { background: var(--purple2); }
-        .c-do   .sensor-glow { background: var(--green); }
-        .sensor-card::after {
-            content: ''; position: absolute; bottom: 0; left: 0; right: 0;
-            height: 2px; border-radius: 0 0 var(--r2) var(--r2);
-        }
-        .c-temp::after { background: var(--red); }
-        .c-ph::after   { background: var(--blue); }
-        .c-orp::after  { background: var(--purple2); }
-        .c-do::after   { background: var(--green); }
-        .sensor-label { font-size: 0.7rem; font-weight: 500; text-transform: uppercase; letter-spacing: 0.1em; color: var(--text3); margin-bottom: 12px; }
-        .sensor-value { font-size: 2.8rem; font-weight: 200; letter-spacing: -0.04em; color: var(--text); line-height: 1; display: flex; align-items: baseline; gap: 5px; margin-bottom: 14px; font-family: var(--mono); }
-        .sensor-value .unit { font-size: 1rem; font-weight: 400; color: var(--text3); font-family: var(--font); }
-        .sensor-footer { display: flex; align-items: center; justify-content: space-between; }
-        .sensor-time { font-size: 0.68rem; color: var(--text3); font-family: var(--mono); }
-        .src-badge { font-size: 0.62rem; font-weight: 600; padding: 2px 8px; border-radius: 8px; letter-spacing: 0.05em; }
-        .src-badge.sim  { background: var(--bg4); color: var(--text3); border: 1px solid var(--border); }
-        .src-badge.real { background: rgba(16,185,129,0.12); color: #6ee7b7; border: 1px solid rgba(16,185,129,0.3); }
-        .sensor-card.alarm { border-color: var(--red) !important; animation: alarm 2s infinite; }
-        @keyframes alarm { 50% { background: rgba(239,68,68,0.08); } }
+        .sensor-card:hover { box-shadow:var(--shadow2); transform:translateY(-2px); border-color:var(--border2); }
+        .sensor-card::before { content:''; position:absolute; top:0; left:0; right:0; height:4px; border-radius:var(--r2) var(--r2) 0 0; }
+        .c-temp::before { background:linear-gradient(90deg,var(--red),#f87171); }
+        .c-ph::before   { background:linear-gradient(90deg,var(--blue),#60a5fa); }
+        .c-orp::before  { background:linear-gradient(90deg,var(--purple),var(--purple2)); }
+        .c-do::before   { background:linear-gradient(90deg,var(--green),#34d399); }
+        .sensor-icon { position:absolute; top:18px; right:16px; width:36px; height:36px; border-radius:10px; display:flex; align-items:center; justify-content:center; font-size:16px; }
+        .c-temp .sensor-icon { background:var(--red-lt); }
+        .c-ph   .sensor-icon { background:var(--blue-lt); }
+        .c-orp  .sensor-icon { background:var(--purple-lt); }
+        .c-do   .sensor-icon { background:var(--green-lt); }
+        .sensor-label { font-size:0.7rem; font-weight:500; text-transform:uppercase; letter-spacing:0.1em; color:var(--gray-500); margin-bottom:10px; }
+        .sensor-value { font-size:2.6rem; font-weight:300; letter-spacing:-0.04em; color:var(--gray-900); line-height:1; display:flex; align-items:baseline; gap:5px; margin-bottom:14px; font-family:var(--mono); }
+        .sensor-value .unit { font-size:1rem; font-weight:400; color:var(--gray-400); font-family:var(--font); }
+        .sensor-footer { display:flex; align-items:center; justify-content:space-between; }
+        .sensor-time { font-size:0.68rem; color:var(--gray-400); font-family:var(--mono); }
+        .src-badge { font-size:0.62rem; font-weight:600; padding:2px 8px; border-radius:8px; letter-spacing:0.04em; }
+        .src-badge.sim  { background:var(--bg3); color:var(--gray-500); border:1px solid var(--border); }
+        .src-badge.real { background:var(--green-lt); color:#065f46; border:1px solid #6ee7b7; }
+        .sensor-card.alarm { border-color:var(--red) !important; animation:alarm 2s infinite; }
+        @keyframes alarm { 50% { background:var(--red-lt); } }
 
-        /* TOOLBAR */
         .toolbar {
-            display: flex; align-items: center; justify-content: space-between;
-            background: var(--bg2); border: 1px solid var(--border);
-            border-radius: var(--r); padding: 10px 14px; margin-bottom: 20px;
+            display:flex; align-items:center; justify-content:space-between;
+            background:var(--white); border:1px solid var(--border);
+            border-radius:var(--r); padding:10px 14px; margin-bottom:24px;
+            box-shadow:var(--shadow);
         }
-        .period-btns { display: flex; gap: 3px; align-items: center; }
-        .period-lbl { font-size: 0.72rem; color: var(--text3); font-weight: 500; margin-right: 8px; text-transform: uppercase; letter-spacing: 0.06em; }
-        .period-btn {
-            padding: 5px 13px; border-radius: 8px; border: 1px solid transparent;
-            background: transparent; color: var(--text3);
-            font-size: 0.8rem; font-weight: 500; cursor: pointer;
-            font-family: var(--font); transition: 0.15s;
-        }
-        .period-btn:hover { background: var(--bg3); color: var(--text); }
-        .period-btn.active { background: var(--purple); color: #fff; border-color: var(--purple); }
-        .export-btn {
-            display: flex; align-items: center; gap: 7px;
-            padding: 7px 16px; border-radius: 8px;
-            background: var(--purple); color: #fff;
-            border: none; font-size: 0.8rem; font-weight: 500;
-            cursor: pointer; font-family: var(--font); transition: background 0.15s;
-        }
-        .export-btn:hover { background: var(--purple2); }
+        .period-btns { display:flex; gap:3px; align-items:center; }
+        .period-lbl { font-size:0.72rem; color:var(--gray-500); font-weight:500; margin-right:8px; text-transform:uppercase; letter-spacing:0.06em; }
+        .period-btn { padding:5px 13px; border-radius:8px; border:1px solid transparent; background:transparent; color:var(--gray-500); font-size:0.8rem; font-weight:500; cursor:pointer; font-family:var(--font); transition:0.15s; }
+        .period-btn:hover { background:var(--bg3); color:var(--gray-900); }
+        .period-btn.active { background:var(--purple); color:#fff; border-color:var(--purple); }
+        .export-btn { display:flex; align-items:center; gap:7px; padding:7px 16px; border-radius:8px; background:var(--purple); color:#fff; border:none; font-size:0.8rem; font-weight:500; cursor:pointer; font-family:var(--font); transition:background 0.15s; }
+        .export-btn:hover { background:var(--purple3); }
 
-        /* BOTTOM */
-        .bottom-grid { display: grid; grid-template-columns: 1fr 300px; gap: 14px; }
-        .charts-col { display: flex; flex-direction: column; gap: 14px; }
-        .chart-card { background: var(--bg2); border: 1px solid var(--border); border-radius: var(--r2); padding: 18px 20px; }
-        .chart-label { font-size: 0.7rem; font-weight: 500; text-transform: uppercase; letter-spacing: 0.08em; color: var(--text3); margin-bottom: 12px; }
-        .chart-wrap { height: 110px; }
+        .bottom-grid { display:grid; grid-template-columns:1fr 300px; gap:14px; }
+        .charts-col { display:flex; flex-direction:column; gap:14px; }
+        .chart-card { background:var(--white); border:1px solid var(--border); border-radius:var(--r2); padding:18px 20px; box-shadow:var(--shadow); }
+        .chart-label { font-size:0.7rem; font-weight:600; text-transform:uppercase; letter-spacing:0.08em; color:var(--gray-500); margin-bottom:12px; }
+        .chart-wrap { height:110px; }
 
-        /* LOG */
-        .log-card { background: var(--bg2); border: 1px solid var(--border); border-radius: var(--r2); overflow: hidden; display: flex; flex-direction: column; }
-        .log-head { padding: 14px 16px; font-size: 0.68rem; font-weight: 600; text-transform: uppercase; letter-spacing: 0.12em; color: var(--purple3); border-bottom: 1px solid var(--border); background: var(--bg3); }
-        .log-body { flex: 1; overflow-y: auto; padding: 10px 14px; font-family: var(--mono); font-size: 0.72rem; max-height: 560px; }
-        .log-body::-webkit-scrollbar { width: 3px; }
-        .log-body::-webkit-scrollbar-thumb { background: var(--border2); border-radius: 4px; }
-        .log-entry { padding: 5px 0; border-bottom: 1px solid var(--border); line-height: 1.5; color: var(--text3); }
-        .log-t { color: var(--purple3); margin-right: 7px; }
-        .log-alarm { color: #fca5a5; }
-        .log-mqtt  { color: #6ee7b7; }
+        .log-card { background:var(--gray-900); border-radius:var(--r2); overflow:hidden; display:flex; flex-direction:column; box-shadow:var(--shadow2); }
+        .log-head { padding:14px 16px; font-size:0.68rem; font-weight:600; text-transform:uppercase; letter-spacing:0.12em; color:#c4b5fd; border-bottom:1px solid rgba(255,255,255,0.07); background:rgba(255,255,255,0.03); }
+        .log-body { flex:1; overflow-y:auto; padding:10px 14px; font-family:var(--mono); font-size:0.72rem; max-height:560px; }
+        .log-body::-webkit-scrollbar { width:3px; }
+        .log-body::-webkit-scrollbar-thumb { background:rgba(255,255,255,0.1); border-radius:4px; }
+        .log-entry { padding:5px 0; border-bottom:1px solid rgba(255,255,255,0.05); line-height:1.5; color:#64748b; }
+        .log-t { color:#a78bfa; margin-right:7px; }
+        .log-alarm { color:#fca5a5; }
+        .log-mqtt  { color:#6ee7b7; }
 
-        @media (max-width: 1100px) {
-            .sensor-grid { grid-template-columns: repeat(2, 1fr); }
-            .bottom-grid { grid-template-columns: 1fr; }
-            .log-body { max-height: 280px; }
-        }
-        @media (max-width: 640px) {
-            .page { padding: 14px; }
-            .topbar { padding: 0 14px; }
-            .hero { flex-direction: column; align-items: flex-start; gap: 16px; padding: 20px; }
-            .hero-right { flex-wrap: wrap; }
-        }
+        @media (max-width:1100px) { .sensor-grid { grid-template-columns:repeat(2,1fr); } .bottom-grid { grid-template-columns:1fr; } .log-body { max-height:280px; } }
+        @media (max-width:640px) { .page { padding:14px; } .topbar { padding:0 14px; } .hero { flex-direction:column; align-items:flex-start; gap:16px; padding:20px; } .hero-right { flex-wrap:wrap; } }
     </style>
 </head>
 <body>
@@ -203,33 +150,31 @@
     </div>
     <h1>Acceso restringido</h1>
     <p>Este sistema requiere un enlace de acceso autorizado.<br>Contacta con el responsable del laboratorio.</p>
-    <p style="font-size:0.75rem; color:#334155; margin-top:8px;">Universidad de Valladolid · TFM Biorreactor</p>
+    <p style="font-size:0.75rem;color:#94a3b8;margin-top:8px;">Universidad de Valladolid · TFM Biorreactor</p>
 </div>
 
 <div id="dashboard" style="display:none;">
     <nav class="topbar">
         <div class="topbar-left">
-            <div class="topbar-logo-text">
-                <b>Monitor de Biorreactor</b>
-                <span>Sistema de adquisición · ESP32-C3</span>
-            </div>
+            <img src="logoUNI.png" alt="Universidad de Valladolid" class="logo-img" onerror="this.style.display='none'">
             <div class="topbar-sep"></div>
+            <div class="topbar-title">
+                <b>Monitor de Biorreactor</b>
+                <span>Universidad de Valladolid</span>
+            </div>
+        </div>
+        <div class="topbar-right">
             <div class="mqtt-pill" id="mqtt-pill">
                 <span class="dot"></span>
                 <span id="mqtt-label">Conectando...</span>
             </div>
         </div>
-        <div class="topbar-right">
-            <img src="logoUNI.png" alt="Universidad de Valladolid" class="logo-img"
-                 onerror="this.outerHTML='<span style=\'color:#64748b;font-size:0.82rem;font-weight:500\'>Universidad de Valladolid</span>'">
-        </div>
     </nav>
 
     <div class="page">
         <div class="hero">
-            <div class="hero::before"></div>
             <div class="hero-text">
-                <h2>Laboratorio de Bioingeniería — UVa</h2>
+                <h2>Laboratorio de Ingeniería Química — UVa</h2>
                 <p>Monitorización en tiempo real · pH · Potencial Redox · Oxígeno Disuelto · Temperatura</p>
             </div>
             <div class="hero-right">
@@ -237,49 +182,34 @@
                     <div class="hero-stat-val" id="stat-uptime">00:00</div>
                     <div class="hero-stat-lbl">Tiempo activo</div>
                 </div>
-                <div class="live-badge">
-                    <span class="dot"></span>
-                    Sistema activo
-                </div>
+                <div class="live-badge"><span class="live-dot"></span>Sistema activo</div>
             </div>
         </div>
 
         <div class="sensor-grid">
             <div class="sensor-card c-temp" id="card-temp">
-                <div class="sensor-glow"></div>
+                <div class="sensor-icon">🌡</div>
                 <div class="sensor-label">Temperatura</div>
                 <div class="sensor-value" id="val-temp">--<span class="unit">°C</span></div>
-                <div class="sensor-footer">
-                    <span class="sensor-time" id="upd-temp">—</span>
-                    <span class="src-badge sim" id="src-temp">SIM</span>
-                </div>
+                <div class="sensor-footer"><span class="sensor-time" id="upd-temp">—</span><span class="src-badge sim" id="src-temp">SIM</span></div>
             </div>
             <div class="sensor-card c-ph" id="card-ph">
-                <div class="sensor-glow"></div>
+                <div class="sensor-icon">⚗</div>
                 <div class="sensor-label">Nivel de pH</div>
                 <div class="sensor-value" id="val-ph">--<span class="unit">pH</span></div>
-                <div class="sensor-footer">
-                    <span class="sensor-time" id="upd-ph">—</span>
-                    <span class="src-badge sim" id="src-ph">SIM</span>
-                </div>
+                <div class="sensor-footer"><span class="sensor-time" id="upd-ph">—</span><span class="src-badge sim" id="src-ph">SIM</span></div>
             </div>
             <div class="sensor-card c-orp" id="card-orp">
-                <div class="sensor-glow"></div>
+                <div class="sensor-icon">⚡</div>
                 <div class="sensor-label">Potencial Redox</div>
                 <div class="sensor-value" id="val-orp">--<span class="unit">mV</span></div>
-                <div class="sensor-footer">
-                    <span class="sensor-time" id="upd-orp">—</span>
-                    <span class="src-badge sim" id="src-orp">SIM</span>
-                </div>
+                <div class="sensor-footer"><span class="sensor-time" id="upd-orp">—</span><span class="src-badge sim" id="src-orp">SIM</span></div>
             </div>
             <div class="sensor-card c-do" id="card-do">
-                <div class="sensor-glow"></div>
+                <div class="sensor-icon">💧</div>
                 <div class="sensor-label">Oxígeno Disuelto</div>
                 <div class="sensor-value" id="val-do">--<span class="unit">mg/L</span></div>
-                <div class="sensor-footer">
-                    <span class="sensor-time" id="upd-do">—</span>
-                    <span class="src-badge sim" id="src-do">SIM</span>
-                </div>
+                <div class="sensor-footer"><span class="sensor-time" id="upd-do">—</span><span class="src-badge sim" id="src-do">SIM</span></div>
             </div>
         </div>
 
@@ -299,10 +229,10 @@
 
         <div class="bottom-grid">
             <div class="charts-col">
-                <div class="chart-card"><div class="chart-label">Temperatura (°C)</div><div class="chart-wrap"><canvas id="chart-temp"></canvas></div></div>
-                <div class="chart-card"><div class="chart-label">pH</div><div class="chart-wrap"><canvas id="chart-ph"></canvas></div></div>
-                <div class="chart-card"><div class="chart-label">Potencial Redox (mV)</div><div class="chart-wrap"><canvas id="chart-orp"></canvas></div></div>
-                <div class="chart-card"><div class="chart-label">Oxígeno Disuelto (mg/L)</div><div class="chart-wrap"><canvas id="chart-do"></canvas></div></div>
+                <div class="chart-card"><div class="chart-label">Evolución de Temperatura (°C)</div><div class="chart-wrap"><canvas id="chart-temp"></canvas></div></div>
+                <div class="chart-card"><div class="chart-label">Evolución de pH</div><div class="chart-wrap"><canvas id="chart-ph"></canvas></div></div>
+                <div class="chart-card"><div class="chart-label">Evolución del Potencial Redox (mV)</div><div class="chart-wrap"><canvas id="chart-orp"></canvas></div></div>
+                <div class="chart-card"><div class="chart-label">Evolución del Oxígeno Disuelto (mg/L)</div><div class="chart-wrap"><canvas id="chart-do"></canvas></div></div>
             </div>
             <div class="log-card">
                 <div class="log-head">Registro de eventos</div>
@@ -315,30 +245,21 @@
 </div>
 
 <script>
-// ── VARIABLES GLOBALES (deben estar antes de cualquier uso) ────────────────
 var SECRET_TOKEN = 'uvalab';
 var maxDataPoints = 20;
 var dataHistory = [];
-var realDataReceived = { temp: false, ph: false, orp: false, do: false };
+var realDataReceived = { temp:false, ph:false, orp:false, do:false };
 var charts = {};
 var startTime = Date.now();
-
 var chartConfigs = {
-    temp: { color: '#ef4444', min: 20, max: 45,   unit: '°C'   },
-    ph:   { color: '#3b82f6', min: 0,  max: 14,   unit: 'pH'   },
-    orp:  { color: '#9d5ff5', min: -200, max: 800, unit: 'mV'  },
-    do:   { color: '#10b981', min: 0,  max: 15,   unit: 'mg/L' }
+    temp:{ color:'#dc2626', min:20,   max:45,  unit:'°C'   },
+    ph:  { color:'#2563eb', min:0,    max:14,  unit:'pH'   },
+    orp: { color:'#7c3aed', min:-200, max:800, unit:'mV'   },
+    do:  { color:'#059669', min:0,    max:15,  unit:'mg/L' }
 };
-
 var MQTT_BROKER = 'wss://broker.hivemq.com:8884/mqtt';
-var MQTT_TOPICS = {
-    temp: 'biorreactor/temperatura',
-    ph:   'biorreactor/ph',
-    orp:  'biorreactor/orp',
-    do:   'biorreactor/do'
-};
+var MQTT_TOPICS = { temp:'biorreactor/temperatura', ph:'biorreactor/ph', orp:'biorreactor/orp', do:'biorreactor/do' };
 
-// ── CONTROL DE ACCESO ─────────────────────────────────────────────────────
 var params = new URLSearchParams(window.location.search);
 if (params.get('token') === SECRET_TOKEN) {
     document.getElementById('dashboard').style.display = 'block';
@@ -347,166 +268,108 @@ if (params.get('token') === SECRET_TOKEN) {
     document.getElementById('access-screen').style.display = 'flex';
 }
 
-// ── INIT ──────────────────────────────────────────────────────────────────
 function initDashboard() {
-    Chart.defaults.color = '#475569';
-    Chart.defaults.borderColor = 'rgba(255,255,255,0.05)';
-    initCharts();
-    connectMQTT();
-    startSimulator();
-    startUptime();
+    Chart.defaults.color = '#94a3b8';
+    Chart.defaults.borderColor = 'rgba(0,0,0,0.05)';
+    initCharts(); connectMQTT(); startSimulator(); startUptime();
 }
 
-// ── UPTIME ────────────────────────────────────────────────────────────────
 function startUptime() {
     setInterval(function() {
-        var s = Math.floor((Date.now() - startTime) / 1000);
-        var h = Math.floor(s / 3600);
-        var m = Math.floor((s % 3600) / 60);
-        var sec = s % 60;
+        var s = Math.floor((Date.now()-startTime)/1000);
+        var h = Math.floor(s/3600), m = Math.floor((s%3600)/60), sec = s%60;
         var el = document.getElementById('stat-uptime');
-        if (el) el.textContent = (h > 0 ? pad(h) + ':' : '') + pad(m) + ':' + pad(sec);
+        if (el) el.textContent = (h>0?pad(h)+':':'')+pad(m)+':'+pad(sec);
     }, 1000);
 }
-function pad(n) { return n < 10 ? '0' + n : '' + n; }
+function pad(n) { return n<10?'0'+n:''+n; }
 
-// ── CHARTS ────────────────────────────────────────────────────────────────
 function initCharts() {
     Object.keys(chartConfigs).forEach(function(key) {
         var cfg = chartConfigs[key];
-        charts[key] = new Chart(document.getElementById('chart-' + key), {
-            type: 'line',
-            data: { labels: [], datasets: [{ data: [],
-                borderColor: cfg.color, backgroundColor: cfg.color + '20',
-                fill: true, tension: 0.4, borderWidth: 2, pointRadius: 0
-            }]},
-            options: {
-                responsive: true, maintainAspectRatio: false,
-                plugins: { legend: { display: false } },
-                scales: {
-                    y: { min: cfg.min, max: cfg.max,
-                        grid: { color: 'rgba(255,255,255,0.04)' },
-                        ticks: { font: { size: 10, family: "'JetBrains Mono'" }, color: '#475569' },
-                        title: { display: true, text: cfg.unit, font: { size: 10 }, color: '#475569' }
-                    },
-                    x: { ticks: { display: false }, grid: { display: false } }
-                }
+        charts[key] = new Chart(document.getElementById('chart-'+key), {
+            type:'line',
+            data:{ labels:[], datasets:[{ data:[], borderColor:cfg.color, backgroundColor:cfg.color+'18', fill:true, tension:0.4, borderWidth:2, pointRadius:0 }]},
+            options:{ responsive:true, maintainAspectRatio:false, plugins:{ legend:{ display:false } },
+                scales:{ y:{ min:cfg.min, max:cfg.max, grid:{ color:'rgba(0,0,0,0.05)' }, ticks:{ font:{ size:10, family:"'JetBrains Mono'" }, color:'#94a3b8' }, title:{ display:true, text:cfg.unit, font:{ size:10 }, color:'#94a3b8' } }, x:{ ticks:{ display:false }, grid:{ display:false } } }
             }
         });
     });
 }
 
-// ── MQTT ──────────────────────────────────────────────────────────────────
 function connectMQTT() {
-    var pill = document.getElementById('mqtt-pill');
-    var label = document.getElementById('mqtt-label');
-    pill.className = 'mqtt-pill connecting';
-    label.textContent = 'Conectando...';
+    var pill = document.getElementById('mqtt-pill'), label = document.getElementById('mqtt-label');
+    pill.className = 'mqtt-pill connecting'; label.textContent = 'Conectando...';
     try {
-        var client = mqtt.connect(MQTT_BROKER, {
-            clientId: 'uva_' + Math.random().toString(16).substr(2, 8),
-            reconnectPeriod: 5000, connectTimeout: 10000
-        });
+        var client = mqtt.connect(MQTT_BROKER, { clientId:'uva_'+Math.random().toString(16).substr(2,8), reconnectPeriod:5000, connectTimeout:10000 });
         client.on('connect', function() {
-            pill.className = 'mqtt-pill connected';
-            label.textContent = 'Broker listo';
-            addLog('Broker MQTT conectado', 'mqtt');
-            Object.values(MQTT_TOPICS).forEach(function(t) { client.subscribe(t); });
+            pill.className='mqtt-pill connected'; label.textContent='En línea';
+            addLog('Conexión establecida — esperando ESP32','mqtt');
+            Object.values(MQTT_TOPICS).forEach(function(t){ client.subscribe(t); });
         });
-        client.on('message', function(topic, msg) {
-            var value = parseFloat(msg.toString());
-            if (isNaN(value)) return;
-            var key = Object.keys(MQTT_TOPICS).find(function(k) { return MQTT_TOPICS[k] === topic; });
-            if (!key) return;
-            if (!realDataReceived[key]) {
-                realDataReceived[key] = true;
-                addLog('Datos reales: ' + key.toUpperCase(), 'mqtt');
-            }
-            updateWidget(key, value, true);
+        client.on('message', function(topic,msg) {
+            var value=parseFloat(msg.toString()); if(isNaN(value)) return;
+            var key=Object.keys(MQTT_TOPICS).find(function(k){ return MQTT_TOPICS[k]===topic; });
+            if(!key) return;
+            if(!realDataReceived[key]){ realDataReceived[key]=true; addLog('Datos reales: '+key.toUpperCase(),'mqtt'); }
+            updateWidget(key,value,true);
         });
-        client.on('offline', function() { pill.className = 'mqtt-pill'; label.textContent = 'Sin conexión'; });
-        client.on('reconnect', function() { pill.className = 'mqtt-pill connecting'; label.textContent = 'Reconectando...'; });
-    } catch(e) { label.textContent = 'MQTT no disponible'; }
+        client.on('offline', function(){ pill.className='mqtt-pill'; label.textContent='Sin conexión'; });
+        client.on('reconnect', function(){ pill.className='mqtt-pill connecting'; label.textContent='Reconectando...'; });
+    } catch(e){ label.textContent='MQTT no disponible'; }
 }
 
-// ── SIMULADOR ─────────────────────────────────────────────────────────────
 function startSimulator() {
     setInterval(function() {
-        var sim = {
-            temp: parseFloat((36.8 + Math.random()*0.4).toFixed(1)),
-            ph:   parseFloat((6.5  + Math.random()*1.8).toFixed(2)),
-            orp:  parseFloat((255  + Math.random()*15).toFixed(0)),
-            do:   parseFloat((7.8  + Math.random()*0.3).toFixed(1))
-        };
-        Object.keys(sim).forEach(function(key) {
-            if (!realDataReceived[key]) updateWidget(key, sim[key], false);
-        });
+        var sim={ temp:parseFloat((36.8+Math.random()*0.4).toFixed(1)), ph:parseFloat((6.5+Math.random()*1.8).toFixed(2)), orp:parseFloat((255+Math.random()*15).toFixed(0)), do:parseFloat((7.8+Math.random()*0.3).toFixed(1)) };
+        Object.keys(sim).forEach(function(key){ if(!realDataReceived[key]) updateWidget(key,sim[key],false); });
     }, 2000);
 }
 
-// ── ACTUALIZAR WIDGET ─────────────────────────────────────────────────────
-function updateWidget(key, value, isReal) {
-    var now = new Date().toLocaleTimeString('es-ES', { hour:'2-digit', minute:'2-digit', second:'2-digit' });
-    var valEl = document.getElementById('val-' + key);
-    var updEl = document.getElementById('upd-' + key);
-    var srcEl = document.getElementById('src-' + key);
-    if (valEl) valEl.childNodes[0].nodeValue = value;
-    if (updEl) updEl.textContent = now;
-    if (srcEl) {
-        srcEl.textContent = isReal ? 'EN VIVO' : 'SIM';
-        srcEl.className = 'src-badge ' + (isReal ? 'real' : 'sim');
+function updateWidget(key,value,isReal) {
+    var now=new Date().toLocaleTimeString('es-ES',{hour:'2-digit',minute:'2-digit',second:'2-digit'});
+    var valEl=document.getElementById('val-'+key), updEl=document.getElementById('upd-'+key), srcEl=document.getElementById('src-'+key);
+    if(valEl) valEl.childNodes[0].nodeValue=value;
+    if(updEl) updEl.textContent=now;
+    if(srcEl){ srcEl.textContent=isReal?'EN VIVO':'SIM'; srcEl.className='src-badge '+(isReal?'real':'sim'); }
+    if(key==='ph'){
+        var card=document.getElementById('card-ph');
+        if(value<6.5||value>8.0){ if(!card.classList.contains('alarm')) addLog('ALERTA: pH fuera de rango ('+value+')','alarm'); card.classList.add('alarm'); }
+        else card.classList.remove('alarm');
     }
-    if (key === 'ph') {
-        var card = document.getElementById('card-ph');
-        if (value < 6.5 || value > 8.0) {
-            if (!card.classList.contains('alarm')) addLog('ALERTA: pH fuera de rango (' + value + ')', 'alarm');
-            card.classList.add('alarm');
-        } else card.classList.remove('alarm');
+    var chart=charts[key];
+    if(chart){
+        if(chart.data.labels.length>=maxDataPoints){ chart.data.labels.shift(); chart.data.datasets[0].data.shift(); }
+        chart.data.labels.push(now); chart.data.datasets[0].data.push(value); chart.update('none');
     }
-    var chart = charts[key];
-    if (chart) {
-        if (chart.data.labels.length >= maxDataPoints) {
-            chart.data.labels.shift();
-            chart.data.datasets[0].data.shift();
-        }
-        chart.data.labels.push(now);
-        chart.data.datasets[0].data.push(value);
-        chart.update('none');
-    }
-    var entry = dataHistory.find(function(d) { return d.time === now; });
-    if (!entry) { entry = { time: now }; dataHistory.push(entry); }
-    entry[key] = value;
-    if (dataHistory.length > 5000) dataHistory.shift();
+    var entry=dataHistory.find(function(d){ return d.time===now; });
+    if(!entry){ entry={time:now}; dataHistory.push(entry); }
+    entry[key]=value;
+    if(dataHistory.length>5000) dataHistory.shift();
 }
 
-// ── LOG ───────────────────────────────────────────────────────────────────
-function addLog(msg, type) {
-    var log = document.getElementById('event-log');
-    var time = new Date().toLocaleTimeString('es-ES', { hour:'2-digit', minute:'2-digit', second:'2-digit' });
-    var div = document.createElement('div');
-    div.className = 'log-entry';
-    var cls = type === 'alarm' ? 'log-alarm' : type === 'mqtt' ? 'log-mqtt' : '';
-    div.innerHTML = '<span class="log-t">[' + time + ']</span><span class="' + cls + '">' + msg + '</span>';
+function addLog(msg,type) {
+    var log=document.getElementById('event-log');
+    var time=new Date().toLocaleTimeString('es-ES',{hour:'2-digit',minute:'2-digit',second:'2-digit'});
+    var div=document.createElement('div'); div.className='log-entry';
+    var cls=type==='alarm'?'log-alarm':type==='mqtt'?'log-mqtt':'';
+    div.innerHTML='<span class="log-t">['+time+']</span><span class="'+cls+'">'+msg+'</span>';
     log.prepend(div);
-    if (log.children.length > 100) log.removeChild(log.lastChild);
+    if(log.children.length>100) log.removeChild(log.lastChild);
 }
 
-// ── CONTROLES ─────────────────────────────────────────────────────────────
-function setPeriod(n, btn) {
-    maxDataPoints = n;
-    document.querySelectorAll('.period-btn').forEach(function(b) { b.classList.remove('active'); });
+function setPeriod(n,btn) {
+    maxDataPoints=n;
+    document.querySelectorAll('.period-btn').forEach(function(b){ b.classList.remove('active'); });
     btn.classList.add('active');
 }
 
 function downloadCSV() {
-    var csv = 'Hora,Temp,pH,ORP,DO\n';
-    dataHistory.forEach(function(r) {
-        csv += (r.time||'') + ',' + (r.temp||'') + ',' + (r.ph||'') + ',' + (r.orp||'') + ',' + (r.do||'') + '\n';
-    });
-    var a = document.createElement('a');
-    a.href = URL.createObjectURL(new Blob([csv], { type: 'text/csv' }));
-    a.download = 'biorreactor_uva.csv';
-    a.click();
+    var csv='Hora,Temp,pH,ORP,DO\n';
+    dataHistory.forEach(function(r){ csv+=(r.time||'')+','+(r.temp||'')+','+(r.ph||'')+','+(r.orp||'')+','+(r.do||'')+'\n'; });
+    var a=document.createElement('a');
+    a.href=URL.createObjectURL(new Blob([csv],{type:'text/csv'}));
+    a.download='biorreactor_uva.csv'; a.click();
     addLog('Datos exportados a CSV.');
 }
 </script>
