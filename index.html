@@ -64,7 +64,7 @@
         .page { max-width:1440px; margin:0 auto; padding:24px 28px; }
 
         .hero {
-            background:linear-gradient(135deg, #1e40af 0%, #1d4ed8 60%, #2563eb 100%);
+            background:linear-gradient(135deg, #0a1628 0%, #0f2347 60%, #102a52 100%);
             border-radius:var(--r2); padding:24px 32px; margin-bottom:24px;
             display:flex; align-items:center; justify-content:space-between;
             position:relative; overflow:hidden; box-shadow:var(--shadow2);
@@ -97,11 +97,11 @@
         .c-ph   .sensor-icon { background:var(--blue-lt); }
         .c-orp  .sensor-icon { background:var(--purple-lt); }
         .c-do   .sensor-icon { background:var(--green-lt); }
-        .sensor-label { font-size:0.7rem; font-weight:500; text-transform:uppercase; letter-spacing:0.1em; color:var(--gray-500); margin-bottom:10px; }
-        .sensor-value { font-size:2.6rem; font-weight:300; letter-spacing:-0.04em; color:var(--gray-900); line-height:1; display:flex; align-items:baseline; gap:5px; margin-bottom:14px; font-family:var(--mono); }
-        .sensor-value .unit { font-size:1rem; font-weight:400; color:var(--gray-400); font-family:var(--font); }
+        .sensor-label { font-size:0.7rem; font-weight:600; text-transform:uppercase; letter-spacing:0.1em; color:#334155; margin-bottom:10px; }
+        .sensor-value { font-size:2.6rem; font-weight:300; letter-spacing:-0.04em; color:#0f172a; line-height:1; display:flex; align-items:baseline; gap:5px; margin-bottom:14px; font-family:var(--mono); }
+        .sensor-value .unit { font-size:1rem; font-weight:400; color:#475569; font-family:var(--font); }
         .sensor-footer { display:flex; align-items:center; justify-content:space-between; }
-        .sensor-time { font-size:0.68rem; color:var(--gray-400); font-family:var(--mono); }
+        .sensor-time { font-size:0.68rem; color:#475569; font-family:var(--mono); }
         .src-badge { font-size:0.62rem; font-weight:600; padding:2px 8px; border-radius:8px; letter-spacing:0.04em; }
         .src-badge.sim  { background:var(--bg3); color:var(--gray-500); border:1px solid var(--border); }
         .src-badge.real { background:var(--green-lt); color:#065f46; border:1px solid #6ee7b7; }
@@ -110,21 +110,22 @@
 
         .toolbar {
             display:flex; align-items:center; justify-content:space-between;
-            background:#1e293b; border:1px solid rgba(255,255,255,0.07);
+            background:#ffffff; border:1px solid #e2e8f0;
             border-radius:var(--r); padding:10px 14px; margin-bottom:24px;
+            box-shadow:var(--shadow);
         }
         .period-btns { display:flex; gap:3px; align-items:center; }
-        .period-lbl { font-size:0.72rem; color:#64748b; font-weight:500; margin-right:8px; text-transform:uppercase; letter-spacing:0.06em; }
-        .period-btn { padding:5px 13px; border-radius:8px; border:1px solid transparent; background:transparent; color:#64748b; font-size:0.8rem; font-weight:500; cursor:pointer; font-family:var(--font); transition:0.15s; }
-        .period-btn:hover { background:rgba(255,255,255,0.07); color:#f1f5f9; }
+        .period-lbl { font-size:0.72rem; color:#475569; font-weight:500; margin-right:8px; text-transform:uppercase; letter-spacing:0.06em; }
+        .period-btn { padding:5px 13px; border-radius:8px; border:1px solid transparent; background:transparent; color:#475569; font-size:0.8rem; font-weight:500; cursor:pointer; font-family:var(--font); transition:0.15s; }
+        .period-btn:hover { background:#f1f5f9; color:#0f172a; }
         .period-btn.active { background:var(--purple); color:#fff; border-color:var(--purple); }
         .export-btn { display:flex; align-items:center; gap:7px; padding:7px 16px; border-radius:8px; background:var(--purple); color:#fff; border:none; font-size:0.8rem; font-weight:500; cursor:pointer; font-family:var(--font); transition:background 0.15s; }
         .export-btn:hover { background:var(--purple3); }
 
         .bottom-grid { display:grid; grid-template-columns:1fr 300px; gap:14px; }
         .charts-col { display:flex; flex-direction:column; gap:14px; }
-        .chart-card { background:#1e293b; border:1px solid rgba(255,255,255,0.07); border-radius:var(--r2); padding:18px 20px; }
-        .chart-label { font-size:0.7rem; font-weight:600; text-transform:uppercase; letter-spacing:0.08em; color:#64748b; margin-bottom:12px; }
+        .chart-card { background:#ffffff; border:1px solid #e2e8f0; border-radius:var(--r2); padding:18px 20px; box-shadow:var(--shadow); }
+        .chart-label { font-size:0.7rem; font-weight:600; text-transform:uppercase; letter-spacing:0.08em; color:#475569; margin-bottom:12px; }
         .chart-wrap { height:110px; }
 
         .log-card { background:var(--gray-900); border-radius:var(--r2); overflow:hidden; display:flex; flex-direction:column; box-shadow:var(--shadow2); }
@@ -144,6 +145,9 @@
 <body>
 
 <div id="access-screen" style="display:none;">
+    <div style="width:64px;height:64px;background:#1e293b;border:1px solid #334155;border-radius:50%;display:flex;align-items:center;justify-content:center;margin:0 auto 12px;">
+        <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="#94a3b8" stroke-width="2"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0110 0v4"/></svg>
+    </div>
     <h1>Acceso restringido</h1>
     <p>Este sistema requiere un enlace de acceso autorizado.<br>Contacta con el responsable del laboratorio.</p>
     <p style="font-size:0.75rem;color:#94a3b8;margin-top:8px;">Universidad de Valladolid</p>
@@ -261,8 +265,8 @@ if (params.get('token') === SECRET_TOKEN) {
 }
 
 function initDashboard() {
-    Chart.defaults.color = '#64748b';
-    Chart.defaults.borderColor = 'rgba(255,255,255,0.05)';
+    Chart.defaults.color = '#475569';
+    Chart.defaults.borderColor = 'rgba(0,0,0,0.06)';
     initCharts(); connectMQTT(); startSimulator(); startUptime();
 }
 
@@ -283,7 +287,7 @@ function initCharts() {
             type:'line',
             data:{ labels:[], datasets:[{ data:[], borderColor:cfg.color, backgroundColor:cfg.color+'18', fill:true, tension:0.4, borderWidth:2, pointRadius:0 }]},
             options:{ responsive:true, maintainAspectRatio:false, plugins:{ legend:{ display:false } },
-                scales:{ y:{ min:cfg.min, max:cfg.max, grid:{ color:'rgba(0,0,0,0.05)' }, ticks:{ font:{ size:10, family:"'JetBrains Mono'" }, color:'#94a3b8' }, title:{ display:true, text:cfg.unit, font:{ size:10 }, color:'#94a3b8' } }, x:{ ticks:{ display:false }, grid:{ display:false } } }
+                scales:{ y:{ min:cfg.min, max:cfg.max, grid:{ color:'rgba(0,0,0,0.05)' }, ticks:{ font:{ size:10, family:"'JetBrains Mono'" }, color:'#475569' }, title:{ display:true, text:cfg.unit, font:{ size:10 }, color:'#475569' } }, x:{ ticks:{ display:false }, grid:{ display:false } } }
             }
         });
     });
