@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Biorreactor Monitor — UVa</title>
+    <title>Monitor de Biorreactor - UVa Lab</title>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/mqtt/dist/mqtt.min.js"></script>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
@@ -173,8 +173,8 @@
     <div class="page">
         <div class="hero">
             <div class="hero-text">
-                <h2>Laboratorio de Ingeniería Química — UVa</h2>
-                <p>Monitorización en tiempo real · pH · Potencial Redox · Oxígeno Disuelto · Temperatura</p>
+                <h2>Laboratorio de Ingeniería Química - UVa</h2>
+                <p>Monitorización en tiempo real · Temperatura · pH · Potencial Redox · Oxígeno Disuelto</p>
             </div>
             <div class="hero-right">
                 <div class="hero-stat">
@@ -213,7 +213,7 @@
 
         <div class="toolbar">
             <div class="period-btns">
-                <span class="period-lbl">Rango</span>
+                <span class="period-lbl">Rango:</span>
                 <button class="period-btn active" onclick="setPeriod(0,this)">Tiempo real</button>
                 <button class="period-btn" onclick="setPeriod(3600000,this)">1 hora</button>
                 <button class="period-btn" onclick="setPeriod(21600000,this)">6 horas</button>
@@ -223,22 +223,22 @@
             <div style="display:flex;gap:8px;align-items:center;">
                 <button class="export-btn" onclick="downloadCSV()">
                     <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
-                    Exportar CSV
+                    Exportar datos CSV
                 </button>
             </div>
         </div>
 
         <div class="bottom-grid">
             <div class="charts-col">
-                <div class="chart-card"><div class="chart-label">Evolución de Temperatura (°C)</div><div class="chart-wrap"><canvas id="chart-temp"></canvas></div></div>
-                <div class="chart-card"><div class="chart-label">Evolución de pH</div><div class="chart-wrap"><canvas id="chart-ph"></canvas></div></div>
+                <div class="chart-card"><div class="chart-label">Evolución de la Temperatura (°C)</div><div class="chart-wrap"><canvas id="chart-temp"></canvas></div></div>
+                <div class="chart-card"><div class="chart-label">Evolución del pH</div><div class="chart-wrap"><canvas id="chart-ph"></canvas></div></div>
                 <div class="chart-card"><div class="chart-label">Evolución del Potencial Redox (mV)</div><div class="chart-wrap"><canvas id="chart-orp"></canvas></div></div>
                 <div class="chart-card"><div class="chart-label">Evolución del Oxígeno Disuelto (mg/L)</div><div class="chart-wrap"><canvas id="chart-do"></canvas></div></div>
             </div>
             <div class="log-card">
                 <div class="log-head">Registro de eventos</div>
                 <div class="log-body" id="event-log">
-                    <div class="log-entry"><span class="log-t">[INIT]</span>Sistema iniciado.</div>
+                    <div class="log-entry"><span class="log-t">[INICIO]</span>Sistema iniciado.</div>
                 </div>
             </div>
         </div>
@@ -323,7 +323,7 @@ function startRecording() {
         recordingStart = null;
         var el = document.getElementById('stat-uptime');
         if (el) el.textContent = '00:00:00';
-        btn.innerHTML = '● Iniciar registro';
+        btn.innerHTML = '▶ Iniciar registro';
         btn.style.background = 'rgba(255,255,255,0.12)';
         btn.style.borderColor = 'rgba(255,255,255,0.3)';
         btn.style.color = '#fff';
