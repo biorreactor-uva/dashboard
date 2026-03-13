@@ -123,7 +123,7 @@
 
         .bottom-grid { display:grid; grid-template-columns:1fr 300px; gap:14px; }
         .charts-col { display:flex; flex-direction:column; gap:14px; }
-        .chart-card { background:#ffffff; border:1px solid #e2e8f0; border-radius:var(--r2); padding:18px 20px; box-shadow:var(--shadow); }
+        .chart-card { background:#ffffff; border:1px solid #0f2347; border-radius:var(--r2); padding:18px 20px; box-shadow:var(--shadow); }
         .chart-label { font-size:0.7rem; font-weight:700; text-transform:uppercase; letter-spacing:0.08em; color:#1e293b; margin-bottom:12px; }
         .chart-wrap { height:130px; }
 
@@ -221,10 +221,6 @@
                 <button class="period-btn" onclick="setPeriod(86400000,this)">24 horas</button>
             </div>
             <div style="display:flex;gap:8px;align-items:center;">
-                <button id="btn-pause" onclick="togglePause()" style="display:flex;align-items:center;gap:6px;padding:7px 16px;border-radius:8px;background:#dc2626;color:#fff;border:none;font-size:0.8rem;font-weight:500;cursor:pointer;font-family:var(--font);transition:background 0.15s;">
-                    <svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor"><rect x="6" y="4" width="4" height="16"/><rect x="14" y="4" width="4" height="16"/></svg>
-                    Pausar
-                </button>
                 <button class="export-btn" onclick="downloadCSV()">
                     <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
                     Exportar CSV
@@ -261,8 +257,7 @@ var realDataReceived = { temp:false, ph:false, orp:false, do:false };
 var charts = {};
 var startTime = Date.now();
 var recordingStart = null;
-var recordingPaused = false;
-var pauseTime = null;
+var recordingEnd = null;
 var currentPeriodMs = 0;
 var chartConfigs = {
     temp:{ color:'#dc2626', min:20,   max:45,  unit:'°C'   },
@@ -299,20 +294,35 @@ function startUptime() {
 function pad(n) { return n<10?'0'+n:''+n; }
 
 function startRecording() {
-    if (recordingStart) return;
-    recordingStart = Date.now();
-    dataHistory = [];
-    Object.keys(charts).forEach(function(key) {
-        charts[key].data.labels = [];
-        charts[key].data.datasets[0].data = [];
-        charts[key].update('none');
-    });
     var btn = document.getElementById('btn-start');
-    btn.textContent = '● Registrando';
-    btn.style.background = 'rgba(16,185,129,0.25)';
-    btn.style.borderColor = 'rgba(16,185,129,0.6)';
-    btn.disabled = true;
-    addLog('Registro de datos iniciado', 'mqtt');
+    if (!recordingStart) {
+        // INICIAR
+        recordingStart = Date.now();
+        recordingEnd = null;
+        dataHistory = [];
+        Object.keys(charts).forEach(function(key) {
+            charts[key].data.labels = [];
+            charts[key].data.datasets[0].data = [];
+            charts[key].data.datasets[1].data = [];
+            charts[key].update('none');
+        });
+        btn.innerHTML = '■ Finalizar';
+        btn.style.background = 'rgba(239,68,68,0.25)';
+        btn.style.borderColor = 'rgba(239,68,68,0.6)';
+        btn.style.color = '#fca5a5';
+        addLog('Registro de datos iniciado', 'mqtt');
+    } else {
+        // FINALIZAR
+        recordingEnd = Date.now();
+        recordingStart = null;
+        var el = document.getElementById('stat-uptime');
+        if (el) el.textContent = '00:00';
+        btn.innerHTML = '● Iniciar registro';
+        btn.style.background = 'rgba(255,255,255,0.12)';
+        btn.style.borderColor = 'rgba(255,255,255,0.3)';
+        btn.style.color = '#fff';
+        addLog('Registro finalizado', 'alarm');
+    }
 }
 
 function initCharts() {
@@ -372,8 +382,8 @@ function updateWidget(key,value,isReal) {
         if(value<6.5||value>8.0){ if(!card.classList.contains('alarm')) addLog('ALERTA: pH fuera de rango ('+value+')','alarm'); card.classList.add('alarm'); }
         else card.classList.remove('alarm');
     }
-    // Solo graba si el registro está activo y no pausado
-    if (!recordingStart || recordingPaused) return;
+    // Solo graba si el registro está activo y no finalizado
+    if (!recordingStart || recordingEnd) return;
 
     var entry = { time: nowStr, ts: now.getTime() };
     entry[key] = value;
@@ -435,33 +445,16 @@ function setPeriod(ms, btn) {
     Object.keys(charts).forEach(function(key){ refreshChart(key); });
 }
 
-function togglePause() {
-    var btn = document.getElementById('btn-pause');
-    if (!recordingPaused) {
-        recordingPaused = true;
-        pauseTime = Date.now();
-        btn.innerHTML = '<svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor"><polygon points="5,3 19,12 5,21"/></svg> Reanudar';
-        btn.style.background = '#059669';
-        addLog('Registro pausado', 'alarm');
-    } else {
-        recordingPaused = false;
-        pauseTime = null;
-        btn.innerHTML = '<svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor"><rect x="6" y="4" width="4" height="16"/><rect x="14" y="4" width="4" height="16"/></svg> Pausar';
-        btn.style.background = '#dc2626';
-        addLog('Registro reanudado', 'mqtt');
-    }
-}
-
 function downloadCSV() {
-    var exportData = pauseTime
-        ? dataHistory.filter(function(r){ return r.ts <= pauseTime; })
+    var exportData = recordingEnd
+        ? dataHistory.filter(function(r){ return r.ts <= recordingEnd; })
         : dataHistory;
     var csv='Hora,Temp,pH,ORP,DO\n';
     exportData.forEach(function(r){ csv+=(r.time||'')+','+(r.temp||'')+','+(r.ph||'')+','+(r.orp||'')+','+(r.do||'')+'\n'; });
     var a=document.createElement('a');
     a.href=URL.createObjectURL(new Blob([csv],{type:'text/csv'}));
     a.download='biorreactor_uva.csv'; a.click();
-    addLog('Datos exportados'+(pauseTime?' (hasta pausa)':'')+'.', '');
+    addLog('Datos exportados'+(recordingEnd?' (registro completo)':'')+'.', '');
 }
 </script>
 </body>
