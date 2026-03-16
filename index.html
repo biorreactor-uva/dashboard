@@ -411,35 +411,14 @@ function initSupabase() {
 }
 
 async function checkActiveSession() {
-    // 1. Revisar localStorage
-    var stored = localStorage.getItem('biorreactor_session');
-    var localSession = null;
-    try { localSession = stored ? JSON.parse(stored) : null; } catch(e) {}
-
-    // Si este dispositivo tiene sesión activa → recuperar
-    if (localSession && !localSession.ended && localSession.id) {
-        currentSessionId = localSession.id;
-        recordingStart   = localSession.start;
-        addLog('Sesión activa recuperada. Cargando historial...', 'mqtt');
-        await loadSessionData(currentSessionId);
-        restoreRecordingUI();
-        return;
-    }
-
-    // Si este dispositivo finalizó la sesión → buscar igualmente si hay una sesión NUEVA en la nube
-    if (localSession && localSession.ended) {
-        // continúa hacia la búsqueda en Supabase (no return)
-    } else if (!localSession) {
-        // sin historial local → continúa hacia Supabase
-    }
-
-    // 2. Dispositivo nuevo (móvil sin historial local) → buscar en Supabase
-    // Solo si hay datos MUY recientes (últimos 30 segundos = sesión en curso ahora mismo)
     if (!sb) return;
-    addLog('Buscando sesión activa en la nube...', 'mqtt');
-    var result = await sb.from('registros')
-        .select('session_id, ts')
-        .order('ts', { ascending: false })
+    addLog('Buscando sesión activa...', 'mqtt');
+
+    // Consultar tabla sesiones: buscar la más reciente no finalizada
+    var result = await sb.from('sesiones')
+        .select('*')
+        .eq('ended', false)
+        .order('start_ts', { ascending: false })
         .limit(1);
 
     if (result.error || !result.data || result.data.length === 0) {
@@ -447,30 +426,11 @@ async function checkActiveSession() {
         return;
     }
 
-    var lastRow = result.data[0];
-    // Solo considerar sesión activa si hay datos de los últimos 30 segundos
-    if (Date.now() - lastRow.ts > 30000) {
-        addLog('No hay sesión activa en este momento.', '');
-        return;
-    }
-
-    // Si la sesión encontrada es la misma que ya finalizamos → ignorar
-    if (localSession && localSession.ended && localSession.id === lastRow.session_id) {
-        addLog('Sesión ya finalizada en este dispositivo.', '');
-        return;
-    }
-
-    // Sesión activa encontrada → obtener hora de inicio
-    currentSessionId = lastRow.session_id;
-    var firstResult = await sb.from('registros')
-        .select('ts')
-        .eq('session_id', currentSessionId)
-        .order('ts', { ascending: true })
-        .limit(1);
-    recordingStart = (firstResult.data && firstResult.data[0]) ? firstResult.data[0].ts : lastRow.ts;
-
+    var ses = result.data[0];
+    currentSessionId = ses.session_id;
+    recordingStart   = ses.start_ts;
     localStorage.setItem('biorreactor_session', JSON.stringify({ id:currentSessionId, start:recordingStart, ended:false }));
-    addLog('Sesión activa encontrada en la nube. Cargando historial...', 'mqtt');
+    addLog('Sesión activa encontrada. Cargando historial...', 'mqtt');
     await loadSessionData(currentSessionId);
     restoreRecordingUI();
 }
@@ -520,21 +480,15 @@ async function flushPending() {
 }
 setInterval(flushPending, 10000);
 
-// Comprobar cada 15s si la sesión fue finalizada desde otro dispositivo
+// Comprobar cada 10s si la sesión fue finalizada desde otro dispositivo
 setInterval(async function() {
     if (!recordingStart || !sb || !currentSessionId) return;
-
-    // Buscar el último dato de esta sesión en Supabase
-    var result = await sb.from('registros')
-        .select('ts')
+    var result = await sb.from('sesiones')
+        .select('ended')
         .eq('session_id', currentSessionId)
-        .order('ts', { ascending: false })
         .limit(1);
     if (result.error || !result.data || result.data.length === 0) return;
-
-    var lastTs = result.data[0].ts;
-    // Si el último dato tiene más de 30 segundos → sesión finalizada remotamente
-    if (Date.now() - lastTs > 30000) {
+    if (result.data[0].ended === true) {
         addLog('Registro finalizado desde otro dispositivo.', 'alarm');
         recordingStart = null;
         recordingEnd   = Date.now();
@@ -548,7 +502,7 @@ setInterval(async function() {
         btn.style.borderColor = 'rgba(255,255,255,0.3)';
         btn.style.color       = '#fff';
     }
-}, 15000);
+}, 10000);
 
 // ── UPTIME ──
 function startUptime() {
@@ -571,13 +525,16 @@ function startRecording() {
         recordingEnd     = null;
         recordingHistory = [];
         currentSessionId = 'ses_' + recordingStart;
+        supabaseFirstSave = false;
         localStorage.setItem('biorreactor_session', JSON.stringify({ id:currentSessionId, start:recordingStart, ended:false }));
+        // Crear sesión en Supabase
+        if (sb) sb.from('sesiones').insert({ session_id:currentSessionId, start_ts:recordingStart, ended:false });
         Object.keys(charts).forEach(function(key) {
             charts[key].data.labels = [];
             charts[key].data.datasets[0].data = [];
             charts[key].update('none');
         });
-        btn.innerHTML      = '■ Finalizar';
+        btn.innerHTML         = '■ Finalizar';
         btn.style.background  = 'rgba(239,68,68,0.25)';
         btn.style.borderColor = 'rgba(239,68,68,0.6)';
         btn.style.color       = '#fca5a5';
@@ -588,12 +545,14 @@ function startRecording() {
         var elapsed  = Math.floor((recordingEnd - recordingStart) / 1000);
         var hh = Math.floor(elapsed/3600), mm = Math.floor((elapsed%3600)/60), ss = elapsed%60;
         var tiempoStr = (hh>0 ? pad(hh)+'h ' : '') + pad(mm)+'m ' + pad(ss)+'s';
+        // Marcar sesión como finalizada en Supabase
+        if (sb) sb.from('sesiones').update({ ended:true }).eq('session_id', currentSessionId);
         recordingStart = null;
         localStorage.setItem('biorreactor_session', JSON.stringify({ id:currentSessionId, ended:true }));
         currentSessionId = null;
         var el = document.getElementById('stat-uptime');
         if (el) el.textContent = '00:00:00';
-        btn.innerHTML      = '▶ Iniciar registro';
+        btn.innerHTML         = '▶ Iniciar registro';
         btn.style.background  = 'rgba(255,255,255,0.12)';
         btn.style.borderColor = 'rgba(255,255,255,0.3)';
         btn.style.color       = '#fff';
