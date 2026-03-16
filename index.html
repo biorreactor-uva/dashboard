@@ -326,7 +326,7 @@
                     <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
                     Exportar datos CSV
                 </button>
-                <button class="export-btn" id="btn-report" onclick="generateReport()" style="background:#1e3a5f;">
+                <button class="export-btn" id="btn-report" onclick="generateReport()" style="background:#0f2347;">
                     <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><polyline points="10 9 9 9 8 9"/></svg>
                     Generar informe
                 </button>
@@ -855,7 +855,7 @@ async function generateReport() {
 
     // Logo App (izquierda) - cargar como imagen
     try {
-        var logoAppEl = new Image(); logoAppEl.src = 'logoApp.png';
+        var logoAppEl = new Image(); logoAppEl.src = 'logoAppC.png';
         doc.addImage(logoAppEl, 'PNG', margin, 4, 24, 24);
     } catch(e) {}
 
@@ -864,7 +864,7 @@ async function generateReport() {
     doc.setFontSize(15); doc.setFont('helvetica','bold');
     doc.text('Monitor de Biorreactor - UVa', pageW/2, 13, { align:'center' });
     doc.setFontSize(8.5); doc.setFont('helvetica','normal');
-    doc.text('Laboratorio de Ingeniería Química — Universidad de Valladolid', pageW/2, 20, { align:'center' });
+    doc.text('Laboratorio de Ingeniería Química - Universidad de Valladolid', pageW/2, 20, { align:'center' });
     doc.setFontSize(7.5);
     doc.text('Informe generado el ' + new Date().toLocaleDateString('es-ES',{year:'numeric',month:'long',day:'numeric'}) + ' a las ' + new Date().toLocaleTimeString('es-ES',{hour:'2-digit',minute:'2-digit'}), pageW/2, 27, { align:'center' });
 
@@ -879,7 +879,7 @@ async function generateReport() {
     // ── Resumen de sesión
     doc.setTextColor(...black);
     doc.setFontSize(12); doc.setFont('helvetica','bold');
-    doc.text('Resumen de la sesión', margin, y); y += 6;
+    doc.text('Resumen de la monitorización', margin, y); y += 6;
     doc.setDrawColor(...darkBlue); doc.setLineWidth(0.4);
     doc.line(margin, y, pageW-margin, y); y += 5;
 
@@ -896,7 +896,7 @@ async function generateReport() {
         ['Hora de inicio', new Date(startDate).toLocaleTimeString('es-ES',{hour:'2-digit',minute:'2-digit',second:'2-digit'})],
         ['Hora de fin', new Date(endDate).toLocaleTimeString('es-ES',{hour:'2-digit',minute:'2-digit',second:'2-digit'})],
         ['Tiempo activo', tiempoStr],
-        ['Total de mediciones', srcHistory.length + ' registros'],
+        ['Total de mediciones', srcHistory.length + ' medidas'],
         ['Alertas generadas', sessionAlerts.length + ' alertas']
     ];
     infoRows.forEach(function(row, i) {
@@ -993,7 +993,10 @@ async function generateReport() {
         doc.text('No se registraron alertas durante esta sesión.', margin+4, y);
         y += 12;
     } else {
-        sessionAlerts.slice(0, 20).forEach(function(a, i) {
+        // Filtrar alertas hasta la hora fin de la sesión
+        var endTimeStr = new Date(endDate).toLocaleTimeString('es-ES',{hour:'2-digit',minute:'2-digit',second:'2-digit'});
+        var alertsInSession = sessionAlerts.filter(function(a){ return a.time <= endTimeStr; });
+        alertsInSession.slice(0, 20).forEach(function(a, i) {
             if (y > 270) { doc.addPage(); y = margin; }
             doc.setFillColor(255, 242, 242);
             doc.rect(margin, y-4, contentW, 7, 'F');
@@ -1003,9 +1006,9 @@ async function generateReport() {
             doc.text(a.msg.replace('ALERTA: ',''), margin+22, y, { maxWidth: contentW-24 });
             y += 7;
         });
-        if (sessionAlerts.length > 20) {
+        if (alertsInSession.length > 20) {
             doc.setFontSize(8); doc.setTextColor(...midGray);
-            doc.text('... y ' + (sessionAlerts.length-20) + ' alertas más.', margin, y); y += 7;
+            doc.text('... y ' + (alertsInSession.length-20) + ' alertas más.', margin, y); y += 7;
         }
         y += 4;
     }
@@ -1018,14 +1021,40 @@ async function generateReport() {
 
     var chartIds = ['chart-temp','chart-ph','chart-orp','chart-do'];
     var chartLabels = ['Temperatura (°C)','pH','Potencial Redox (mV)','Oxígeno Disuelto (mg/L)'];
+    var chartKeys   = ['temp','ph','orp','do'];
+
+    // Renderizar gráficas de 24h en canvas ocultos para el informe
+    var ms24h = 86400000;
     for (var ci = 0; ci < chartIds.length; ci++) {
-        var canvas = document.getElementById(chartIds[ci]);
-        if (!canvas) continue;
-        var imgData = canvas.toDataURL('image/png');
-        var imgH = 42;
-        if (y + imgH + 10 > 285) { doc.addPage(); y = margin; }
+        var key24 = chartKeys[ci];
+        var cfg24 = chartConfigs[key24];
+        // Filtrar datos de las últimas 24h hasta endDate
+        var ws24 = endDate - ms24h;
+        var data24 = srcHistory.filter(function(d){ return d.ts >= ws24 && d.ts <= endDate && d[key24] !== null && d[key24] !== undefined; });
+        var labels24 = data24.map(function(d){ return d.time; });
+        var vals24   = data24.map(function(d){ return d[key24]; });
+
+        // Crear canvas temporal
+        var tmpCanvas = document.createElement('canvas');
+        tmpCanvas.width = 900; tmpCanvas.height = 280;
+        document.body.appendChild(tmpCanvas);
+        var tmpChart = new Chart(tmpCanvas, {
+            type:'line',
+            data:{ labels:labels24, datasets:[{ data:vals24, borderColor:cfg24.color, backgroundColor:cfg24.color+'18', fill:true, tension:0.4, borderWidth:2, pointRadius:2, spanGaps:true }]},
+            options:{ responsive:false, animation:false, plugins:{ legend:{ display:false } },
+                scales:{ y:{ min:cfg24.min, max:cfg24.max, grid:{ color:'rgba(0,0,0,0.05)' }, ticks:{ font:{ size:11 }, color:'#334155' }, title:{ display:true, text:cfg24.unit, font:{ size:11, weight:'bold' }, color:'#1e293b' } }, x:{ ticks:{ maxTicksLimit:8, font:{ size:9 }, color:'#64748b', maxRotation:0 }, grid:{ display:false } } }
+            }
+        });
+        tmpChart.update();
+
+        var imgData = tmpCanvas.toDataURL('image/png');
+        tmpChart.destroy();
+        document.body.removeChild(tmpCanvas);
+
+        var imgH = 44;
+        if (y + imgH + 12 > 285) { doc.addPage(); y = margin; }
         doc.setFontSize(9); doc.setFont('helvetica','bold'); doc.setTextColor(...darkBlue);
-        doc.text(chartLabels[ci], margin, y); y += 4;
+        doc.text(chartLabels[ci] + ' — últimas 24h', margin, y); y += 4;
         doc.addImage(imgData, 'PNG', margin, y, contentW, imgH);
         y += imgH + 8;
     }
