@@ -73,12 +73,12 @@
         @keyframes alarm { 50% { background:var(--red-lt); } }
         /* ── WIDGETS DERIVADOS ── */
         .derived-grid { display:grid; grid-template-columns:1fr 1fr; gap:14px; margin-bottom:24px; }
-        .derived-card { background:var(--white); border:1px solid var(--border); border-radius:var(--r2); padding:20px 20px 16px; position:relative; box-shadow:var(--shadow); transition:box-shadow 0.2s,transform 0.2s; }
+        .derived-card { background:var(--white); border:2px solid #0f2347; border-radius:var(--r2); padding:12px 16px; position:relative; box-shadow:var(--shadow); transition:box-shadow 0.2s,transform 0.2s; }
         .derived-card:hover { box-shadow:var(--shadow2); transform:translateY(-2px); }
-        .derived-card::before { content:''; position:absolute; top:0; left:0; right:0; height:3px; border-radius:var(--r2) var(--r2) 0 0; }
-        .d-mic::before   { background:linear-gradient(90deg,#0891b2,#22d3ee); }
-        .d-mu::before    { background:linear-gradient(90deg,#7c3aed,#a78bfa); }
-        .d-redox::before { background:linear-gradient(90deg,#0f2347,#2563eb); }
+        .derived-card::before { display:none; }
+        .d-mic::before   { display:none; }
+        .d-mu::before    { display:none; }
+        .d-redox::before { display:none; }
         .derived-header { display:flex; align-items:center; justify-content:space-between; margin-bottom:10px; }
         .derived-label { font-size:0.68rem; font-weight:600; text-transform:uppercase; letter-spacing:0.1em; color:#334155; }
         .derived-value { font-size:2.2rem; font-weight:300; letter-spacing:-0.03em; color:#0f172a; line-height:1; display:flex; align-items:baseline; gap:4px; margin-bottom:8px; font-family:var(--mono); }
