@@ -295,20 +295,21 @@
             <div class="charts-col">
                 <div class="chart-card"><div class="chart-label">Evolución de la Temperatura (°C)</div><div class="chart-wrap"><canvas id="chart-temp"></canvas></div></div>
                 <div class="chart-card"><div class="chart-label">Evolución del pH</div><div class="chart-wrap"><canvas id="chart-ph"></canvas></div></div>
+                <div class="chart-card"><div class="chart-label">Evolución del Potencial Redox (mV)</div><div class="chart-wrap"><canvas id="chart-orp"></canvas></div></div>
+                <div class="chart-card"><div class="chart-label">Evolución del Oxígeno Disuelto (mg/L)</div><div class="chart-wrap"><canvas id="chart-do"></canvas></div></div>
                 <div class="chart-card">
                     <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px;">
-                        <div class="chart-label" style="margin-bottom:0;">Evolución del Potencial Redox (mV)</div>
+                        <div class="chart-label" style="margin-bottom:0;">Velocidad de Crecimiento μ (h⁻¹)</div>
                         <div style="display:flex;align-items:center;gap:6px;">
-                            <span id="orp-fase-badge" style="font-size:0.68rem;font-weight:600;padding:2px 10px;border-radius:12px;background:#f1f5f9;color:#64748b;transition:all 0.4s;">--</span>
+                            <span id="mu-fase-badge" style="font-size:0.68rem;font-weight:600;padding:2px 10px;border-radius:12px;background:#f1f5f9;color:#64748b;transition:all 0.4s;">--</span>
                             <div class="iw">
                                 <button class="i-btn">i</button>
-                                <div class="i-tip" style="right:0;">Fase del cultivo estimada según el potencial redox (ORP): Lag/adaptación (&gt;350 mV), Exponencial (200–350 mV), Estacionaria (50–200 mV), Declive/anaerobia (&lt;50 mV). Referencia orientativa para cultivos aeróbicos.</div>
+                                <div class="i-tip" style="right:0;">Fase del cultivo estimada según μ (velocidad de crecimiento): Lag/Adaptación (μ&lt;0.05), Fase Exponencial (0.05–0.35), Fase Estacionaria (μ≥0.35). Calculada a partir de DO y pH.</div>
                             </div>
                         </div>
                     </div>
-                    <div class="chart-wrap"><canvas id="chart-orp"></canvas></div>
+                    <div class="chart-wrap"><canvas id="chart-mu"></canvas></div>
                 </div>
-                <div class="chart-card"><div class="chart-label">Evolución del Oxígeno Disuelto (mg/L)</div><div class="chart-wrap"><canvas id="chart-do"></canvas></div></div>
             </div>
             <div class="log-card">
                 <div class="log-head">Registro de eventos</div>
@@ -336,8 +337,9 @@ var chartConfigs={
     ph:  { color:'#2563eb', min:0,  max:14, unit:'pH' },
     orp: { color:'#7c3aed', min:-200, max:800, unit:'mV' },
     do:  { color:'#059669', min:0,  max:15, unit:'mg/L' },
-    do:  { color:'#059669', min:0,  max:15, unit:'mg/L' }
+    mu:  { color:'#ea580c', min:0,  max:0.5, unit:'h⁻¹' }
 };
+var muHistory=[], muRecording=[];
 var sensorNames={ temp:'Temperatura', ph:'pH', orp:'Potencial Redox', do:'Oxígeno Disuelto' };
 var sensorUnits={ temp:'°C', ph:'pH', orp:'mV', do:'mg/L' };
 
@@ -380,18 +382,41 @@ function calcDerived() {
         if(subR) subR.textContent=desc;
     }
 
-    // 3. Etiqueta de fase en gráfica ORP
-    var faseBadge=document.getElementById('orp-fase-badge');
-    if(faseBadge){
-        var fase, fbg, ftc;
-        if(orp>350)      { fase='Lag / Adaptación';    fbg='#fee2e2'; ftc='#991b1b'; }
-        else if(orp>200) { fase='Fase Exponencial';     fbg='#fef3c7'; ftc='#92400e'; }
-        else if(orp>50)  { fase='Fase Estacionaria';   fbg='#d1fae5'; ftc='#065f46'; }
-        else             { fase='Declive / Anaerobia';  fbg='#ede9fe'; ftc='#5b21b6'; }
-        faseBadge.textContent=fase;
-        faseBadge.style.background=fbg;
-        faseBadge.style.color=ftc;
+    // 3. Etiqueta de fase en gráfica μ
+    var doSat=14.62-0.3898*t+0.006969*t*t-0.00005896*t*t*t;
+    var doRatio=Math.max(0,Math.min(1,doVal/Math.max(doSat,0.1)));
+    var phOpt=Math.max(0,1-Math.pow((ph-7)/2.5,2));
+    var mu=parseFloat((0.45*doRatio*phOpt).toFixed(3));
+    var muFaseBadge=document.getElementById('mu-fase-badge');
+    if(muFaseBadge){
+        var fase,fbg,ftc;
+        if(mu<0.05)       { fase='Lag / Adaptación';    fbg='#f1f5f9'; ftc='#64748b'; }
+        else if(mu<0.35)  { fase='Fase Exponencial';     fbg='#fef3c7'; ftc='#92400e'; }
+        else              { fase='Fase Estacionaria';   fbg='#d1fae5'; ftc='#065f46'; }
+        muFaseBadge.textContent=fase; muFaseBadge.style.background=fbg; muFaseBadge.style.color=ftc;
     }
+    updateMuHistory(mu);
+}
+
+function updateMuHistory(mu){
+    var now=new Date(),nowStr=now.toLocaleTimeString('es-ES',{hour:'2-digit',minute:'2-digit',second:'2-digit'}),ts=now.getTime();
+    var rt=muHistory[muHistory.length-1];
+    if(!rt||rt.time!==nowStr){ rt={time:nowStr,ts:ts}; muHistory.push(rt); }
+    rt.mu=mu; if(muHistory.length>50) muHistory.shift();
+    if(recordingStart&&!recordingEnd){
+        var re=muRecording[muRecording.length-1];
+        if(!re||re.time!==nowStr){ re={time:nowStr,ts:ts}; muRecording.push(re); }
+        re.mu=mu;
+    }
+    var chart=charts['mu']; if(!chart) return;
+    var filtered,isActive=recordingStart&&!recordingEnd;
+    if(currentPeriodMs===0){ filtered=muHistory.slice(-30); }
+    else if(isActive){ var co=Date.now(),ws=co-currentPeriodMs; filtered=muRecording.filter(function(d){ return d.ts>=ws&&d.ts<=co; }); }
+    else { var eTs=lastRecordingEnd||(muRecording.length>0?muRecording[muRecording.length-1].ts:Date.now()),ws2=eTs-currentPeriodMs; filtered=muRecording.filter(function(d){ return d.ts>=ws2&&d.ts<=eTs; }); }
+    var wv=filtered.filter(function(d){ return d.mu!==null&&d.mu!==undefined; });
+    chart.data.labels=wv.map(function(d){ return d.time; });
+    chart.data.datasets[0].data=wv.map(function(d){ return d.mu; });
+    chart.update('none');
 }
 
 // ── SUPABASE ──
@@ -470,7 +495,7 @@ function pad(n){ return n<10?'0'+n:''+n; }
 async function startRecording(){
     var btn=document.getElementById('btn-start');
     if(!recordingStart){
-        recordingStart=Date.now(); recordingEnd=null; recordingHistory=[]; lastSessionHistory=[]; lastRecordingEnd=null;
+        recordingStart=Date.now(); recordingEnd=null; recordingHistory=[]; lastSessionHistory=[]; lastRecordingEnd=null; muRecording=[];
         currentSessionId='ses_'+recordingStart; supabaseFirstSave=false;
         localStorage.setItem('biorreactor_session',JSON.stringify({id:currentSessionId,start:recordingStart,ended:false}));
         if(sb){ var sr=await sb.from('sesiones').insert({session_id:currentSessionId,start_ts:recordingStart,ended:false}); if(sr.error) addLog('Error creando sesión: '+sr.error.message,'alarm'); else addLog('Sesión creada en la nube.','mqtt'); }
