@@ -528,7 +528,14 @@ function startRecording() {
         supabaseFirstSave = false;
         localStorage.setItem('biorreactor_session', JSON.stringify({ id:currentSessionId, start:recordingStart, ended:false }));
         // Crear sesión en Supabase
-        if (sb) sb.from('sesiones').insert({ session_id:currentSessionId, start_ts:recordingStart, ended:false });
+        if (sb) {
+            var sesResult = await sb.from('sesiones').insert({ session_id:currentSessionId, start_ts:recordingStart, ended:false });
+            if (sesResult.error) {
+                addLog('Error creando sesión en BD: ' + sesResult.error.message, 'alarm');
+            } else {
+                addLog('Sesión creada en la nube.', 'mqtt');
+            }
+        }
         Object.keys(charts).forEach(function(key) {
             charts[key].data.labels = [];
             charts[key].data.datasets[0].data = [];
@@ -546,7 +553,10 @@ function startRecording() {
         var hh = Math.floor(elapsed/3600), mm = Math.floor((elapsed%3600)/60), ss = elapsed%60;
         var tiempoStr = (hh>0 ? pad(hh)+'h ' : '') + pad(mm)+'m ' + pad(ss)+'s';
         // Marcar sesión como finalizada en Supabase
-        if (sb) sb.from('sesiones').update({ ended:true }).eq('session_id', currentSessionId);
+        if (sb) {
+            var endResult = await sb.from('sesiones').update({ ended:true }).eq('session_id', currentSessionId);
+            if (endResult.error) addLog('Error finalizando sesión en BD: ' + endResult.error.message, 'alarm');
+        }
         recordingStart = null;
         localStorage.setItem('biorreactor_session', JSON.stringify({ id:currentSessionId, ended:true }));
         currentSessionId = null;
