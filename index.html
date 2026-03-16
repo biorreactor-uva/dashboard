@@ -8,6 +8,7 @@
     <link rel="apple-touch-icon" href="logoApp.png">
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/mqtt/dist/mqtt.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
     <style>
         *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
@@ -46,10 +47,6 @@
         .topbar-title b { font-size:0.95rem; font-weight:600; color:var(--gray-900); }
         .topbar-title span { font-size:0.7rem; color:#9b1c6e; font-weight:500; letter-spacing:0.05em; text-transform:uppercase; }
         .topbar-right { display:flex; align-items:center; gap:12px; }
-        .mqtt-pill { display:flex; align-items:center; gap:6px; background:var(--bg3); border:1px solid var(--border); padding:5px 12px; border-radius:20px; font-size:0.72rem; font-family:var(--mono); color:var(--gray-500); }
-        .mqtt-pill .dot { width:7px; height:7px; border-radius:50%; background:var(--red); box-shadow:0 0 5px var(--red); flex-shrink:0; animation:blink 1.2s infinite; }
-        .mqtt-pill.device-connected .dot { background:var(--green); box-shadow:0 0 5px var(--green); animation:blink 2s infinite; }
-        @keyframes blink { 50% { opacity:0.2; } }
 
         .page { max-width:1440px; margin:0 auto; padding:24px 28px; }
 
@@ -62,7 +59,7 @@
         .hero-stat-val { font-size:1.25rem; font-weight:400; color:#fff; font-family:var(--mono); }
         .hero-stat-lbl { font-size:0.62rem; color:rgba(255,255,255,0.6); text-transform:uppercase; letter-spacing:0.08em; margin-top:2px; }
         .live-badge { display:flex; align-items:center; gap:7px; background:rgba(255,255,255,0.12); border:1px solid rgba(255,255,255,0.25); color:#fff; padding:8px 16px; border-radius:20px; font-size:0.78rem; font-weight:500; }
-        .live-dot { width:7px; height:7px; border-radius:50%; background:#4ade80; box-shadow:0 0 8px #4ade80; animation:blink 2s infinite; }
+        @keyframes blink { 50% { opacity:0.2; } }
 
         .sensor-grid { display:grid; grid-template-columns:repeat(4,1fr); gap:14px; margin-bottom:24px; }
         .sensor-card { background:var(--white); border:1px solid var(--border); border-radius:var(--r2); padding:22px 20px; position:relative; overflow:hidden; box-shadow:var(--shadow); transition:box-shadow 0.2s,transform 0.2s,border-color 0.2s; }
@@ -72,11 +69,6 @@
         .c-ph::before   { background:linear-gradient(90deg,var(--blue),#60a5fa); }
         .c-orp::before  { background:linear-gradient(90deg,var(--purple),var(--purple2)); }
         .c-do::before   { background:linear-gradient(90deg,var(--green),#34d399); }
-        .sensor-icon { position:absolute; top:18px; right:16px; width:36px; height:36px; border-radius:10px; display:flex; align-items:center; justify-content:center; font-size:16px; }
-        .c-temp .sensor-icon { background:var(--red-lt); }
-        .c-ph   .sensor-icon { background:var(--blue-lt); }
-        .c-orp  .sensor-icon { background:var(--purple-lt); }
-        .c-do   .sensor-icon { background:var(--green-lt); }
         .sensor-label { font-size:0.7rem; font-weight:600; text-transform:uppercase; letter-spacing:0.1em; color:#334155; margin-bottom:10px; }
         .sensor-value { font-size:2.6rem; font-weight:300; letter-spacing:-0.04em; color:#0f172a; line-height:1; display:flex; align-items:baseline; gap:5px; margin-bottom:14px; font-family:var(--mono); }
         .sensor-value .unit { font-size:1rem; font-weight:400; color:#475569; font-family:var(--font); }
@@ -127,7 +119,6 @@
         .modal-header h3 { color:#fff; font-size:0.95rem; font-weight:600; display:flex; align-items:center; gap:8px; }
         .modal-close { background:none; border:none; color:rgba(255,255,255,0.55); cursor:pointer; font-size:1.4rem; line-height:1; padding:0 2px; transition:color 0.15s; }
         .modal-close:hover { color:#fff; }
-        .modal-desc { font-size:0.8rem; color:#64748b; margin-bottom:20px; line-height:1.55; padding:10px 12px; background:#f8fafc; border-radius:8px; border-left:3px solid #0f2347; }
         .btn-info { display:flex; align-items:center; justify-content:center; width:28px; height:28px; border-radius:50%; border:1.5px solid #0f2347; background:#fff; color:#0f2347; cursor:pointer; transition:all 0.15s; flex-shrink:0; }
         .btn-info:hover, .btn-info.open { background:#0f2347; color:#fff; }
         .info-panel { display:none; padding:10px 24px 0; }
@@ -214,8 +205,6 @@
             <button class="modal-close" onclick="closeAlertModal()">×</button>
         </div>
         <div class="modal-body">
-            <p class="modal-desc" style="display:none;" id="modal-info-text">Define los umbrales mínimo y máximo para cada variable. Si el valor medido supera algún límite se registrará una alerta. Deja los campos vacíos para desactivar la alerta de esa variable.</p>
-
             <div class="alert-section">
                 <div class="alert-section-title"><span class="alert-dot" style="background:#dc2626;"></span>Temperatura (°C)</div>
                 <div class="alert-inputs">
@@ -223,7 +212,6 @@
                     <div class="alert-field"><label>Máximo (°C)</label><input type="number" id="al-temp-max" placeholder="Sin límite" step="0.1"></div>
                 </div>
             </div>
-
             <div class="alert-section">
                 <div class="alert-section-title"><span class="alert-dot" style="background:#2563eb;"></span>pH</div>
                 <div class="alert-inputs">
@@ -231,7 +219,6 @@
                     <div class="alert-field"><label>Máximo (pH)</label><input type="number" id="al-ph-max" placeholder="Sin límite" step="0.01" min="0" max="14"></div>
                 </div>
             </div>
-
             <div class="alert-section">
                 <div class="alert-section-title"><span class="alert-dot" style="background:#7c3aed;"></span>Potencial Redox (mV)</div>
                 <div class="alert-inputs">
@@ -239,7 +226,6 @@
                     <div class="alert-field"><label>Máximo (mV)</label><input type="number" id="al-orp-max" placeholder="Sin límite" step="1"></div>
                 </div>
             </div>
-
             <div class="alert-section">
                 <div class="alert-section-title"><span class="alert-dot" style="background:#059669;"></span>Oxígeno Disuelto (mg/L)</div>
                 <div class="alert-inputs">
@@ -273,15 +259,14 @@
                 <span>Universidad de Valladolid</span>
             </div>
         </div>
-        <div class="topbar-right">
-        </div>
+        <div class="topbar-right"></div>
     </nav>
 
     <div class="page">
         <div class="hero">
             <div class="hero-text">
                 <h2>Laboratorio de Ingeniería Química - UVa</h2>
-                <p>Monitorización en tiempo real · Temperatura · pH · Potencial Redox · Oxígeno Disuelto ·</p>
+                <p>Monitorización en tiempo real · Temperatura · pH · Potencial Redox · Oxígeno Disuelto</p>
             </div>
             <div class="hero-right">
                 <div class="hero-stat">
@@ -291,7 +276,10 @@
                 <button id="btn-start" onclick="startRecording()" style="padding:8px 18px;border-radius:var(--r);border:1px solid rgba(255,255,255,0.3);background:rgba(255,255,255,0.12);color:#fff;font-size:0.8rem;font-weight:600;cursor:pointer;font-family:var(--font);letter-spacing:0.03em;transition:background 0.2s;">
                     ▶ Iniciar registro
                 </button>
-                <div class="live-badge" id="mqtt-pill"><span class="dot" style="width:7px;height:7px;border-radius:50%;background:#f87171;box-shadow:0 0 8px #f87171;animation:blink 1.2s infinite;flex-shrink:0;"></span><span id="mqtt-label">Esperando dispositivo...</span></div>
+                <div class="live-badge" id="mqtt-pill">
+                    <span class="dot" id="device-dot" style="width:7px;height:7px;border-radius:50%;background:#f87171;box-shadow:0 0 8px #f87171;animation:blink 1.2s infinite;flex-shrink:0;"></span>
+                    <span id="mqtt-label">Esperando dispositivo...</span>
+                </div>
             </div>
         </div>
 
@@ -361,23 +349,26 @@
 </div>
 
 <script>
-var SECRET_TOKEN = 'uvalab';
-var realDataReceived = { temp:false, ph:false, orp:false, do:false };
+// ── CONFIGURACIÓN ──
+var SECRET_TOKEN  = 'uvalab';
+var SUPABASE_URL  = 'https://xxqsxspxzmpiyihefdpx.supabase.co';
+var SUPABASE_KEY  = 'sb_publishable_eWprfzTeOlHhJ8K2KoA-bg_8EqkRlBe';
+var MQTT_BROKER   = 'wss://broker.hivemq.com:8884/mqtt';
+var MQTT_TOPICS   = { temp:'biorreactor/temperatura', ph:'biorreactor/ph', orp:'biorreactor/orp', do:'biorreactor/do' };
+
+// ── ESTADO ──
+var sb = null;
 var charts = {};
 var recordingStart = null;
-var recordingEnd = null;
-var currentPeriodMs = 0;
-var realtimeHistory = [];
+var recordingEnd   = null;
+var currentSessionId = null;
+var currentPeriodMs  = 0;
+var realtimeHistory  = [];
 var recordingHistory = [];
-
-// Umbrales: null = sin límite (sin alertas por defecto)
-var alertThresholds = {
-    temp: { min:null, max:null },
-    ph:   { min:null, max:null },
-    orp:  { min:null, max:null },
-    do:   { min:null, max:null }
-};
-var alertCooldown = {}; // evita spam de alertas repetidas (30 s cooldown)
+var realDataReceived = { temp:false, ph:false, orp:false, do:false };
+var alertThresholds  = { temp:{min:null,max:null}, ph:{min:null,max:null}, orp:{min:null,max:null}, do:{min:null,max:null} };
+var alertCooldown    = {};
+var pendingRows      = [];
 
 var chartConfigs = {
     temp:{ color:'#dc2626', min:20,   max:45,  unit:'°C'   },
@@ -388,9 +379,7 @@ var chartConfigs = {
 var sensorNames = { temp:'Temperatura', ph:'pH', orp:'Potencial Redox', do:'Oxígeno Disuelto' };
 var sensorUnits = { temp:'°C', ph:'pH', orp:'mV', do:'mg/L' };
 
-var MQTT_BROKER = 'wss://broker.hivemq.com:8884/mqtt';
-var MQTT_TOPICS = { temp:'biorreactor/temperatura', ph:'biorreactor/ph', orp:'biorreactor/orp', do:'biorreactor/do' };
-
+// ── ACCESO ──
 var params = new URLSearchParams(window.location.search);
 if (params.get('token') === SECRET_TOKEN) {
     document.getElementById('dashboard').style.display = 'block';
@@ -399,12 +388,79 @@ if (params.get('token') === SECRET_TOKEN) {
     document.getElementById('access-screen').style.display = 'flex';
 }
 
+// ── INIT ──
 function initDashboard() {
     Chart.defaults.color = '#475569';
     Chart.defaults.borderColor = 'rgba(0,0,0,0.06)';
-    initCharts(); connectMQTT(); startSimulator(); startUptime();
+    initCharts();
+    initSupabase();
+    connectMQTT();
+    startSimulator();
+    startUptime();
 }
 
+// ── SUPABASE ──
+function initSupabase() {
+    try {
+        sb = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+        addLog('Base de datos conectada.', 'mqtt');
+        checkActiveSession();
+    } catch(e) {
+        addLog('Error conectando base de datos.', 'alarm');
+    }
+}
+
+async function checkActiveSession() {
+    var stored = localStorage.getItem('biorreactor_session');
+    if (!stored) return;
+    var session;
+    try { session = JSON.parse(stored); } catch(e) { return; }
+    if (!session || session.ended) return;
+
+    // Hay sesión activa → recuperar
+    currentSessionId = session.id;
+    recordingStart   = session.start;
+    addLog('Sesión activa encontrada. Cargando historial...', 'mqtt');
+    await loadSessionData(currentSessionId);
+
+    // Restaurar botón
+    var btn = document.getElementById('btn-start');
+    btn.innerHTML = '■ Finalizar';
+    btn.style.background   = 'rgba(239,68,68,0.25)';
+    btn.style.borderColor  = 'rgba(239,68,68,0.6)';
+    btn.style.color        = '#fca5a5';
+}
+
+async function loadSessionData(sessionId) {
+    if (!sb) return;
+    var result = await sb.from('registros').select('*').eq('session_id', sessionId).order('ts', { ascending: true });
+    if (result.error || !result.data || result.data.length === 0) {
+        addLog('Sin datos previos en la sesión.', '');
+        return;
+    }
+    recordingHistory = result.data.map(function(r) {
+        return { time:r.time, ts:r.ts, temp:r.temp, ph:r.ph, orp:r.orp, do:r.do };
+    });
+    Object.keys(charts).forEach(function(key){ refreshChart(key); });
+    addLog('Historial cargado: ' + result.data.length + ' registros.', 'mqtt');
+}
+
+async function saveRow(entry) {
+    if (!sb || !currentSessionId) return;
+    var row = { ts:entry.ts, time:entry.time, temp:entry.temp||null, ph:entry.ph||null, orp:entry.orp||null, do:entry.do||null, session_id:currentSessionId };
+    var result = await sb.from('registros').upsert(row, { onConflict:'ts,session_id' });
+    if (result.error) pendingRows.push(row);
+}
+
+async function flushPending() {
+    if (!sb || pendingRows.length === 0) return;
+    var batch = pendingRows.splice(0, 50);
+    var result = await sb.from('registros').upsert(batch, { onConflict:'ts,session_id' });
+    if (result.error) pendingRows = batch.concat(pendingRows);
+}
+setInterval(flushPending, 10000);
+
+// ── UPTIME ──
 function startUptime() {
     setInterval(function() {
         if (!recordingStart) return;
@@ -416,38 +472,46 @@ function startUptime() {
 }
 function pad(n) { return n<10?'0'+n:''+n; }
 
+// ── REGISTRO ──
 function startRecording() {
     var btn = document.getElementById('btn-start');
     if (!recordingStart) {
-        recordingStart = Date.now();
-        recordingEnd = null;
+        // INICIAR
+        recordingStart   = Date.now();
+        recordingEnd     = null;
         recordingHistory = [];
+        currentSessionId = 'ses_' + recordingStart;
+        localStorage.setItem('biorreactor_session', JSON.stringify({ id:currentSessionId, start:recordingStart, ended:false }));
         Object.keys(charts).forEach(function(key) {
             charts[key].data.labels = [];
             charts[key].data.datasets[0].data = [];
             charts[key].update('none');
         });
-        btn.innerHTML = '■ Finalizar';
-        btn.style.background = 'rgba(239,68,68,0.25)';
+        btn.innerHTML      = '■ Finalizar';
+        btn.style.background  = 'rgba(239,68,68,0.25)';
         btn.style.borderColor = 'rgba(239,68,68,0.6)';
-        btn.style.color = '#fca5a5';
-        addLog('Registro de datos iniciado', 'mqtt');
+        btn.style.color       = '#fca5a5';
+        addLog('Registro de datos iniciado.', 'mqtt');
     } else {
+        // FINALIZAR
         recordingEnd = Date.now();
-        var elapsed = Math.floor((recordingEnd - recordingStart) / 1000);
+        var elapsed  = Math.floor((recordingEnd - recordingStart) / 1000);
         var hh = Math.floor(elapsed/3600), mm = Math.floor((elapsed%3600)/60), ss = elapsed%60;
         var tiempoStr = (hh>0 ? pad(hh)+'h ' : '') + pad(mm)+'m ' + pad(ss)+'s';
         recordingStart = null;
+        localStorage.setItem('biorreactor_session', JSON.stringify({ id:currentSessionId, ended:true }));
+        currentSessionId = null;
         var el = document.getElementById('stat-uptime');
         if (el) el.textContent = '00:00:00';
-        btn.innerHTML = '▶ Iniciar registro';
-        btn.style.background = 'rgba(255,255,255,0.12)';
+        btn.innerHTML      = '▶ Iniciar registro';
+        btn.style.background  = 'rgba(255,255,255,0.12)';
         btn.style.borderColor = 'rgba(255,255,255,0.3)';
-        btn.style.color = '#fff';
+        btn.style.color       = '#fff';
         addLog('Registro finalizado — Tiempo activo: ' + tiempoStr, 'alarm');
     }
 }
 
+// ── CHARTS ──
 function initCharts() {
     Object.keys(chartConfigs).forEach(function(key) {
         var cfg = chartConfigs[key];
@@ -463,121 +527,121 @@ function initCharts() {
     });
 }
 
+// ── MQTT ──
 function connectMQTT() {
     try {
         var client = mqtt.connect(MQTT_BROKER, { clientId:'uva_'+Math.random().toString(16).substr(2,8), reconnectPeriod:5000, connectTimeout:10000 });
         client.on('connect', function() {
-            addLog('Conexión establecida - esperando dispositivo ...','mqtt');
+            addLog('Conexión establecida - esperando dispositivo...', 'mqtt');
             Object.values(MQTT_TOPICS).forEach(function(t){ client.subscribe(t); });
         });
         client.on('message', function(topic,msg) {
-            var value=parseFloat(msg.toString()); if(isNaN(value)) return;
-            var key=Object.keys(MQTT_TOPICS).find(function(k){ return MQTT_TOPICS[k]===topic; });
+            var value = parseFloat(msg.toString()); if(isNaN(value)) return;
+            var key = Object.keys(MQTT_TOPICS).find(function(k){ return MQTT_TOPICS[k]===topic; });
             if(!key) return;
-            if(!realDataReceived[key]){
-                realDataReceived[key]=true;
-                addLog('Datos reales recibidos: '+sensorNames[key],'mqtt');
-                var anyReal=Object.values(realDataReceived).some(function(v){ return v; });
-                if(anyReal){
-                var pill=document.getElementById('mqtt-pill'), label=document.getElementById('mqtt-label');
-                    var dot=pill.querySelector('.dot');
-                    dot.style.background='#4ade80'; dot.style.boxShadow='0 0 8px #4ade80'; dot.style.animationDuration='2s';
-                    label.textContent='Dispositivo conectado';
+            if(!realDataReceived[key]) {
+                realDataReceived[key] = true;
+                addLog('Datos reales recibidos: '+sensorNames[key], 'mqtt');
+                if(Object.values(realDataReceived).some(function(v){ return v; })) {
+                    var dot = document.getElementById('device-dot');
+                    var lbl = document.getElementById('mqtt-label');
+                    dot.style.background = '#4ade80'; dot.style.boxShadow = '0 0 8px #4ade80'; dot.style.animationDuration = '2s';
+                    lbl.textContent = 'Dispositivo conectado';
                 }
             }
-            updateWidget(key,value,true);
+            updateWidget(key, value, true);
         });
-        client.on('offline', function(){});
+        client.on('offline',   function(){});
         client.on('reconnect', function(){});
-    } catch(e){ document.getElementById('mqtt-label').textContent='MQTT no disponible'; }
+    } catch(e) { document.getElementById('mqtt-label').textContent = 'MQTT no disponible'; }
 }
 
+// ── SIMULADOR ──
 function startSimulator() {
     setInterval(function() {
-        var sim={ temp:parseFloat((36.8+Math.random()*0.4).toFixed(1)), ph:parseFloat((6.5+Math.random()*1.8).toFixed(2)), orp:parseFloat((255+Math.random()*15).toFixed(0)), do:parseFloat((7.8+Math.random()*0.3).toFixed(1)) };
-        Object.keys(sim).forEach(function(key){ if(!realDataReceived[key]) updateWidget(key,sim[key],false); });
+        var sim = { temp:parseFloat((36.8+Math.random()*0.4).toFixed(1)), ph:parseFloat((6.5+Math.random()*1.8).toFixed(2)), orp:parseFloat((255+Math.random()*15).toFixed(0)), do:parseFloat((7.8+Math.random()*0.3).toFixed(1)) };
+        Object.keys(sim).forEach(function(key){ if(!realDataReceived[key]) updateWidget(key, sim[key], false); });
     }, 2000);
 }
 
-function updateWidget(key,value,isReal) {
-    var now = new Date();
+// ── UPDATE WIDGET ──
+function updateWidget(key, value, isReal) {
+    var now    = new Date();
     var nowStr = now.toLocaleTimeString('es-ES',{hour:'2-digit',minute:'2-digit',second:'2-digit'});
     var valEl=document.getElementById('val-'+key), updEl=document.getElementById('upd-'+key), srcEl=document.getElementById('src-'+key);
-    if(valEl) valEl.childNodes[0].nodeValue=value;
-    if(updEl) updEl.textContent=nowStr;
-    if(srcEl){ srcEl.textContent=isReal?'EN VIVO':'SIM'; srcEl.className='src-badge '+(isReal?'real':'sim'); }
+    if(valEl) valEl.childNodes[0].nodeValue = value;
+    if(updEl) updEl.textContent = nowStr;
+    if(srcEl){ srcEl.textContent = isReal?'EN VIVO':'SIM'; srcEl.className = 'src-badge '+(isReal?'real':'sim'); }
 
     checkThreshold(key, value);
 
+    // Historial tiempo real (siempre)
     var rtEntry = realtimeHistory[realtimeHistory.length-1];
-    if (!rtEntry || rtEntry.time !== nowStr) { rtEntry = {time:nowStr, ts:now.getTime()}; realtimeHistory.push(rtEntry); }
+    if(!rtEntry || rtEntry.time !== nowStr){ rtEntry = {time:nowStr, ts:now.getTime()}; realtimeHistory.push(rtEntry); }
     rtEntry[key] = value;
     if(realtimeHistory.length > 50) realtimeHistory.shift();
 
-    if (recordingStart && !recordingEnd) {
+    // Historial de registro (solo si activo)
+    if(recordingStart && !recordingEnd) {
         var entry = recordingHistory[recordingHistory.length-1];
-        if (!entry || entry.time !== nowStr) { entry = {time:nowStr, ts:now.getTime()}; recordingHistory.push(entry); }
+        if(!entry || entry.time !== nowStr){ entry = {time:nowStr, ts:now.getTime()}; recordingHistory.push(entry); }
         entry[key] = value;
         if(recordingHistory.length > 50000) recordingHistory.shift();
+        saveRow(entry); // guardar en Supabase
     }
     refreshChart(key);
 }
 
+// ── ALERTAS ──
 function checkThreshold(key, value) {
-    var th = alertThresholds[key];
+    var th   = alertThresholds[key];
     var card = document.getElementById('card-'+key);
-    var now = Date.now();
+    var now  = Date.now();
     var COOLDOWN = 30000;
-    var triggered = false;
-    var msg = '';
-
-    if (th.min !== null && value < th.min) {
+    var triggered = false, msg = '';
+    if(th.min !== null && value < th.min) {
         msg = 'ALERTA: '+sensorNames[key]+' bajo el mínimo ('+value+' '+sensorUnits[key]+' < '+th.min+' '+sensorUnits[key]+')';
         triggered = true;
-    } else if (th.max !== null && value > th.max) {
+    } else if(th.max !== null && value > th.max) {
         msg = 'ALERTA: '+sensorNames[key]+' sobre el máximo ('+value+' '+sensorUnits[key]+' > '+th.max+' '+sensorUnits[key]+')';
         triggered = true;
     }
-
-    if (triggered) {
-        if (!alertCooldown[key] || now - alertCooldown[key] > COOLDOWN) {
-            alertCooldown[key] = now;
-            addLog(msg, 'alarm');
-        }
-        if (card) card.classList.add('alarm');
+    if(triggered) {
+        if(!alertCooldown[key] || now - alertCooldown[key] > COOLDOWN){ alertCooldown[key]=now; addLog(msg,'alarm'); }
+        if(card) card.classList.add('alarm');
     } else {
-        if (card) card.classList.remove('alarm');
+        if(card) card.classList.remove('alarm');
     }
 }
 
+// ── CHART REFRESH ──
 function refreshChart(key) {
-    var chart = charts[key];
-    if (!chart) return;
+    var chart = charts[key]; if(!chart) return;
     var filtered;
-    if (currentPeriodMs === 0) {
+    if(currentPeriodMs === 0) {
         filtered = realtimeHistory.slice(-30);
     } else {
         var cutoff = recordingEnd ? recordingEnd : Date.now();
         var windowStart = cutoff - currentPeriodMs;
-        filtered = recordingHistory.filter(function(d) { return d.ts >= windowStart && d.ts <= cutoff; });
+        filtered = recordingHistory.filter(function(d){ return d.ts >= windowStart && d.ts <= cutoff; });
     }
-    var labels = filtered.map(function(d){ return d.time; });
-    var data = filtered.map(function(d){ return d[key] !== undefined ? d[key] : null; });
-    chart.data.labels = labels;
-    chart.data.datasets[0].data = data;
+    chart.data.labels = filtered.map(function(d){ return d.time; });
+    chart.data.datasets[0].data = filtered.map(function(d){ return d[key] !== undefined ? d[key] : null; });
     chart.update('none');
 }
 
-function addLog(msg,type) {
-    var log=document.getElementById('event-log');
-    var time=new Date().toLocaleTimeString('es-ES',{hour:'2-digit',minute:'2-digit',second:'2-digit'});
-    var div=document.createElement('div'); div.className='log-entry';
-    var cls=type==='alarm'?'log-alarm':type==='mqtt'?'log-mqtt':'';
-    div.innerHTML='<span class="log-t">['+time+']</span><span class="'+cls+'">'+msg+'</span>';
+// ── LOG ──
+function addLog(msg, type) {
+    var log  = document.getElementById('event-log');
+    var time = new Date().toLocaleTimeString('es-ES',{hour:'2-digit',minute:'2-digit',second:'2-digit'});
+    var div  = document.createElement('div'); div.className = 'log-entry';
+    var cls  = type==='alarm'?'log-alarm':type==='mqtt'?'log-mqtt':'';
+    div.innerHTML = '<span class="log-t">['+time+']</span><span class="'+cls+'">'+msg+'</span>';
     log.prepend(div);
-    if(log.children.length>100) log.removeChild(log.lastChild);
+    if(log.children.length > 100) log.removeChild(log.lastChild);
 }
 
+// ── PERIODO ──
 function setPeriod(ms, btn) {
     currentPeriodMs = ms;
     document.querySelectorAll('.period-btn').forEach(function(b){ b.classList.remove('active'); });
@@ -585,70 +649,56 @@ function setPeriod(ms, btn) {
     Object.keys(charts).forEach(function(key){ refreshChart(key); });
 }
 
+// ── CSV ──
 function downloadCSV() {
     var exportData = recordingEnd
         ? recordingHistory.filter(function(r){ return r.ts <= recordingEnd; })
         : recordingHistory;
-    var csv='Hora,Temp,pH,ORP,DO\n';
-    exportData.forEach(function(r){ csv+=(r.time||'')+','+(r.temp||'')+','+(r.ph||'')+','+(r.orp||'')+','+(r.do||'')+'\n'; });
-    var a=document.createElement('a');
-    a.href=URL.createObjectURL(new Blob([csv],{type:'text/csv'}));
-    a.download='biorreactor_uva.csv'; a.click();
+    var csv = 'Hora,Temp,pH,ORP,DO\n';
+    exportData.forEach(function(r){ csv += (r.time||'')+','+(r.temp||'')+','+(r.ph||'')+','+(r.orp||'')+','+(r.do||'')+'\n'; });
+    var a = document.createElement('a');
+    a.href = URL.createObjectURL(new Blob([csv],{type:'text/csv'}));
+    a.download = 'biorreactor_uva.csv'; a.click();
     addLog('Datos exportados'+(recordingEnd?' (registro completo)':'')+'.', '');
 }
 
 // ── MODAL ALERTAS ──
 function toggleInfo() {
     var panel = document.getElementById('info-panel');
-    var btn = document.getElementById('btn-info');
-    var open = panel.classList.toggle('open');
+    var btn   = document.getElementById('btn-info');
+    var open  = panel.classList.toggle('open');
     btn.classList.toggle('open', open);
 }
-
 function openAlertModal() {
-    var keys = ['temp','ph','orp','do'];
-    keys.forEach(function(k) {
+    ['temp','ph','orp','do'].forEach(function(k) {
         document.getElementById('al-'+k+'-min').value = alertThresholds[k].min !== null ? alertThresholds[k].min : '';
         document.getElementById('al-'+k+'-max').value = alertThresholds[k].max !== null ? alertThresholds[k].max : '';
     });
     document.getElementById('modal-alerts').classList.add('open');
 }
-
-function closeAlertModal() {
-    document.getElementById('modal-alerts').classList.remove('open');
-}
-
+function closeAlertModal() { document.getElementById('modal-alerts').classList.remove('open'); }
 function saveAlerts() {
-    var keys = ['temp','ph','orp','do'];
     var hasAny = false;
-    keys.forEach(function(k) {
+    ['temp','ph','orp','do'].forEach(function(k) {
         var minVal = document.getElementById('al-'+k+'-min').value.trim();
         var maxVal = document.getElementById('al-'+k+'-max').value.trim();
         alertThresholds[k].min = minVal !== '' ? parseFloat(minVal) : null;
         alertThresholds[k].max = maxVal !== '' ? parseFloat(maxVal) : null;
-        if (alertThresholds[k].min !== null || alertThresholds[k].max !== null) hasAny = true;
+        if(alertThresholds[k].min !== null || alertThresholds[k].max !== null) hasAny = true;
     });
-    alertCooldown = {}; // reset cooldowns al cambiar config
-    var btn = document.getElementById('btn-alerts');
-    if (hasAny) {
-        btn.classList.add('active');
-    } else {
-        btn.classList.remove('active');
-    }
+    alertCooldown = {};
+    document.getElementById('btn-alerts').classList.toggle('active', hasAny);
     closeAlertModal();
-    addLog('Configuración de alertas actualizada', 'mqtt');
+    addLog('Configuración de alertas actualizada.', 'mqtt');
 }
-
 function resetAlertInputs() {
     ['temp','ph','orp','do'].forEach(function(k) {
         document.getElementById('al-'+k+'-min').value = '';
         document.getElementById('al-'+k+'-max').value = '';
     });
 }
-
-// Cerrar modal al hacer clic fuera
 document.getElementById('modal-alerts').addEventListener('click', function(e) {
-    if (e.target === this) closeAlertModal();
+    if(e.target === this) closeAlertModal();
 });
 </script>
 </body>
