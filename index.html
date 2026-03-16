@@ -477,6 +477,17 @@ async function loadSessionData(sessionId) {
     addLog('Historial cargado: ' + result.data.length + ' registros.', 'mqtt');
 }
 
+// Debounce por ts: espera 3s antes de insertar para que lleguen todos los sensores
+var saveTimers = {};
+function scheduleSave(entry) {
+    var key = entry.ts;
+    if (saveTimers[key]) clearTimeout(saveTimers[key]);
+    saveTimers[key] = setTimeout(function() {
+        delete saveTimers[key];
+        saveRow(entry);
+    }, 3000);
+}
+
 var supabaseFirstSave = false;
 async function saveRow(entry) {
     if (!sb || !currentSessionId) return;
@@ -674,7 +685,7 @@ function updateWidget(key, value, isReal) {
         if(!entry || entry.time !== nowStr){ entry = {time:nowStr, ts:now.getTime()}; recordingHistory.push(entry); }
         entry[key] = value;
         if(recordingHistory.length > 50000) recordingHistory.shift();
-        saveRow(entry); // guardar en Supabase
+        scheduleSave(entry); // guardar en Supabase con debounce
     }
     refreshChart(key);
 }
