@@ -267,7 +267,8 @@
                     </div>
                 </div>
                 <div class="derived-value" id="val-mu">--<span class="unit">h⁻¹</span></div>
-                <div class="derived-sub" id="sub-mu">Esperando los 4 sensores...</div>
+                <div class="derived-sub" id="sub-mu-fase" style="font-weight:600;color:#0f172a;margin-bottom:3px;">Esperando los 4 sensores...</div>
+                <div class="derived-sub" id="sub-mu" style="font-size:0.68rem;"></div>
             </div>
 
             <!-- Estado Redox Dinámico -->
@@ -279,11 +280,11 @@
                         <div class="i-tip">Clasificación dinámica del potencial redox (ORP) del medio de cultivo. Indica el balance entre oxidación y reducción: Muy oxidante (&gt;400 mV), Oxidante (200–400), Lev. oxidante (0–200), Reductor (-100–0), Muy reductor (&lt;-100 mV).</div>
                     </div>
                 </div>
-                <div class="derived-value" id="val-orp-disp">--<span class="unit">mV</span></div>
-                <div id="redox-badge" class="redox-badge" style="background:#f1f5f9;color:#64748b;">
-                    <span class="redox-dot" id="redox-dot" style="background:#94a3b8;"></span>
+                <div id="redox-badge" class="redox-badge" style="background:#f1f5f9;color:#64748b;font-size:1.1rem;padding:10px 16px;margin-top:6px;">
+                    <span class="redox-dot" id="redox-dot" style="background:#94a3b8;width:10px;height:10px;border-radius:50%;flex-shrink:0;"></span>
                     <span id="redox-label">Sin datos</span>
                 </div>
+                <div class="derived-sub" style="margin-top:8px;" id="sub-redox">Esperando los 4 sensores...</div>
             </div>
 
         </div>
@@ -310,6 +311,7 @@
                 <div class="chart-card"><div class="chart-label">Evolución del pH</div><div class="chart-wrap"><canvas id="chart-ph"></canvas></div></div>
                 <div class="chart-card"><div class="chart-label">Evolución del Potencial Redox (mV)</div><div class="chart-wrap"><canvas id="chart-orp"></canvas></div></div>
                 <div class="chart-card"><div class="chart-label">Evolución del Oxígeno Disuelto (mg/L)</div><div class="chart-wrap"><canvas id="chart-do"></canvas></div></div>
+                <div class="chart-card"><div class="chart-label">Velocidad de Crecimiento μ (h⁻¹)</div><div class="chart-wrap"><canvas id="chart-mu"></canvas></div></div>
             </div>
             <div class="log-card">
                 <div class="log-head">Registro de eventos</div>
@@ -336,8 +338,12 @@ var chartConfigs={
     temp:{ color:'#dc2626', min:20, max:45, unit:'°C' },
     ph:  { color:'#2563eb', min:0,  max:14, unit:'pH' },
     orp: { color:'#7c3aed', min:-200, max:800, unit:'mV' },
-    do:  { color:'#059669', min:0,  max:15, unit:'mg/L' }
+    do:  { color:'#059669', min:0,  max:15, unit:'mg/L' },
+    mu:  { color:'#ea580c', min:0,  max:0.5, unit:'h⁻¹' }
 };
+// Historial para μ (derivado)
+var muHistory = [];
+var muRecording = [];
 var sensorNames={ temp:'Temperatura', ph:'pH', orp:'Potencial Redox', do:'Oxígeno Disuelto' };
 var sensorUnits={ temp:'°C', ph:'pH', orp:'mV', do:'mg/L' };
 
@@ -366,28 +372,67 @@ function calcDerived() {
     var sM=document.getElementById('sub-mic'); if(sM) sM.textContent=micLabel;
     var bM=document.getElementById('bar-mic'); if(bM){ bM.style.width=mic+'%'; bM.style.background=micColor; }
 
-    // 2. Velocidad de crecimiento μ (h⁻¹)
+    // 2. Velocidad de crecimiento μ (h⁻¹) con fases
     var doSat=14.62-0.3898*t+0.006969*t*t-0.00005896*t*t*t;
     var doRatio=Math.max(0,Math.min(1,doVal/Math.max(doSat,0.1)));
     var phOpt=Math.max(0,1-Math.pow((ph-7)/2.5,2));
     var mu=parseFloat((0.45*doRatio*phOpt).toFixed(3));
-    var muLabel=mu>0.3?'Crecimiento rápido':mu>0.15?'Crecimiento moderado':'Crecimiento lento';
+    // Determinar fase de crecimiento
+    var muFase, muDesc;
+    if(mu<0.05){
+        muFase='Fase Lag (Adaptación)';
+        muDesc='μ ≈ 0 — Las levaduras se están adaptando al medio. No hay crecimiento activo todavía.';
+    } else if(mu>=0.05&&mu<0.35){
+        muFase='Fase Logarítmica (Exponencial)';
+        muDesc='μ en valor máximo — La levadura es más activa y productiva. Crecimiento exponencial en curso.';
+    } else {
+        muFase='Fase Estacionaria';
+        muDesc='μ → 0 — El sustrato se agota o hay inhibición por etanol/ácidos. El crecimiento se frena.';
+    }
     var vMu=document.getElementById('val-mu'); if(vMu) vMu.childNodes[0].nodeValue=mu;
-    var sMu=document.getElementById('sub-mu'); if(sMu) sMu.textContent=muLabel+' (DO sat: '+doSat.toFixed(1)+' mg/L)';
+    var sFase=document.getElementById('sub-mu-fase'); if(sFase) sFase.textContent=muFase;
+    var sMu=document.getElementById('sub-mu'); if(sMu) sMu.textContent=muDesc;
+    // Guardar μ para gráfica
+    updateMuHistory(mu);
 
-    // 3. Estado Redox dinámico
-    var vOD=document.getElementById('val-orp-disp'); if(vOD) vOD.childNodes[0].nodeValue=orp;
-    var badge=document.getElementById('redox-badge'), lbl=document.getElementById('redox-label'), dot=document.getElementById('redox-dot');
+    // 3. Estado Redox dinámico (sin valor numérico)
+    var badge=document.getElementById('redox-badge'), lbl=document.getElementById('redox-label'), dot=document.getElementById('redox-dot'), subR=document.getElementById('sub-redox');
     if(badge&&lbl&&dot){
-        var state,bg,tc,dc;
-        if(orp>400)       { state='Muy oxidante';    bg='#fee2e2'; tc='#991b1b'; dc='#dc2626'; }
-        else if(orp>200)  { state='Oxidante';          bg='#fef3c7'; tc='#92400e'; dc='#d97706'; }
-        else if(orp>0)    { state='Lev. oxidante';    bg='#d1fae5'; tc='#065f46'; dc='#059669'; }
-        else if(orp>-100) { state='Reductor';           bg='#dbeafe'; tc='#1e40af'; dc='#2563eb'; }
-        else              { state='Muy reductor';     bg='#ede9fe'; tc='#5b21b6'; dc='#7c3aed'; }
+        var state,bg,tc,dc,desc;
+        if(orp>400)       { state='Muy oxidante';    bg='#fee2e2'; tc='#991b1b'; dc='#dc2626'; desc='Medio muy oxidante. Posible exceso de aireación o fase inicial del cultivo.'; }
+        else if(orp>200)  { state='Oxidante';          bg='#fef3c7'; tc='#92400e'; dc='#d97706'; desc='Condiciones aeróbicas activas. Respiración celular predominante.'; }
+        else if(orp>0)    { state='Lev. oxidante';    bg='#d1fae5'; tc='#065f46'; dc='#059669'; desc='Balance favorable para fermentación aeróbica moderada.'; }
+        else if(orp>-100) { state='Reductor';           bg='#dbeafe'; tc='#1e40af'; dc='#2563eb'; desc='Tendencia reductora. Posible inicio de fermentación anaerobia.'; }
+        else              { state='Muy reductor';     bg='#ede9fe'; tc='#5b21b6'; dc='#7c3aed'; desc='Medio muy reductor. Fermentación anaerobia activa o déficit severo de O₂.'; }
         badge.style.background=bg; badge.style.color=tc;
         lbl.textContent=state; dot.style.background=dc;
+        if(subR) subR.textContent=desc;
     }
+}
+
+function updateMuHistory(mu) {
+    var now=new Date(), nowStr=now.toLocaleTimeString('es-ES',{hour:'2-digit',minute:'2-digit',second:'2-digit'}), ts=now.getTime();
+    var rt=muHistory[muHistory.length-1];
+    if(!rt||rt.time!==nowStr){ rt={time:nowStr,ts:ts}; muHistory.push(rt); }
+    rt.mu=mu; if(muHistory.length>50) muHistory.shift();
+    if(recordingStart&&!recordingEnd){
+        var re=muRecording[muRecording.length-1];
+        if(!re||re.time!==nowStr){ re={time:nowStr,ts:ts}; muRecording.push(re); }
+        re.mu=mu;
+    }
+    refreshMuChart();
+}
+
+function refreshMuChart() {
+    var chart=charts['mu']; if(!chart) return;
+    var filtered, isActive=recordingStart&&!recordingEnd;
+    if(currentPeriodMs===0){ filtered=muHistory.slice(-30); }
+    else if(isActive){ var co=Date.now(),ws=co-currentPeriodMs; filtered=muRecording.filter(function(d){ return d.ts>=ws&&d.ts<=co; }); }
+    else { var eTs=lastRecordingEnd||(muRecording.length>0?muRecording[muRecording.length-1].ts:Date.now()),ws2=eTs-currentPeriodMs; filtered=muRecording.filter(function(d){ return d.ts>=ws2&&d.ts<=eTs; }); }
+    var wv=filtered.filter(function(d){ return d.mu!==null&&d.mu!==undefined; });
+    chart.data.labels=wv.map(function(d){ return d.time; });
+    chart.data.datasets[0].data=wv.map(function(d){ return d.mu; });
+    chart.update('none');
 }
 
 // ── SUPABASE ──
@@ -466,7 +511,7 @@ function pad(n){ return n<10?'0'+n:''+n; }
 async function startRecording(){
     var btn=document.getElementById('btn-start');
     if(!recordingStart){
-        recordingStart=Date.now(); recordingEnd=null; recordingHistory=[]; lastSessionHistory=[]; lastRecordingEnd=null;
+        recordingStart=Date.now(); recordingEnd=null; recordingHistory=[]; lastSessionHistory=[]; lastRecordingEnd=null; muRecording=[];
         currentSessionId='ses_'+recordingStart; supabaseFirstSave=false;
         localStorage.setItem('biorreactor_session',JSON.stringify({id:currentSessionId,start:recordingStart,ended:false}));
         if(sb){ var sr=await sb.from('sesiones').insert({session_id:currentSessionId,start_ts:recordingStart,ended:false}); if(sr.error) addLog('Error creando sesión: '+sr.error.message,'alarm'); else addLog('Sesión creada en la nube.','mqtt'); }
@@ -555,6 +600,7 @@ function checkThreshold(key,value){
 }
 
 function refreshChart(key){
+    if(key==='mu'){ refreshMuChart(); return; }
     var chart=charts[key]; if(!chart) return;
     var filtered,isActive=recordingStart&&!recordingEnd;
     if(currentPeriodMs===0){ filtered=realtimeHistory.slice(-30); }
@@ -574,7 +620,7 @@ function addLog(msg,type){
     log.prepend(div); if(log.children.length>100) log.removeChild(log.lastChild);
 }
 
-function setPeriod(ms,btn){ currentPeriodMs=ms; document.querySelectorAll('.period-btn').forEach(function(b){ b.classList.remove('active'); }); btn.classList.add('active'); Object.keys(charts).forEach(function(k){ refreshChart(k); }); }
+function setPeriod(ms,btn){ currentPeriodMs=ms; document.querySelectorAll('.period-btn').forEach(function(b){ b.classList.remove('active'); }); btn.classList.add('active'); Object.keys(charts).forEach(function(k){ refreshChart(k); }); refreshMuChart(); }
 
 function downloadCSV(){
     var isActive=recordingStart&&!recordingEnd, ed=isActive?recordingHistory:lastSessionHistory;
