@@ -349,6 +349,18 @@ else { document.getElementById('access-screen').style.display='flex'; }
 
 function initDashboard() {
     Chart.defaults.color='#475569'; Chart.defaults.borderColor='rgba(0,0,0,0.06)';
+    // Restaurar botón inmediatamente si hay sesión activa en localStorage
+    try {
+        var stored = localStorage.getItem('biorreactor_session');
+        if (stored) {
+            var ls = JSON.parse(stored);
+            if (ls && !ls.ended && ls.id) {
+                recordingStart = ls.start;
+                currentSessionId = ls.id;
+                restoreRecordingUI();
+            }
+        }
+    } catch(e) {}
     initCharts(); initSupabase(); connectMQTT(); startSimulator(); startUptime();
 }
 
