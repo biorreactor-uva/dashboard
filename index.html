@@ -1016,7 +1016,7 @@ async function generateReport() {
     // ── Gráficas
     doc.addPage(); y = margin;
     doc.setFontSize(12); doc.setFont('helvetica','bold'); doc.setTextColor(...black);
-    doc.text('Evolución de los parámetros', margin, y); y += 6;
+    doc.text('Evolución de los parámetros medidos', margin, y); y += 6;
     doc.setDrawColor(...darkBlue); doc.line(margin, y, pageW-margin, y); y += 6;
 
     var chartIds = ['chart-temp','chart-ph','chart-orp','chart-do'];
@@ -1054,7 +1054,7 @@ async function generateReport() {
         var imgH = 44;
         if (y + imgH + 12 > 285) { doc.addPage(); y = margin; }
         doc.setFontSize(9); doc.setFont('helvetica','bold'); doc.setTextColor(...darkBlue);
-        doc.text(chartLabels[ci] + ' — últimas 24h', margin, y); y += 4;
+        doc.text(chartLabels[ci], margin, y); y += 4;
         doc.addImage(imgData, 'PNG', margin, y, contentW, imgH);
         y += imgH + 8;
     }
@@ -1066,7 +1066,7 @@ async function generateReport() {
         doc.setFillColor(...darkBlue);
         doc.rect(0, 287, pageW, 10, 'F');
         doc.setFontSize(7); doc.setTextColor(255,255,255); doc.setFont('helvetica','normal');
-        doc.text('Monitor de Biorreactor — Universidad de Valladolid', margin, 293);
+        doc.text('Monitor de Biorreactor - Universidad de Valladolid', margin, 293);
         doc.text('Página ' + p + ' de ' + totalPages, pageW-margin, 293, { align:'right' });
     }
 
