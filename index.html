@@ -363,6 +363,7 @@ var recordingStart = null;
 var recordingEnd   = null;
 var currentSessionId = null;
 var lastSessionHistory = []; // preserva historial tras finalizar
+var lastRecordingEnd   = null; // timestamp de fin de última sesión
 var currentPeriodMs  = 0;
 var realtimeHistory  = [];
 var recordingHistory = [];
@@ -415,25 +416,39 @@ async function checkActiveSession() {
     if (!sb) return;
     addLog('Buscando sesión activa...', 'mqtt');
 
-    // Consultar tabla sesiones: buscar la más reciente no finalizada
+    // 1. Buscar sesión activa (ended=false)
     var result = await sb.from('sesiones')
         .select('*')
         .eq('ended', false)
         .order('start_ts', { ascending: false })
         .limit(1);
 
-    if (result.error || !result.data || result.data.length === 0) {
-        addLog('No hay sesión activa.', '');
+    if (!result.error && result.data && result.data.length > 0) {
+        var ses = result.data[0];
+        currentSessionId = ses.session_id;
+        recordingStart   = ses.start_ts;
+        localStorage.setItem('biorreactor_session', JSON.stringify({ id:currentSessionId, start:recordingStart, ended:false }));
+        addLog('Sesión activa encontrada. Cargando historial...', 'mqtt');
+        await loadSessionData(currentSessionId);
+        restoreRecordingUI();
         return;
     }
 
-    var ses = result.data[0];
-    currentSessionId = ses.session_id;
-    recordingStart   = ses.start_ts;
-    localStorage.setItem('biorreactor_session', JSON.stringify({ id:currentSessionId, start:recordingStart, ended:false }));
-    addLog('Sesión activa encontrada. Cargando historial...', 'mqtt');
-    await loadSessionData(currentSessionId);
-    restoreRecordingUI();
+    // 2. No hay sesión activa → cargar la última sesión finalizada para exportar/ver gráficas
+    addLog('No hay sesión activa. Cargando última sesión...', '');
+    var lastResult = await sb.from('sesiones')
+        .select('*')
+        .eq('ended', true)
+        .order('start_ts', { ascending: false })
+        .limit(1);
+
+    if (!lastResult.error && lastResult.data && lastResult.data.length > 0) {
+        var lastSes = lastResult.data[0];
+        await loadSessionData(lastSes.session_id);
+        addLog('Última sesión cargada. Puedes exportar o ver las gráficas.', 'mqtt');
+    } else {
+        addLog('No hay sesiones registradas.', '');
+    }
 }
 
 function restoreRecordingUI() {
@@ -454,8 +469,10 @@ async function loadSessionData(sessionId) {
     var rows = result.data.map(function(r) {
         return { time:r.time, ts:r.ts, temp:r.temp, ph:r.ph, orp:r.orp, do:r.do };
     });
-    recordingHistory = rows;
+    recordingHistory   = rows;
     lastSessionHistory = rows.slice();
+    // Guardar timestamp del último registro como fin de sesión
+    if (rows.length > 0) lastRecordingEnd = rows[rows.length-1].ts;
     Object.keys(charts).forEach(function(key){ refreshChart(key); });
     addLog('Historial cargado: ' + result.data.length + ' registros.', 'mqtt');
 }
@@ -527,6 +544,8 @@ async function startRecording() {
         recordingStart   = Date.now();
         recordingEnd     = null;
         recordingHistory = [];
+        lastSessionHistory = [];
+        lastRecordingEnd   = null;
         currentSessionId = 'ses_' + recordingStart;
         supabaseFirstSave = false;
         localStorage.setItem('biorreactor_session', JSON.stringify({ id:currentSessionId, start:recordingStart, ended:false }));
@@ -560,8 +579,11 @@ async function startRecording() {
             var endResult = await sb.from('sesiones').update({ ended:true }).eq('session_id', currentSessionId);
             if (endResult.error) addLog('Error finalizando sesión en BD: ' + endResult.error.message, 'alarm');
         }
+        // Preservar historial ANTES de limpiar
+        lastSessionHistory = recordingHistory.slice();
+        lastRecordingEnd   = recordingEnd;
         recordingStart = null;
-        lastSessionHistory = recordingHistory.slice(); // preservar para CSV y gráficas
+        recordingEnd   = null; // resetear para que las gráficas usen lastRecordingEnd
         localStorage.setItem('biorreactor_session', JSON.stringify({ id:currentSessionId, ended:true }));
         currentSessionId = null;
         var el = document.getElementById('stat-uptime');
@@ -570,6 +592,8 @@ async function startRecording() {
         btn.style.background  = 'rgba(255,255,255,0.12)';
         btn.style.borderColor = 'rgba(255,255,255,0.3)';
         btn.style.color       = '#fff';
+        // Refrescar gráficas con datos de la sesión finalizada
+        Object.keys(charts).forEach(function(key){ refreshChart(key); });
         addLog('Registro finalizado — Tiempo activo: ' + tiempoStr, 'alarm');
     }
 }
@@ -681,14 +705,18 @@ function checkThreshold(key, value) {
 function refreshChart(key) {
     var chart = charts[key]; if(!chart) return;
     var filtered;
+    var isActive = recordingStart && !recordingEnd;
     if(currentPeriodMs === 0) {
         filtered = realtimeHistory.slice(-30);
-    } else {
-        // Usar historial activo o el de la última sesión finalizada
-        var sourceHistory = (recordingStart && !recordingEnd) ? recordingHistory : lastSessionHistory;
-        var cutoff = recordingEnd ? recordingEnd : Date.now();
+    } else if(isActive) {
+        var cutoff = Date.now();
         var windowStart = cutoff - currentPeriodMs;
-        filtered = sourceHistory.filter(function(d){ return d.ts >= windowStart && d.ts <= cutoff; });
+        filtered = recordingHistory.filter(function(d){ return d.ts >= windowStart && d.ts <= cutoff; });
+    } else {
+        // Sesión finalizada: usar lastRecordingEnd como referencia de fin
+        var endTs = lastRecordingEnd || (lastSessionHistory.length > 0 ? lastSessionHistory[lastSessionHistory.length-1].ts : Date.now());
+        var windowStart = endTs - currentPeriodMs;
+        filtered = lastSessionHistory.filter(function(d){ return d.ts >= windowStart && d.ts <= endTs; });
     }
     chart.data.labels = filtered.map(function(d){ return d.time; });
     chart.data.datasets[0].data = filtered.map(function(d){ return d[key] !== undefined ? d[key] : null; });
@@ -716,11 +744,8 @@ function setPeriod(ms, btn) {
 
 // ── CSV ──
 function downloadCSV() {
-    // Usar historial activo o el de la última sesión finalizada
-    var sourceHistory = (recordingHistory.length > 0) ? recordingHistory : lastSessionHistory;
-    var exportData = recordingEnd
-        ? sourceHistory.filter(function(r){ return r.ts <= recordingEnd; })
-        : sourceHistory;
+    var isActive = recordingStart && !recordingEnd;
+    var exportData = isActive ? recordingHistory : lastSessionHistory;
     if (exportData.length === 0) { addLog('No hay datos para exportar.', 'alarm'); return; }
     var csv = 'Hora,Temp,pH,ORP,DO\n';
     exportData.forEach(function(r){ csv += (r.time||'')+','+(r.temp||'')+','+(r.ph||'')+','+(r.orp||'')+','+(r.do||'')+'\n'; });
