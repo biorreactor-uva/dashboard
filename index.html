@@ -407,6 +407,9 @@ function updateMuHistory(mu){
         var re=muRecording[muRecording.length-1];
         if(!re||re.time!==nowStr){ re={time:nowStr,ts:ts}; muRecording.push(re); }
         re.mu=mu;
+        // También guardar en el entry de recordingHistory para que saveRow lo incluya
+        var en=recordingHistory[recordingHistory.length-1];
+        if(en&&en.time===nowStr) en.mu=mu;
     }
     var chart=charts['mu']; if(!chart) return;
     var filtered,isActive=recordingStart&&!recordingEnd;
@@ -453,9 +456,11 @@ async function loadSessionData(sessionId){
     if(!sb) return;
     var r=await sb.from('registros').select('*').eq('session_id',sessionId).order('ts',{ascending:true});
     if(r.error||!r.data||r.data.length===0){ addLog('Sin datos previos en la sesión.',''); return; }
-    var rows=r.data.map(function(x){ return {time:x.time,ts:x.ts,temp:x.temp,ph:x.ph,orp:x.orp,do:x.do}; });
+    var rows=r.data.map(function(x){ return {time:x.time,ts:x.ts,temp:x.temp,ph:x.ph,orp:x.orp,do:x.do,mu:x.mu}; });
     recordingHistory=rows; lastSessionHistory=rows.slice();
     if(rows.length>0) lastRecordingEnd=rows[rows.length-1].ts;
+    // Reconstruir muRecording desde el historial cargado
+    muRecording=rows.filter(function(r){ return r.mu!==null&&r.mu!==undefined; }).map(function(r){ return {time:r.time,ts:r.ts,mu:r.mu}; });
     Object.keys(charts).forEach(function(k){ refreshChart(k); });
     addLog('Historial cargado: '+r.data.length+' registros.','mqtt');
 }
@@ -466,7 +471,7 @@ function scheduleSave(entry){ var k=entry.ts; if(saveTimers[k]) clearTimeout(sav
 var supabaseFirstSave=false;
 async function saveRow(entry){
     if(!sb||!currentSessionId) return;
-    var row={ts:entry.ts,time:entry.time,temp:entry.temp||null,ph:entry.ph||null,orp:entry.orp||null,do:entry.do||null,session_id:currentSessionId};
+    var row={ts:entry.ts,time:entry.time,temp:entry.temp||null,ph:entry.ph||null,orp:entry.orp||null,do:entry.do||null,mu:entry.mu||null,session_id:currentSessionId};
     var r=await sb.from('registros').insert(row);
     if(r.error){ if(!r.error.message||r.error.message.indexOf('duplicate')===-1){ pendingRows.push(row); if(!supabaseFirstSave) addLog('Error BD: '+r.error.message,'alarm'); } }
     else { if(!supabaseFirstSave){ supabaseFirstSave=true; addLog('Datos guardándose en la nube correctamente.','mqtt'); } }
@@ -508,12 +513,20 @@ async function startRecording(){
         var ts=(hh>0?pad(hh)+'h ':'')+pad(mm)+'m '+pad(ss)+'s';
         if(sb){ var er=await sb.from('sesiones').update({ended:true}).eq('session_id',currentSessionId); if(er.error) addLog('Error finalizando: '+er.error.message,'alarm'); }
         lastSessionHistory=recordingHistory.slice(); lastRecordingEnd=recordingEnd;
+        // muRecording ya tiene los datos — se preserva para los rangos de tiempo
         recordingStart=null; recordingEnd=null;
         localStorage.setItem('biorreactor_session',JSON.stringify({id:currentSessionId,ended:true}));
         currentSessionId=null;
         var el=document.getElementById('stat-uptime'); if(el) el.textContent='00:00:00';
         btn.innerHTML='▶ Iniciar registro'; btn.style.background='rgba(255,255,255,0.12)'; btn.style.borderColor='rgba(255,255,255,0.3)'; btn.style.color='#fff';
         Object.keys(charts).forEach(function(k){ refreshChart(k); });
+        // Refrescar gráfica μ con datos de la sesión finalizada
+        if(charts['mu']){
+            var wv=muRecording.filter(function(d){ return d.mu!==null&&d.mu!==undefined; });
+            charts['mu'].data.labels=wv.map(function(d){ return d.time; });
+            charts['mu'].data.datasets[0].data=wv.map(function(d){ return d.mu; });
+            charts['mu'].update('none');
+        }
         addLog('Registro finalizado — Tiempo activo: '+ts,'alarm');
     }
 }
@@ -669,6 +682,18 @@ async function generateReport(){
     doc.addPage(); y=mg; doc.setFontSize(12); doc.setFont('helvetica','bold'); doc.setTextColor(...bk); doc.text('Evolución de los parámetros medidos',mg,y); y+=6; doc.setDrawColor(...dB); doc.line(mg,y,pW-mg,y); y+=6;
     var cKs=['temp','ph','orp','do'],cLs=['Temperatura (°C)','pH','Potencial Redox (mV)','Oxígeno Disuelto (mg/L)'],ms24h=86400000;
     for(var ci=0;ci<cKs.length;ci++){ var k24=cKs[ci],cf=chartConfigs[k24],ws24=ed2-ms24h; var d24=src.filter(function(d){ return d.ts>=ws24&&d.ts<=ed2&&d[k24]!==null&&d[k24]!==undefined; }); var tc=document.createElement('canvas'); tc.width=900; tc.height=280; document.body.appendChild(tc); var tCh=new Chart(tc,{type:'line',data:{labels:d24.map(function(d){ return d.time; }),datasets:[{data:d24.map(function(d){ return d[k24]; }),borderColor:cf.color,backgroundColor:cf.color+'18',fill:true,tension:0.4,borderWidth:2,pointRadius:2,spanGaps:true}]},options:{responsive:false,animation:false,plugins:{legend:{display:false}},scales:{y:{min:cf.min,max:cf.max,ticks:{font:{size:11},color:'#334155'},title:{display:true,text:cf.unit,font:{size:11,weight:'bold'},color:'#1e293b'}},x:{ticks:{maxTicksLimit:8,font:{size:9},color:'#64748b',maxRotation:0}}}}}); tCh.update(); var iD=tc.toDataURL('image/png'); tCh.destroy(); document.body.removeChild(tc); if(y+56>285){ doc.addPage(); y=mg; } doc.setFontSize(9); doc.setFont('helvetica','bold'); doc.setTextColor(...dB); doc.text(cLs[ci],mg,y); y+=4; doc.addImage(iD,'PNG',mg,y,cW,44); y+=52; }
+
+    // Gráfica μ — Velocidad de crecimiento
+    var muSrc=muRecording.filter(function(d){ return d.ts>=(ed2-ms24h)&&d.ts<=ed2&&d.mu!==null&&d.mu!==undefined; });
+    if(muSrc.length>0){
+        if(y+56>285){ doc.addPage(); y=mg; }
+        var cfMu=chartConfigs['mu'];
+        var tcMu=document.createElement('canvas'); tcMu.width=900; tcMu.height=280; document.body.appendChild(tcMu);
+        var tChMu=new Chart(tcMu,{type:'line',data:{labels:muSrc.map(function(d){ return d.time; }),datasets:[{data:muSrc.map(function(d){ return d.mu; }),borderColor:cfMu.color,backgroundColor:cfMu.color+'18',fill:true,tension:0.4,borderWidth:2,pointRadius:2,spanGaps:true}]},options:{responsive:false,animation:false,plugins:{legend:{display:false}},singles:{y:{min:cfMu.min,max:cfMu.max,ticks:{font:{size:11},color:'#334155'},title:{display:true,text:cfMu.unit,font:{size:11,weight:'bold'},color:'#1e293b'}},x:{ticks:{maxTicksLimit:8,font:{size:9},color:'#64748b',maxRotation:0}}},scales:{y:{min:cfMu.min,max:cfMu.max,ticks:{font:{size:11},color:'#334155'},title:{display:true,text:cfMu.unit,font:{size:11,weight:'bold'},color:'#1e293b'}},x:{ticks:{maxTicksLimit:8,font:{size:9},color:'#64748b',maxRotation:0}}}}}}); tChMu.update();
+        var iDMu=tcMu.toDataURL('image/png'); tChMu.destroy(); document.body.removeChild(tcMu);
+        doc.setFontSize(9); doc.setFont('helvetica','bold'); doc.setTextColor(...dB); doc.text('Velocidad de Crecimiento μ (h⁻¹)',mg,y); y+=4;
+        doc.addImage(iDMu,'PNG',mg,y,cW,44); y+=52;
+    }
     var tp=doc.internal.getNumberOfPages(); for(var p=1;p<=tp;p++){ doc.setPage(p); doc.setFillColor(...dB); doc.rect(0,287,pW,10,'F'); doc.setFontSize(7); doc.setTextColor(255,255,255); doc.setFont('helvetica','normal'); doc.text('Monitor de Biorreactor - Universidad de Valladolid',mg,293); doc.text('Página '+p+' de '+tp,pW-mg,293,{align:'right'}); }
     doc.save('informe_biorreactor.pdf');
     btn.innerHTML='<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><polyline points="10 9 9 9 8 9"/></svg> Generar informe';
