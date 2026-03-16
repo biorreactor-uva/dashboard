@@ -706,9 +706,9 @@ async function generateReport(){
         doc.setFontSize(9); doc.setFont('helvetica','bold'); doc.setTextColor(...dB); doc.text('Velocidad de Crecimiento μ (h⁻¹)',mg,y); y+=4;
         doc.addImage(iDMu,'PNG',mg,y,cW,44); y+=52;
     }
-    var tp=doc.internal.getNumberOfPages(); for(var p=1;p<=tp;p++){ doc.setPage(p); doc.setFillColor(...dB); doc.rect(0,287,pW,10,'F'); doc.setFontSize(7); doc.setTextColor(255,255,255); doc.setFont('helvetica','normal'); doc.text('Monitor de Biorreactor - Universidad de Valladolid',mg,293); doc.text('Página '+p+' de '+tp,pW-mg,293,{align:'right'}); }
-    // ── Conclusiones y Observaciones
-    doc.addPage(); y=mg;
+    // ── Conclusiones y Observaciones — justo tras la última gráfica
+    if(y+20>275){ doc.addPage(); y=mg; } else { y+=6; }
+
     doc.setFontSize(12); doc.setFont('helvetica','bold'); doc.setTextColor(...dB);
     doc.text('Conclusiones automáticas', mg, y); y+=6;
     doc.setDrawColor(...dB); doc.setLineWidth(0.4); doc.line(mg,y,pW-mg,y); y+=6;
@@ -721,68 +721,59 @@ async function generateReport(){
     var phMean=phVals.length>0?phVals.reduce(function(a,b){ return a+b; },0)/phVals.length:null;
     var doMean=doVals.length>0?doVals.reduce(function(a,b){ return a+b; },0)/doVals.length:null;
 
-    // Texto conclusión actividad microbiana
     var concMic='';
     if(phMean!==null&&orpMean!==null){
         var phF=Math.max(0,1-Math.abs(phMean-7)/3.5);
         var orpF=Math.max(0,Math.min(1,(400-orpMean)/500));
         var micMedia=Math.round((phF*0.5+orpF*0.5)*100);
         if(micMedia>65) concMic='La actividad microbiana media durante la sesión fue alta ('+micMedia+'%), lo que indica una fermentación activa y un metabolismo microbiano en pleno rendimiento. El pH y el ORP se mantuvieron en rangos compatibles con una actividad fermentativa intensa.';
-        else if(micMedia>35) concMic='La actividad microbiana media durante la sesión fue moderada ('+micMedia+'%). El cultivo presentó actividad fermentativa intermitente, con periodos de mayor y menor intensidad metabólica. Se recomienda revisar las condiciones de aireación y nutrientes.';
-        else concMic='La actividad microbiana media durante la sesión fue baja ('+micMedia+'%). El cultivo mostró poca actividad fermentativa, lo que puede indicar condiciones subóptimas de pH, temperatura o disponibilidad de nutrientes.';
+        else if(micMedia>35) concMic='La actividad microbiana media fue moderada ('+micMedia+'%). El cultivo presentó actividad fermentativa intermitente. Se recomienda revisar las condiciones de aireación y nutrientes.';
+        else concMic='La actividad microbiana media fue baja ('+micMedia+'%). El cultivo mostró poca actividad fermentativa, lo que puede indicar condiciones subóptimas de pH, temperatura o disponibilidad de nutrientes.';
     } else { concMic='No hay suficientes datos de pH y ORP para evaluar la actividad microbiana.'; }
 
-    // Texto conclusión estado redox
     var concRedox='';
     if(orpMean!==null){
-        if(orpMean>400) concRedox='El potencial redox medio ('+orpMean.toFixed(0)+' mV) indica un medio muy oxidante durante toda la sesión. Esto sugiere una elevada concentración de oxígeno y posible exceso de aireación.';
+        if(orpMean>400) concRedox='El potencial redox medio ('+orpMean.toFixed(0)+' mV) indica un medio muy oxidante. Posible exceso de aireación o fase inicial del cultivo.';
         else if(orpMean>200) concRedox='El potencial redox medio ('+orpMean.toFixed(0)+' mV) refleja condiciones aeróbicas activas, favorables para el crecimiento de microorganismos aeróbicos.';
-        else if(orpMean>0) concRedox='El potencial redox medio ('+orpMean.toFixed(0)+' mV) indica un estado levemente oxidante, compatible con una fermentación aeróbica moderada y buen balance entre aireación y consumo de oxígeno.';
-        else if(orpMean>-100) concRedox='El potencial redox medio ('+orpMean.toFixed(0)+' mV) muestra tendencia reductora, lo que puede indicar inicio de fermentación anaerobia o déficit de oxígeno en el cultivo.';
-        else concRedox='El potencial redox medio ('+orpMean.toFixed(0)+' mV) indica un medio muy reductor. Se detectó fermentación anaerobia significativa o una severa deficiencia de oxígeno durante la sesión.';
+        else if(orpMean>0) concRedox='El potencial redox medio ('+orpMean.toFixed(0)+' mV) indica un estado levemente oxidante, compatible con fermentación aeróbica moderada.';
+        else if(orpMean>-100) concRedox='El potencial redox medio ('+orpMean.toFixed(0)+' mV) muestra tendencia reductora, posible inicio de fermentación anaerobia o déficit de oxígeno.';
+        else concRedox='El potencial redox medio ('+orpMean.toFixed(0)+' mV) indica un medio muy reductor. Se detectó fermentación anaerobia significativa o déficit severo de O₂.';
     } else { concRedox='No hay suficientes datos de ORP para evaluar el estado redox del cultivo.'; }
 
-    // Texto conclusión oxígeno disuelto
     var concDO='';
     if(doMean!==null){
-        if(doMean>7) concDO='El oxígeno disuelto medio ('+doMean.toFixed(1)+' mg/L) se mantuvo en niveles óptimos para cultivos aeróbicos, garantizando una buena transferencia de oxígeno.';
-        else if(doMean>4) concDO='El oxígeno disuelto medio ('+doMean.toFixed(1)+' mg/L) fue adecuado aunque con margen de mejora en la eficiencia de transferencia de oxígeno.';
-        else concDO='El oxígeno disuelto medio ('+doMean.toFixed(1)+' mg/L) fue bajo, lo que pudo limitar el crecimiento microbiano aeróbico durante la sesión.';
+        if(doMean>7) concDO='El oxígeno disuelto medio ('+doMean.toFixed(1)+' mg/L) se mantuvo en niveles óptimos para cultivos aeróbicos.';
+        else if(doMean>4) concDO='El oxígeno disuelto medio ('+doMean.toFixed(1)+' mg/L) fue adecuado aunque con margen de mejora en la eficiencia de transferencia.';
+        else concDO='El oxígeno disuelto medio ('+doMean.toFixed(1)+' mg/L) fue bajo, lo que pudo limitar el crecimiento microbiano aeróbico.';
     }
 
     var conclusiones=[
-        { titulo:'Actividad microbiana', texto:concMic, color:[8,145,178] },
-        { titulo:'Estado redox del cultivo', texto:concRedox, color:[124,58,237] },
-        { titulo:'Oxígeno disuelto', texto:concDO, color:[5,150,105] }
+        { titulo:'Actividad microbiana', texto:concMic },
+        { titulo:'Estado redox del cultivo', texto:concRedox },
+        { titulo:'Oxígeno disuelto', texto:concDO }
     ];
 
     conclusiones.forEach(function(c){
-        if(y>260){ doc.addPage(); y=mg; }
-        // Título con punto de color
-        doc.setFillColor(...c.color); doc.circle(mg+3,y-1,3,'F');
-        doc.setFontSize(10); doc.setFont('helvetica','bold'); doc.setTextColor(...bk);
-        doc.text(c.titulo, mg+9, y); y+=5;
-        // Texto justificado
-        doc.setFontSize(8.5); doc.setFont('helvetica','normal'); doc.setTextColor(50,60,80);
-        var lines=doc.splitTextToSize(c.texto, cW-4);
-        doc.text(lines, mg+4, y); y+=lines.length*4.5+6;
+        if(y>262){ doc.addPage(); y=mg; }
+        doc.setFontSize(9); doc.setFont('helvetica','bold'); doc.setTextColor(...bk);
+        doc.text(c.titulo, mg, y); y+=5;
+        doc.setFont('helvetica','normal'); doc.setTextColor(50,60,80);
+        var lines=doc.splitTextToSize(c.texto, cW);
+        doc.text(lines, mg, y); y+=lines.length*4.5+5;
     });
 
-    // ── Observaciones (campo vacío para escribir)
-    if(y>230){ doc.addPage(); y=mg; }
-    y+=4;
+    // ── Observaciones
+    if(y+50>275){ doc.addPage(); y=mg; } else { y+=4; }
     doc.setFontSize(12); doc.setFont('helvetica','bold'); doc.setTextColor(...dB);
     doc.text('Observaciones', mg, y); y+=6;
-    doc.setDrawColor(...dB); doc.line(mg,y,pW-mg,y); y+=8;
-    doc.setFontSize(8.5); doc.setFont('helvetica','normal'); doc.setTextColor(150,160,170);
-    doc.text('Escriba aquí sus observaciones, notas o comentarios sobre la sesión de monitorización:', mg, y); y+=8;
-    // Líneas vacías para escribir
+    doc.setDrawColor(...dB); doc.setLineWidth(0.4); doc.line(mg,y,pW-mg,y); y+=8;
     doc.setDrawColor(200,210,220); doc.setLineWidth(0.3);
     for(var li=0;li<10;li++){
         doc.line(mg, y, pW-mg, y); y+=9;
         if(y>275){ break; }
     }
 
+    var tp=doc.internal.getNumberOfPages(); for(var p=1;p<=tp;p++){ doc.setPage(p); doc.setFillColor(...dB); doc.rect(0,287,pW,10,'F'); doc.setFontSize(7); doc.setTextColor(255,255,255); doc.setFont('helvetica','normal'); doc.text('Monitor de Biorreactor - Universidad de Valladolid',mg,293); doc.text('Página '+p+' de '+tp,pW-mg,293,{align:'right'}); }
     doc.save('informe_biorreactor.pdf');
     btn.innerHTML='<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><polyline points="10 9 9 9 8 9"/></svg> Generar informe';
     btn.disabled=false; addLog('Informe PDF generado correctamente.','mqtt');
