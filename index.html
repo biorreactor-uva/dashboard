@@ -483,17 +483,25 @@ async function loadSessionData(sessionId) {
     addLog('Historial cargado: ' + result.data.length + ' registros.', 'mqtt');
 }
 
+var supabaseFirstSave = false;
 async function saveRow(entry) {
     if (!sb || !currentSessionId) return;
     var row = { ts:entry.ts, time:entry.time, temp:entry.temp||null, ph:entry.ph||null, orp:entry.orp||null, do:entry.do||null, session_id:currentSessionId };
-    var result = await sb.from('registros').upsert(row, { onConflict:'ts,session_id' });
-    if (result.error) pendingRows.push(row);
+    var result = await sb.from('registros').insert(row);
+    if (result.error) {
+        if (!result.error.message || result.error.message.indexOf('duplicate') === -1) {
+            pendingRows.push(row);
+            if (!supabaseFirstSave) addLog('Error guardando en BD: ' + result.error.message, 'alarm');
+        }
+    } else {
+        if (!supabaseFirstSave) { supabaseFirstSave = true; addLog('Datos guardándose en la nube correctamente.', 'mqtt'); }
+    }
 }
 
 async function flushPending() {
     if (!sb || pendingRows.length === 0) return;
     var batch = pendingRows.splice(0, 50);
-    var result = await sb.from('registros').upsert(batch, { onConflict:'ts,session_id' });
+    var result = await sb.from('registros').insert(batch);
     if (result.error) pendingRows = batch.concat(pendingRows);
 }
 setInterval(flushPending, 10000);
