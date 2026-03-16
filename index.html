@@ -411,11 +411,12 @@ function initSupabase() {
 }
 
 async function checkActiveSession() {
-    // 1. Buscar primero en localStorage (mismo dispositivo)
+    // 1. Revisar localStorage
     var stored = localStorage.getItem('biorreactor_session');
     var localSession = null;
     try { localSession = stored ? JSON.parse(stored) : null; } catch(e) {}
 
+    // Si este dispositivo tiene sesión activa → recuperar
     if (localSession && !localSession.ended && localSession.id) {
         currentSessionId = localSession.id;
         recordingStart   = localSession.start;
@@ -425,7 +426,14 @@ async function checkActiveSession() {
         return;
     }
 
-    // 2. Sin sesión local → buscar en Supabase la sesión activa más reciente
+    // Si este dispositivo finalizó la sesión → no buscar en la nube
+    if (localSession && localSession.ended) {
+        addLog('Última sesión finalizada.', '');
+        return;
+    }
+
+    // 2. Dispositivo nuevo (móvil sin historial local) → buscar en Supabase
+    // Solo si hay datos MUY recientes (últimos 30 segundos = sesión en curso ahora mismo)
     if (!sb) return;
     addLog('Buscando sesión activa en la nube...', 'mqtt');
     var result = await sb.from('registros')
@@ -434,14 +442,14 @@ async function checkActiveSession() {
         .limit(1);
 
     if (result.error || !result.data || result.data.length === 0) {
-        addLog('No hay sesión activa en la nube.', '');
+        addLog('No hay sesión activa.', '');
         return;
     }
 
     var lastRow = result.data[0];
-    // Si el último dato tiene más de 10 minutos, la sesión está finalizada
-    if (Date.now() - lastRow.ts > 600000) {
-        addLog('No hay sesión activa reciente.', '');
+    // Solo considerar sesión activa si hay datos de los últimos 30 segundos
+    if (Date.now() - lastRow.ts > 30000) {
+        addLog('No hay sesión activa en este momento.', '');
         return;
     }
 
@@ -454,7 +462,6 @@ async function checkActiveSession() {
         .limit(1);
     recordingStart = (firstResult.data && firstResult.data[0]) ? firstResult.data[0].ts : lastRow.ts;
 
-    // Guardar en localStorage para recargas futuras en este dispositivo
     localStorage.setItem('biorreactor_session', JSON.stringify({ id:currentSessionId, start:recordingStart, ended:false }));
     addLog('Sesión activa encontrada en la nube. Cargando historial...', 'mqtt');
     await loadSessionData(currentSessionId);
