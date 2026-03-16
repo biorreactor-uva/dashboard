@@ -848,17 +848,32 @@ async function generateReport() {
     var red = [220, 38, 38];
     var green = [5, 150, 105];
 
-    // ── Cabecera
+    // ── Cabecera con logos
     doc.setFillColor(...darkBlue);
-    doc.rect(0, 0, pageW, 32, 'F');
+    doc.rect(0, 0, pageW, 36, 'F');
+
+    // Logo App (izquierda) - cargar como imagen
+    try {
+        var logoAppEl = new Image(); logoAppEl.src = 'logoApp.png';
+        doc.addImage(logoAppEl, 'PNG', margin, 4, 24, 24);
+    } catch(e) {}
+
+    // Texto centrado
     doc.setTextColor(255,255,255);
-    doc.setFontSize(16); doc.setFont('helvetica','bold');
-    doc.text('Monitor de Biorreactor - UVa', margin, 13);
-    doc.setFontSize(9); doc.setFont('helvetica','normal');
-    doc.text('Laboratorio de Ingeniería Química — Universidad de Valladolid', margin, 20);
-    doc.setFontSize(8);
-    doc.text('Informe generado el ' + new Date().toLocaleDateString('es-ES',{year:'numeric',month:'long',day:'numeric'}) + ' a las ' + new Date().toLocaleTimeString('es-ES',{hour:'2-digit',minute:'2-digit'}), margin, 27);
-    y = 40;
+    doc.setFontSize(15); doc.setFont('helvetica','bold');
+    doc.text('Monitor de Biorreactor - UVa', pageW/2, 13, { align:'center' });
+    doc.setFontSize(8.5); doc.setFont('helvetica','normal');
+    doc.text('Laboratorio de Ingeniería Química — Universidad de Valladolid', pageW/2, 20, { align:'center' });
+    doc.setFontSize(7.5);
+    doc.text('Informe generado el ' + new Date().toLocaleDateString('es-ES',{year:'numeric',month:'long',day:'numeric'}) + ' a las ' + new Date().toLocaleTimeString('es-ES',{hour:'2-digit',minute:'2-digit'}), pageW/2, 27, { align:'center' });
+
+    // Logo UNI (derecha)
+    try {
+        var logoUNIEl = new Image(); logoUNIEl.src = 'logoUNI.png';
+        doc.addImage(logoUNIEl, 'PNG', pageW-margin-24, 4, 24, 24);
+    } catch(e) {}
+
+    y = 44;
 
     // ── Resumen de sesión
     doc.setTextColor(...black);
@@ -867,11 +882,13 @@ async function generateReport() {
     doc.setDrawColor(...darkBlue); doc.setLineWidth(0.4);
     doc.line(margin, y, pageW-margin, y); y += 5;
 
-    var startDate = recordingStart || (srcHistory[0] ? srcHistory[0].ts : Date.now());
-    var endDate   = recordingEnd   || Date.now();
+    // Hora fin = último dato del historial
+    var startDate = srcHistory[0] ? srcHistory[0].ts : (recordingStart || Date.now());
+    var lastEntry = srcHistory[srcHistory.length-1];
+    var endDate   = lastEntry ? lastEntry.ts : (recordingEnd || Date.now());
     var elapsed   = Math.floor((endDate - startDate) / 1000);
-    var hh = Math.floor(elapsed/3600), mm = Math.floor((elapsed%3600)/60), ss = elapsed%60;
-    var tiempoStr = pad(hh)+'h '+pad(mm)+'m '+pad(ss)+'s';
+    var hh = Math.floor(elapsed/3600), mm2 = Math.floor((elapsed%3600)/60), ss = elapsed%60;
+    var tiempoStr = pad(hh)+'h '+pad(mm2)+'m '+pad(ss)+'s';
 
     var infoRows = [
         ['Fecha de inicio', new Date(startDate).toLocaleDateString('es-ES',{year:'numeric',month:'long',day:'numeric'})],
@@ -962,12 +979,19 @@ async function generateReport() {
         y += 6;
     }
 
-    // ── Alertas registradas
-    if (sessionAlerts.length > 0) {
-        if (y > 240) { doc.addPage(); y = margin; }
-        doc.setFontSize(12); doc.setFont('helvetica','bold'); doc.setTextColor(...black);
-        doc.text('Alertas registradas durante la sesión', margin, y); y += 6;
-        doc.setDrawColor(...darkBlue); doc.line(margin, y, pageW-margin, y); y += 5;
+    // ── Alertas registradas (siempre se muestra la sección)
+    if (y > 220) { doc.addPage(); y = margin; }
+    doc.setFontSize(12); doc.setFont('helvetica','bold'); doc.setTextColor(...black);
+    doc.text('Alertas registradas durante la sesión', margin, y); y += 6;
+    doc.setDrawColor(...darkBlue); doc.line(margin, y, pageW-margin, y); y += 5;
+
+    if (sessionAlerts.length === 0) {
+        doc.setFillColor(240, 253, 244);
+        doc.rect(margin, y-4, contentW, 8, 'F');
+        doc.setFontSize(9); doc.setFont('helvetica','normal'); doc.setTextColor(...green);
+        doc.text('No se registraron alertas durante esta sesión.', margin+4, y);
+        y += 12;
+    } else {
         sessionAlerts.slice(0, 20).forEach(function(a, i) {
             if (y > 270) { doc.addPage(); y = margin; }
             doc.setFillColor(255, 242, 242);
