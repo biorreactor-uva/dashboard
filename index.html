@@ -17,30 +17,22 @@
         :root {
             --bg:#f8fafc; --bg2:#ffffff; --bg3:#f1f5f9;
             --border:#e2e8f0; --border2:#cbd5e1;
-            --purple:#7c3aed; --purple2:#9d5ff5;
-            --purple-lt:#ede9fe;
+            --purple:#7c3aed; --purple2:#9d5ff5; --purple-lt:#ede9fe;
             --blue:#2563eb; --blue-lt:#dbeafe;
             --green:#059669; --green-lt:#d1fae5;
             --red:#dc2626; --red-lt:#fee2e2;
             --amber:#d97706;
             --gray-900:#0f172a; --gray-700:#334155; --gray-500:#64748b;
-            --gray-400:#94a3b8; --gray-300:#cbd5e1;
-            --white:#ffffff;
-            --font:'Inter',system-ui,sans-serif;
-            --mono:'JetBrains Mono',monospace;
+            --gray-400:#94a3b8; --gray-300:#cbd5e1; --white:#ffffff;
+            --font:'Inter',system-ui,sans-serif; --mono:'JetBrains Mono',monospace;
             --r:10px; --r2:16px;
             --shadow:0 1px 3px rgba(0,0,0,0.08),0 1px 2px rgba(0,0,0,0.04);
             --shadow2:0 4px 16px rgba(0,0,0,0.08),0 2px 4px rgba(0,0,0,0.04);
         }
         body { font-family:var(--font); background:var(--bg); color:var(--gray-900); min-height:100vh; }
-
-        #access-screen {
-            display:flex; flex-direction:column; align-items:center; justify-content:center;
-            min-height:100vh; background:#0f172a; text-align:center; gap:16px;
-        }
+        #access-screen { display:flex; flex-direction:column; align-items:center; justify-content:center; min-height:100vh; background:#0f172a; text-align:center; gap:16px; }
         #access-screen h1 { font-size:1.5rem; font-weight:600; color:#f1f5f9; }
         #access-screen p { color:#94a3b8; font-size:0.88rem; line-height:1.6; }
-
         .topbar { background:var(--white); border-bottom:3px solid #0f2347; padding:0 28px; height:64px; display:flex; align-items:center; justify-content:space-between; box-shadow:var(--shadow); position:sticky; top:0; z-index:100; }
         .topbar-left { display:flex; align-items:center; gap:14px; }
         .logo-img { height:40px; width:auto; }
@@ -49,10 +41,8 @@
         .topbar-title b { font-size:0.95rem; font-weight:600; color:var(--gray-900); }
         .topbar-title span { font-size:0.7rem; color:#9b1c6e; font-weight:500; letter-spacing:0.05em; text-transform:uppercase; }
         .topbar-right { display:flex; align-items:center; gap:12px; }
-
         .page { max-width:1440px; margin:0 auto; padding:24px 28px; }
-
-        .hero { background:linear-gradient(135deg, #0a1628 0%, #0f2347 60%, #102a52 100%); border-radius:var(--r2); padding:24px 32px; margin-bottom:24px; display:flex; align-items:center; justify-content:space-between; position:relative; overflow:hidden; box-shadow:var(--shadow2); }
+        .hero { background:linear-gradient(135deg,#0a1628 0%,#0f2347 60%,#102a52 100%); border-radius:var(--r2); padding:24px 32px; margin-bottom:24px; display:flex; align-items:center; justify-content:space-between; position:relative; overflow:hidden; box-shadow:var(--shadow2); }
         .hero::before { content:''; position:absolute; top:-50px; right:-50px; width:200px; height:200px; border-radius:50%; background:rgba(255,255,255,0.06); pointer-events:none; }
         .hero-text h2 { font-size:1.25rem; font-weight:600; color:#fff; margin-bottom:5px; }
         .hero-text p { font-size:0.82rem; color:rgba(255,255,255,0.65); }
@@ -62,8 +52,8 @@
         .hero-stat-lbl { font-size:0.62rem; color:rgba(255,255,255,0.6); text-transform:uppercase; letter-spacing:0.08em; margin-top:2px; }
         .live-badge { display:flex; align-items:center; gap:7px; background:rgba(255,255,255,0.12); border:1px solid rgba(255,255,255,0.25); color:#fff; padding:8px 16px; border-radius:20px; font-size:0.78rem; font-weight:500; }
         @keyframes blink { 50% { opacity:0.2; } }
-
-        .sensor-grid { display:grid; grid-template-columns:repeat(4,1fr); gap:14px; margin-bottom:24px; }
+        /* sensores */
+        .sensor-grid { display:grid; grid-template-columns:repeat(4,1fr); gap:14px; margin-bottom:14px; }
         .sensor-card { background:var(--white); border:1px solid var(--border); border-radius:var(--r2); padding:22px 20px; position:relative; overflow:hidden; box-shadow:var(--shadow); transition:box-shadow 0.2s,transform 0.2s,border-color 0.2s; }
         .sensor-card:hover { box-shadow:var(--shadow2); transform:translateY(-2px); border-color:var(--border2); }
         .sensor-card::before { content:''; position:absolute; top:0; left:0; right:0; height:4px; border-radius:var(--r2) var(--r2) 0 0; }
@@ -81,7 +71,31 @@
         .src-badge.real { background:var(--green-lt); color:#065f46; border:1px solid #6ee7b7; }
         .sensor-card.alarm { border-color:var(--red) !important; animation:alarm 2s infinite; }
         @keyframes alarm { 50% { background:var(--red-lt); } }
-
+        /* ── WIDGETS DERIVADOS ── */
+        .derived-grid { display:grid; grid-template-columns:repeat(3,1fr); gap:14px; margin-bottom:24px; }
+        .derived-card { background:var(--white); border:1px solid var(--border); border-radius:var(--r2); padding:20px 20px 16px; position:relative; box-shadow:var(--shadow); transition:box-shadow 0.2s,transform 0.2s; }
+        .derived-card:hover { box-shadow:var(--shadow2); transform:translateY(-2px); }
+        .derived-card::before { content:''; position:absolute; top:0; left:0; right:0; height:3px; border-radius:var(--r2) var(--r2) 0 0; }
+        .d-mic::before   { background:linear-gradient(90deg,#0891b2,#22d3ee); }
+        .d-mu::before    { background:linear-gradient(90deg,#7c3aed,#a78bfa); }
+        .d-redox::before { background:linear-gradient(90deg,#0f2347,#2563eb); }
+        .derived-header { display:flex; align-items:center; justify-content:space-between; margin-bottom:10px; }
+        .derived-label { font-size:0.68rem; font-weight:600; text-transform:uppercase; letter-spacing:0.1em; color:#334155; }
+        .derived-value { font-size:2.2rem; font-weight:300; letter-spacing:-0.03em; color:#0f172a; line-height:1; display:flex; align-items:baseline; gap:4px; margin-bottom:8px; font-family:var(--mono); }
+        .derived-value .unit { font-size:0.88rem; font-weight:400; color:#475569; font-family:var(--font); }
+        .derived-sub { font-size:0.72rem; color:#64748b; line-height:1.4; }
+        .progress-bar-wrap { height:5px; background:#e2e8f0; border-radius:3px; margin-top:10px; overflow:hidden; }
+        .progress-bar { height:100%; border-radius:3px; transition:width 0.6s ease; }
+        .redox-badge { display:inline-flex; align-items:center; gap:5px; font-size:0.72rem; font-weight:600; padding:4px 10px; border-radius:20px; margin-top:8px; transition:all 0.4s; }
+        .redox-dot { width:7px; height:7px; border-radius:50%; flex-shrink:0; }
+        /* tooltip ⓘ */
+        .iw { position:relative; display:inline-flex; }
+        .i-btn { width:18px; height:18px; border-radius:50%; border:1.5px solid #94a3b8; background:none; color:#94a3b8; font-style:italic; font-weight:700; font-size:0.7rem; font-family:Georgia,serif; cursor:pointer; display:inline-flex; align-items:center; justify-content:center; flex-shrink:0; transition:all 0.15s; padding:0; line-height:1; }
+        .i-btn:hover { border-color:#0f2347; color:#0f2347; background:#f1f5f9; }
+        .i-tip { display:none; position:absolute; top:24px; right:0; z-index:500; background:#0f2347; color:#fff; font-size:0.71rem; font-family:var(--font); font-style:normal; font-weight:400; padding:9px 12px; border-radius:8px; width:230px; line-height:1.55; box-shadow:0 4px 20px rgba(0,0,0,0.25); pointer-events:none; }
+        .i-tip::before { content:''; position:absolute; top:-5px; right:5px; width:10px; height:10px; background:#0f2347; transform:rotate(45deg); border-radius:1px; }
+        .iw:hover .i-tip, .iw:focus-within .i-tip { display:block; }
+        /* toolbar */
         .toolbar { display:flex; align-items:center; justify-content:space-between; background:#ffffff; border:2px solid #0f2347; border-radius:var(--r); padding:10px 14px; margin-bottom:24px; box-shadow:var(--shadow); }
         .period-btns { display:flex; gap:3px; align-items:center; }
         .period-lbl { font-size:0.72rem; color:#0f2347; font-weight:600; margin-right:12px; text-transform:uppercase; letter-spacing:0.06em; }
@@ -94,13 +108,12 @@
         .alert-cfg-btn:hover { background:#0f2347; color:#fff; }
         .alert-cfg-btn.active { background:#e0e7ff; border-color:#0f2347; color:#0f2347; }
         .alert-cfg-btn.active:hover { background:#0f2347; color:#fff; border-color:#0f2347; }
-
+        /* bottom */
         .bottom-grid { display:grid; grid-template-columns:1fr 300px; gap:14px; align-items:start; }
         .charts-col { display:flex; flex-direction:column; gap:14px; }
         .chart-card { background:#ffffff; border:1px solid #0f2347; border-radius:var(--r2); padding:18px 20px; box-shadow:var(--shadow); }
         .chart-label { font-size:0.7rem; font-weight:700; text-transform:uppercase; letter-spacing:0.08em; color:#1e293b; margin-bottom:12px; }
         .chart-wrap { height:130px; }
-
         .log-card { background:#ffffff; border:2px solid #0f2347; border-radius:var(--r2); overflow:hidden; display:flex; flex-direction:column; box-shadow:var(--shadow2); height:816px; }
         .log-head { padding:14px 16px; font-size:0.68rem; font-weight:600; text-transform:uppercase; letter-spacing:0.12em; color:#fbbf24; border-bottom:1px solid #e2e8f0; background:#0f172a; flex-shrink:0; }
         .log-body { flex:1; overflow-y:auto; padding:10px 14px; font-family:var(--mono); font-size:0.72rem; background:#ffffff; min-height:0; }
@@ -110,8 +123,7 @@
         .log-t { color:#0f2347; margin-right:7px; font-weight:600; }
         .log-alarm { color:#dc2626; font-weight:600; }
         .log-mqtt  { color:#059669; font-weight:700; }
-
-        /* ── MODAL ── */
+        /* modal */
         .modal-overlay { display:none; position:fixed; inset:0; background:rgba(0,0,0,0.55); z-index:999; align-items:center; justify-content:center; }
         .modal-overlay.open { display:flex; }
         .modal { background:#fff; border-radius:var(--r2); box-shadow:0 20px 60px rgba(0,0,0,0.2); width:480px; max-width:95vw; max-height:88vh; display:flex; flex-direction:column; animation:modalIn 0.2s ease; }
@@ -132,7 +144,7 @@
         .alert-dot { width:9px; height:9px; border-radius:50%; flex-shrink:0; }
         .alert-inputs { display:grid; grid-template-columns:1fr 1fr; gap:10px; }
         .alert-field label { display:block; font-size:0.71rem; color:#64748b; font-weight:500; margin-bottom:4px; }
-        .alert-field input { width:100%; padding:8px 10px; border:1.5px solid #e2e8f0; border-radius:8px; font-family:var(--mono); font-size:0.85rem; color:#0f172a; background:#f8fafc; transition:border-color 0.15s, background 0.15s; }
+        .alert-field input { width:100%; padding:8px 10px; border:1.5px solid #e2e8f0; border-radius:8px; font-family:var(--mono); font-size:0.85rem; color:#0f172a; background:#f8fafc; transition:border-color 0.15s,background 0.15s; }
         .alert-field input:focus { outline:none; border-color:#0f2347; background:#fff; }
         .alert-field input::placeholder { color:#cbd5e1; }
         .modal-footer { padding:14px 24px; background:#f8fafc; border-top:1px solid #e2e8f0; display:flex; gap:8px; justify-content:flex-end; border-radius:0 0 var(--r2) var(--r2); }
@@ -140,49 +152,29 @@
         .btn-secondary:hover { border-color:#0f2347; color:#0f2347; }
         .btn-primary { padding:7px 20px; border-radius:8px; border:none; background:#0f2347; color:#fff; font-size:0.8rem; font-weight:600; cursor:pointer; font-family:var(--font); transition:background 0.15s; }
         .btn-primary:hover { background:#0a1628; }
-
         @media (max-width:1100px) {
             .sensor-grid { grid-template-columns:repeat(2,1fr); }
+            .derived-grid { grid-template-columns:repeat(2,1fr); }
             .bottom-grid { grid-template-columns:1fr; }
-            .log-card { height:400px; }
-            .log-body { max-height:340px; }
+            .log-card { height:400px; } .log-body { max-height:340px; }
         }
         @media (max-width:640px) {
-            .page { padding:12px; }
-            .topbar { padding:0 14px; height:56px; }
-            .logo-img { height:32px; }
-            .topbar-title b { font-size:0.82rem; }
-            .topbar-title span { display:none; }
+            .page { padding:12px; } .topbar { padding:0 14px; height:56px; } .logo-img { height:32px; }
+            .topbar-title b { font-size:0.82rem; } .topbar-title span { display:none; }
             .hero { flex-direction:column; align-items:flex-start; gap:14px; padding:18px 16px; }
-            .hero-text h2 { font-size:1rem; }
-            .hero-text p { font-size:0.75rem; }
-            .hero-right { flex-wrap:wrap; gap:8px; width:100%; }
-            .hero-stat { padding:6px 14px; }
-            .hero-stat-val { font-size:1rem; }
-            .sensor-grid { grid-template-columns:repeat(2,1fr); gap:10px; margin-bottom:16px; }
-            .sensor-card { padding:16px 14px; }
-            .sensor-value { font-size:2rem; }
+            .hero-text h2 { font-size:1rem; } .hero-text p { font-size:0.75rem; }
+            .hero-right { flex-wrap:wrap; gap:8px; width:100%; } .hero-stat { padding:6px 14px; } .hero-stat-val { font-size:1rem; }
+            .sensor-grid { grid-template-columns:repeat(2,1fr); gap:10px; margin-bottom:10px; }
+            .derived-grid { grid-template-columns:1fr; gap:10px; }
+            .sensor-card { padding:16px 14px; } .sensor-value { font-size:2rem; }
             .toolbar { flex-direction:column; align-items:stretch; gap:10px; padding:10px 12px; }
-            .period-btns { flex-wrap:wrap; gap:4px; }
-            .period-lbl { width:100%; margin-bottom:2px; }
-            .period-btn { font-size:0.75rem; padding:5px 10px; }
-            .toolbar > div:last-child { display:flex; gap:8px; }
-            .alert-cfg-btn, .export-btn { flex:1; justify-content:center; font-size:0.75rem; padding:7px 10px; }
-            .bottom-grid { grid-template-columns:1fr; gap:10px; }
-            .chart-wrap { height:110px; }
-            .log-card { height:320px; }
-            .modal { width:95vw; max-height:90vh; }
-            .modal-body { padding:16px; }
-            .modal-header { padding:14px 16px; }
-            .modal-footer { padding:12px 16px; }
-            .alert-inputs { grid-template-columns:1fr 1fr; gap:8px; }
-            footer { padding:16px 0 20px; font-size:0.75rem; }
+            .period-btns { flex-wrap:wrap; gap:4px; } .period-lbl { width:100%; margin-bottom:2px; } .period-btn { font-size:0.75rem; padding:5px 10px; }
+            .toolbar > div:last-child { display:flex; gap:8px; } .alert-cfg-btn,.export-btn { flex:1; justify-content:center; font-size:0.75rem; padding:7px 10px; }
+            .bottom-grid { grid-template-columns:1fr; gap:10px; } .chart-wrap { height:110px; } .log-card { height:320px; }
+            .modal { width:95vw; max-height:90vh; } .modal-body { padding:16px; } .modal-header { padding:14px 16px; } .modal-footer { padding:12px 16px; }
+            .alert-inputs { grid-template-columns:1fr 1fr; gap:8px; } footer { padding:16px 0 20px; font-size:0.75rem; }
         }
-        @media (max-width:400px) {
-            .sensor-grid { grid-template-columns:1fr 1fr; gap:8px; }
-            .sensor-value { font-size:1.7rem; }
-            .hero-right { flex-direction:column; align-items:flex-start; }
-        }
+        @media (max-width:400px) { .sensor-grid { grid-template-columns:1fr 1fr; gap:8px; } .sensor-value { font-size:1.7rem; } .hero-right { flex-direction:column; align-items:flex-start; } }
     </style>
 </head>
 <body>
@@ -196,55 +188,21 @@
     <p style="font-size:0.75rem;color:#94a3b8;margin-top:8px;">Universidad de Valladolid</p>
 </div>
 
-<!-- MODAL CONFIGURACIÓN DE ALERTAS -->
 <div class="modal-overlay" id="modal-alerts">
     <div class="modal">
         <div class="modal-header">
-            <h3>
-                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M18 8A6 6 0 006 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 01-3.46 0"/></svg>
-                Configuración de alertas
-            </h3>
+            <h3><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M18 8A6 6 0 006 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 01-3.46 0"/></svg> Configuración de alertas</h3>
             <button class="modal-close" onclick="closeAlertModal()">×</button>
         </div>
         <div class="modal-body">
-            <div class="alert-section">
-                <div class="alert-section-title"><span class="alert-dot" style="background:#dc2626;"></span>Temperatura (°C)</div>
-                <div class="alert-inputs">
-                    <div class="alert-field"><label>Mínimo (°C)</label><input type="number" id="al-temp-min" placeholder="Sin límite" step="0.1"></div>
-                    <div class="alert-field"><label>Máximo (°C)</label><input type="number" id="al-temp-max" placeholder="Sin límite" step="0.1"></div>
-                </div>
-            </div>
-            <div class="alert-section">
-                <div class="alert-section-title"><span class="alert-dot" style="background:#2563eb;"></span>pH</div>
-                <div class="alert-inputs">
-                    <div class="alert-field"><label>Mínimo (pH)</label><input type="number" id="al-ph-min" placeholder="Sin límite" step="0.01" min="0" max="14"></div>
-                    <div class="alert-field"><label>Máximo (pH)</label><input type="number" id="al-ph-max" placeholder="Sin límite" step="0.01" min="0" max="14"></div>
-                </div>
-            </div>
-            <div class="alert-section">
-                <div class="alert-section-title"><span class="alert-dot" style="background:#7c3aed;"></span>Potencial Redox (mV)</div>
-                <div class="alert-inputs">
-                    <div class="alert-field"><label>Mínimo (mV)</label><input type="number" id="al-orp-min" placeholder="Sin límite" step="1"></div>
-                    <div class="alert-field"><label>Máximo (mV)</label><input type="number" id="al-orp-max" placeholder="Sin límite" step="1"></div>
-                </div>
-            </div>
-            <div class="alert-section">
-                <div class="alert-section-title"><span class="alert-dot" style="background:#059669;"></span>Oxígeno Disuelto (mg/L)</div>
-                <div class="alert-inputs">
-                    <div class="alert-field"><label>Mínimo (mg/L)</label><input type="number" id="al-do-min" placeholder="Sin límite" step="0.1" min="0"></div>
-                    <div class="alert-field"><label>Máximo (mg/L)</label><input type="number" id="al-do-max" placeholder="Sin límite" step="0.1" min="0"></div>
-                </div>
-            </div>
+            <div class="alert-section"><div class="alert-section-title"><span class="alert-dot" style="background:#dc2626;"></span>Temperatura (°C)</div><div class="alert-inputs"><div class="alert-field"><label>Mínimo (°C)</label><input type="number" id="al-temp-min" placeholder="Sin límite" step="0.1"></div><div class="alert-field"><label>Máximo (°C)</label><input type="number" id="al-temp-max" placeholder="Sin límite" step="0.1"></div></div></div>
+            <div class="alert-section"><div class="alert-section-title"><span class="alert-dot" style="background:#2563eb;"></span>pH</div><div class="alert-inputs"><div class="alert-field"><label>Mínimo (pH)</label><input type="number" id="al-ph-min" placeholder="Sin límite" step="0.01" min="0" max="14"></div><div class="alert-field"><label>Máximo (pH)</label><input type="number" id="al-ph-max" placeholder="Sin límite" step="0.01" min="0" max="14"></div></div></div>
+            <div class="alert-section"><div class="alert-section-title"><span class="alert-dot" style="background:#7c3aed;"></span>Potencial Redox (mV)</div><div class="alert-inputs"><div class="alert-field"><label>Mínimo (mV)</label><input type="number" id="al-orp-min" placeholder="Sin límite" step="1"></div><div class="alert-field"><label>Máximo (mV)</label><input type="number" id="al-orp-max" placeholder="Sin límite" step="1"></div></div></div>
+            <div class="alert-section"><div class="alert-section-title"><span class="alert-dot" style="background:#059669;"></span>Oxígeno Disuelto (mg/L)</div><div class="alert-inputs"><div class="alert-field"><label>Mínimo (mg/L)</label><input type="number" id="al-do-min" placeholder="Sin límite" step="0.1" min="0"></div><div class="alert-field"><label>Máximo (mg/L)</label><input type="number" id="al-do-max" placeholder="Sin límite" step="0.1" min="0"></div></div></div>
         </div>
-        <div class="info-panel" id="info-panel">
-            <p>Define los umbrales mínimo y máximo para cada variable. Si el valor medido supera algún límite se registrará una alerta. Deja los campos vacíos para desactivar la alerta de esa variable.</p>
-        </div>
+        <div class="info-panel" id="info-panel"><p>Define los umbrales mínimo y máximo para cada variable. Si el valor medido supera algún límite se registrará una alerta. Deja los campos vacíos para desactivar la alerta de esa variable.</p></div>
         <div class="modal-footer">
-            <div style="display:flex;align-items:center;gap:8px;margin-right:auto;">
-                <button class="btn-info" id="btn-info" onclick="toggleInfo()" title="Información">
-                    <span style="font-style:italic;font-weight:700;font-size:0.85rem;font-family:Georgia,serif;">i</span>
-                </button>
-            </div>
+            <div style="display:flex;align-items:center;gap:8px;margin-right:auto;"><button class="btn-info" id="btn-info" onclick="toggleInfo()"><span style="font-style:italic;font-weight:700;font-size:0.85rem;font-family:Georgia,serif;">i</span></button></div>
             <button class="btn-secondary" onclick="resetAlertInputs()">Limpiar todo</button>
             <button class="btn-primary" onclick="saveAlerts()">Guardar alertas</button>
         </div>
@@ -256,10 +214,7 @@
         <div class="topbar-left">
             <img src="logoUNI.png" alt="Universidad de Valladolid" class="logo-img" onerror="this.style.display='none'">
             <div class="topbar-sep"></div>
-            <div class="topbar-title">
-                <b>Monitor de Biorreactor</b>
-                <span>Universidad de Valladolid</span>
-            </div>
+            <div class="topbar-title"><b>Monitor de Biorreactor</b><span>Universidad de Valladolid</span></div>
         </div>
         <div class="topbar-right"></div>
     </nav>
@@ -271,41 +226,66 @@
                 <p>Monitorización en tiempo real · Temperatura · pH · Potencial Redox · Oxígeno Disuelto</p>
             </div>
             <div class="hero-right">
-                <div class="hero-stat">
-                    <div class="hero-stat-val" id="stat-uptime">00:00:00</div>
-                    <div class="hero-stat-lbl">Tiempo activo</div>
-                </div>
-                <button id="btn-start" onclick="startRecording()" style="padding:8px 18px;border-radius:var(--r);border:1px solid rgba(255,255,255,0.3);background:rgba(255,255,255,0.12);color:#fff;font-size:0.8rem;font-weight:600;cursor:pointer;font-family:var(--font);letter-spacing:0.03em;transition:background 0.2s;">
-                    ▶ Iniciar registro
-                </button>
-                <div class="live-badge" id="mqtt-pill">
-                    <span class="dot" id="device-dot" style="width:7px;height:7px;border-radius:50%;background:#f87171;box-shadow:0 0 8px #f87171;animation:blink 1.2s infinite;flex-shrink:0;"></span>
-                    <span id="mqtt-label">Esperando dispositivo...</span>
-                </div>
+                <div class="hero-stat"><div class="hero-stat-val" id="stat-uptime">00:00:00</div><div class="hero-stat-lbl">Tiempo activo</div></div>
+                <button id="btn-start" onclick="startRecording()" style="padding:8px 18px;border-radius:var(--r);border:1px solid rgba(255,255,255,0.3);background:rgba(255,255,255,0.12);color:#fff;font-size:0.8rem;font-weight:600;cursor:pointer;font-family:var(--font);letter-spacing:0.03em;transition:background 0.2s;">▶ Iniciar registro</button>
+                <div class="live-badge" id="mqtt-pill"><span class="dot" id="device-dot" style="width:7px;height:7px;border-radius:50%;background:#f87171;box-shadow:0 0 8px #f87171;animation:blink 1.2s infinite;flex-shrink:0;"></span><span id="mqtt-label">Esperando dispositivo...</span></div>
             </div>
         </div>
 
+        <!-- SENSORES PRIMARIOS -->
         <div class="sensor-grid">
-            <div class="sensor-card c-temp" id="card-temp">
-                <div class="sensor-label">Temperatura</div>
-                <div class="sensor-value" id="val-temp">--<span class="unit">°C</span></div>
-                <div class="sensor-footer"><span class="sensor-time" id="upd-temp">—</span><span class="src-badge sim" id="src-temp">SIM</span></div>
+            <div class="sensor-card c-temp" id="card-temp"><div class="sensor-label">Temperatura</div><div class="sensor-value" id="val-temp">--<span class="unit">°C</span></div><div class="sensor-footer"><span class="sensor-time" id="upd-temp">—</span><span class="src-badge sim" id="src-temp">SIM</span></div></div>
+            <div class="sensor-card c-ph" id="card-ph"><div class="sensor-label">Nivel de pH</div><div class="sensor-value" id="val-ph">--<span class="unit">pH</span></div><div class="sensor-footer"><span class="sensor-time" id="upd-ph">—</span><span class="src-badge sim" id="src-ph">SIM</span></div></div>
+            <div class="sensor-card c-orp" id="card-orp"><div class="sensor-label">Potencial Redox</div><div class="sensor-value" id="val-orp">--<span class="unit">mV</span></div><div class="sensor-footer"><span class="sensor-time" id="upd-orp">—</span><span class="src-badge sim" id="src-orp">SIM</span></div></div>
+            <div class="sensor-card c-do" id="card-do"><div class="sensor-label">Oxígeno Disuelto</div><div class="sensor-value" id="val-do">--<span class="unit">mg/L</span></div><div class="sensor-footer"><span class="sensor-time" id="upd-do">—</span><span class="src-badge sim" id="src-do">SIM</span></div></div>
+        </div>
+
+        <!-- WIDGETS DERIVADOS -->
+        <div class="derived-grid">
+
+            <!-- Actividad Microbiana -->
+            <div class="derived-card d-mic">
+                <div class="derived-header">
+                    <span class="derived-label">Actividad Microbiana</span>
+                    <div class="iw">
+                        <button class="i-btn">i</button>
+                        <div class="i-tip">Estimación de la actividad fermentativa basada en pH y ORP. Un pH próximo a 7 y un ORP bajo indican metabolismo microbiano activo. Escala 0–100%: menos de 30% actividad baja, 30–65% moderada, más de 65% alta actividad fermentativa.</div>
+                    </div>
+                </div>
+                <div class="derived-value" id="val-mic">--<span class="unit">%</span></div>
+                <div class="derived-sub" id="sub-mic">Esperando los 4 sensores...</div>
+                <div class="progress-bar-wrap"><div class="progress-bar" id="bar-mic" style="width:0%;background:linear-gradient(90deg,#0891b2,#22d3ee);"></div></div>
             </div>
-            <div class="sensor-card c-ph" id="card-ph">
-                <div class="sensor-label">Nivel de pH</div>
-                <div class="sensor-value" id="val-ph">--<span class="unit">pH</span></div>
-                <div class="sensor-footer"><span class="sensor-time" id="upd-ph">—</span><span class="src-badge sim" id="src-ph">SIM</span></div>
+
+            <!-- Velocidad de crecimiento μ -->
+            <div class="derived-card d-mu">
+                <div class="derived-header">
+                    <span class="derived-label">Vel. Crecimiento μ</span>
+                    <div class="iw">
+                        <button class="i-btn">i</button>
+                        <div class="i-tip">Velocidad específica de crecimiento microbiano μ (h⁻¹), calculada a partir del oxígeno disuelto y el pH. Refleja la rapidez con que se reproduce la biomasa. Valores típicos en cultivos aeróbicos: 0.05–0.5 h⁻¹. Solo disponible con los 4 sensores activos.</div>
+                    </div>
+                </div>
+                <div class="derived-value" id="val-mu">--<span class="unit">h⁻¹</span></div>
+                <div class="derived-sub" id="sub-mu">Esperando los 4 sensores...</div>
             </div>
-            <div class="sensor-card c-orp" id="card-orp">
-                <div class="sensor-label">Potencial Redox</div>
-                <div class="sensor-value" id="val-orp">--<span class="unit">mV</span></div>
-                <div class="sensor-footer"><span class="sensor-time" id="upd-orp">—</span><span class="src-badge sim" id="src-orp">SIM</span></div>
+
+            <!-- Estado Redox Dinámico -->
+            <div class="derived-card d-redox">
+                <div class="derived-header">
+                    <span class="derived-label">Estado Redox del Cultivo</span>
+                    <div class="iw">
+                        <button class="i-btn">i</button>
+                        <div class="i-tip">Clasificación dinámica del potencial redox (ORP) del medio de cultivo. Indica el balance entre oxidación y reducción: Muy oxidante (&gt;400 mV), Oxidante (200–400), Lev. oxidante (0–200), Reductor (-100–0), Muy reductor (&lt;-100 mV).</div>
+                    </div>
+                </div>
+                <div class="derived-value" id="val-orp-disp">--<span class="unit">mV</span></div>
+                <div id="redox-badge" class="redox-badge" style="background:#f1f5f9;color:#64748b;">
+                    <span class="redox-dot" id="redox-dot" style="background:#94a3b8;"></span>
+                    <span id="redox-label">Sin datos</span>
+                </div>
             </div>
-            <div class="sensor-card c-do" id="card-do">
-                <div class="sensor-label">Oxígeno Disuelto</div>
-                <div class="sensor-value" id="val-do">--<span class="unit">mg/L</span></div>
-                <div class="sensor-footer"><span class="sensor-time" id="upd-do">—</span><span class="src-badge sim" id="src-do">SIM</span></div>
-            </div>
+
         </div>
 
         <div class="toolbar">
@@ -318,18 +298,9 @@
                 <button class="period-btn" onclick="setPeriod(86400000,this)">24 horas</button>
             </div>
             <div style="display:flex;gap:8px;align-items:center;">
-                <button class="alert-cfg-btn" id="btn-alerts" onclick="openAlertModal()">
-                    <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M18 8A6 6 0 006 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 01-3.46 0"/></svg>
-                    Configurar alertas
-                </button>
-                <button class="export-btn" onclick="downloadCSV()">
-                    <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
-                    Exportar datos CSV
-                </button>
-                <button class="export-btn" id="btn-report" onclick="generateReport()" style="background:#0f2347;">
-                    <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><polyline points="10 9 9 9 8 9"/></svg>
-                    Generar informe
-                </button>
+                <button class="alert-cfg-btn" id="btn-alerts" onclick="openAlertModal()"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M18 8A6 6 0 006 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 01-3.46 0"/></svg> Configurar alertas</button>
+                <button class="export-btn" onclick="downloadCSV()"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg> Exportar datos CSV</button>
+                <button class="export-btn" id="btn-report" onclick="generateReport()" style="background:#0f2347;"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><polyline points="10 9 9 9 8 9"/></svg> Generar informe</button>
             </div>
         </div>
 
@@ -342,738 +313,336 @@
             </div>
             <div class="log-card">
                 <div class="log-head">Registro de eventos</div>
-                <div class="log-body" id="event-log">
-                    <div class="log-entry"><span class="log-t">[INICIO]</span>Sistema iniciado.</div>
-                </div>
+                <div class="log-body" id="event-log"><div class="log-entry"><span class="log-t">[INICIO]</span>Sistema iniciado.</div></div>
             </div>
         </div>
     </div>
-    <div style="border-top:1.5px solid #0f2347; margin:0 28px;"></div>
-    <footer style="text-align:center; padding:20px 0 28px; font-size:0.82rem; color:#0f2347; font-family:var(--font); letter-spacing:0.02em;">
-        Proyecto desarrollado por Jaime Madruga Barriga
-    </footer>
+    <div style="border-top:1.5px solid #0f2347;margin:0 28px;"></div>
+    <footer style="text-align:center;padding:20px 0 28px;font-size:0.82rem;color:#0f2347;font-family:var(--font);letter-spacing:0.02em;">Proyecto desarrollado por Jaime Madruga Barriga</footer>
 </div>
 
 <script>
-// ── CONFIGURACIÓN ──
-var SECRET_TOKEN  = 'uvalab';
-var SUPABASE_URL  = 'https://xxqsxspxzmpiyihefdpx.supabase.co';
-var SUPABASE_KEY  = 'sb_publishable_eWprfzTeOlHhJ8K2KoA-bg_8EqkRlBe';
-var MQTT_BROKER   = 'wss://broker.hivemq.com:8884/mqtt';
-var MQTT_TOPICS   = { temp:'biorreactor/temperatura', ph:'biorreactor/ph', orp:'biorreactor/orp', do:'biorreactor/do' };
-
-// ── ESTADO ──
-var sb = null;
-var charts = {};
-var recordingStart = null;
-var recordingEnd   = null;
-var currentSessionId = null;
-var lastSessionHistory = []; // preserva historial tras finalizar
-var lastRecordingEnd   = null; // timestamp de fin de última sesión
-var currentPeriodMs  = 0;
-var realtimeHistory  = [];
-var recordingHistory = [];
-var realDataReceived = { temp:false, ph:false, orp:false, do:false };
-var alertThresholds  = { temp:{min:null,max:null}, ph:{min:null,max:null}, orp:{min:null,max:null}, do:{min:null,max:null} };
-var alertCooldown    = {};
-var pendingRows      = [];
-
-var chartConfigs = {
-    temp:{ color:'#dc2626', min:20,   max:45,  unit:'°C'   },
-    ph:  { color:'#2563eb', min:0,    max:14,  unit:'pH'   },
-    orp: { color:'#7c3aed', min:-200, max:800, unit:'mV'   },
-    do:  { color:'#059669', min:0,    max:15,  unit:'mg/L' }
+var SECRET_TOKEN='uvalab', SUPABASE_URL='https://xxqsxspxzmpiyihefdpx.supabase.co', SUPABASE_KEY='sb_publishable_eWprfzTeOlHhJ8K2KoA-bg_8EqkRlBe';
+var MQTT_BROKER='wss://broker.hivemq.com:8884/mqtt';
+var MQTT_TOPICS={ temp:'biorreactor/temperatura', ph:'biorreactor/ph', orp:'biorreactor/orp', do:'biorreactor/do' };
+var sb=null, charts={}, recordingStart=null, recordingEnd=null, currentSessionId=null;
+var lastSessionHistory=[], lastRecordingEnd=null, currentPeriodMs=0;
+var realtimeHistory=[], recordingHistory=[];
+var realDataReceived={ temp:false, ph:false, orp:false, do:false };
+var alertThresholds={ temp:{min:null,max:null}, ph:{min:null,max:null}, orp:{min:null,max:null}, do:{min:null,max:null} };
+var alertCooldown={}, pendingRows=[];
+var lastVals={ temp:null, ph:null, orp:null, do:null };
+var chartConfigs={
+    temp:{ color:'#dc2626', min:20, max:45, unit:'°C' },
+    ph:  { color:'#2563eb', min:0,  max:14, unit:'pH' },
+    orp: { color:'#7c3aed', min:-200, max:800, unit:'mV' },
+    do:  { color:'#059669', min:0,  max:15, unit:'mg/L' }
 };
-var sensorNames = { temp:'Temperatura', ph:'pH', orp:'Potencial Redox', do:'Oxígeno Disuelto' };
-var sensorUnits = { temp:'°C', ph:'pH', orp:'mV', do:'mg/L' };
+var sensorNames={ temp:'Temperatura', ph:'pH', orp:'Potencial Redox', do:'Oxígeno Disuelto' };
+var sensorUnits={ temp:'°C', ph:'pH', orp:'mV', do:'mg/L' };
 
-// ── ACCESO ──
-var params = new URLSearchParams(window.location.search);
-if (params.get('token') === SECRET_TOKEN) {
-    document.getElementById('dashboard').style.display = 'block';
-    window.addEventListener('DOMContentLoaded', initDashboard);
-} else {
-    document.getElementById('access-screen').style.display = 'flex';
+var params=new URLSearchParams(window.location.search);
+if(params.get('token')===SECRET_TOKEN){ document.getElementById('dashboard').style.display='block'; window.addEventListener('DOMContentLoaded',initDashboard); }
+else { document.getElementById('access-screen').style.display='flex'; }
+
+function initDashboard() {
+    Chart.defaults.color='#475569'; Chart.defaults.borderColor='rgba(0,0,0,0.06)';
+    initCharts(); initSupabase(); connectMQTT(); startSimulator(); startUptime();
 }
 
-// ── INIT ──
-function initDashboard() {
-    Chart.defaults.color = '#475569';
-    Chart.defaults.borderColor = 'rgba(0,0,0,0.06)';
-    initCharts();
-    initSupabase();
-    connectMQTT();
-    startSimulator();
-    startUptime();
+// ── PARÁMETROS DERIVADOS ──
+function calcDerived() {
+    var t=lastVals.temp, ph=lastVals.ph, orp=lastVals.orp, doVal=lastVals.do;
+    if(t===null||ph===null||orp===null||doVal===null) return;
+
+    // 1. Actividad microbiana (0-100%)
+    var phFactor=Math.max(0,1-Math.abs(ph-7)/3.5);
+    var orpFactor=Math.max(0,Math.min(1,(400-orp)/500));
+    var mic=Math.round((phFactor*0.5+orpFactor*0.5)*100);
+    mic=Math.max(0,Math.min(100,mic));
+    var micLabel=mic>65?'Alta actividad fermentativa':mic>35?'Actividad moderada':'Actividad baja';
+    var micColor=mic>65?'linear-gradient(90deg,#059669,#34d399)':mic>35?'linear-gradient(90deg,#d97706,#fbbf24)':'linear-gradient(90deg,#dc2626,#f87171)';
+    var vM=document.getElementById('val-mic'); if(vM) vM.childNodes[0].nodeValue=mic;
+    var sM=document.getElementById('sub-mic'); if(sM) sM.textContent=micLabel;
+    var bM=document.getElementById('bar-mic'); if(bM){ bM.style.width=mic+'%'; bM.style.background=micColor; }
+
+    // 2. Velocidad de crecimiento μ (h⁻¹)
+    var doSat=14.62-0.3898*t+0.006969*t*t-0.00005896*t*t*t;
+    var doRatio=Math.max(0,Math.min(1,doVal/Math.max(doSat,0.1)));
+    var phOpt=Math.max(0,1-Math.pow((ph-7)/2.5,2));
+    var mu=parseFloat((0.45*doRatio*phOpt).toFixed(3));
+    var muLabel=mu>0.3?'Crecimiento rápido':mu>0.15?'Crecimiento moderado':'Crecimiento lento';
+    var vMu=document.getElementById('val-mu'); if(vMu) vMu.childNodes[0].nodeValue=mu;
+    var sMu=document.getElementById('sub-mu'); if(sMu) sMu.textContent=muLabel+' (DO sat: '+doSat.toFixed(1)+' mg/L)';
+
+    // 3. Estado Redox dinámico
+    var vOD=document.getElementById('val-orp-disp'); if(vOD) vOD.childNodes[0].nodeValue=orp;
+    var badge=document.getElementById('redox-badge'), lbl=document.getElementById('redox-label'), dot=document.getElementById('redox-dot');
+    if(badge&&lbl&&dot){
+        var state,bg,tc,dc;
+        if(orp>400)       { state='Muy oxidante';    bg='#fee2e2'; tc='#991b1b'; dc='#dc2626'; }
+        else if(orp>200)  { state='Oxidante';          bg='#fef3c7'; tc='#92400e'; dc='#d97706'; }
+        else if(orp>0)    { state='Lev. oxidante';    bg='#d1fae5'; tc='#065f46'; dc='#059669'; }
+        else if(orp>-100) { state='Reductor';           bg='#dbeafe'; tc='#1e40af'; dc='#2563eb'; }
+        else              { state='Muy reductor';     bg='#ede9fe'; tc='#5b21b6'; dc='#7c3aed'; }
+        badge.style.background=bg; badge.style.color=tc;
+        lbl.textContent=state; dot.style.background=dc;
+    }
 }
 
 // ── SUPABASE ──
 function initSupabase() {
     try {
-        sb = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
-        addLog('Base de datos conectada.', 'mqtt');
+        sb=supabase.createClient(SUPABASE_URL,SUPABASE_KEY);
+        addLog('Base de datos conectada.','mqtt');
         checkActiveSession();
-    } catch(e) {
-        addLog('Error conectando base de datos.', 'alarm');
-    }
+    } catch(e){ addLog('Error conectando base de datos.','alarm'); }
 }
 
 async function checkActiveSession() {
-    if (!sb) return;
-    addLog('Buscando sesión activa...', 'mqtt');
-
-    // 1. Buscar sesión activa (ended=false)
-    var result = await sb.from('sesiones')
-        .select('*')
-        .eq('ended', false)
-        .order('start_ts', { ascending: false })
-        .limit(1);
-
-    if (!result.error && result.data && result.data.length > 0) {
-        var ses = result.data[0];
-        currentSessionId = ses.session_id;
-        recordingStart   = ses.start_ts;
-        localStorage.setItem('biorreactor_session', JSON.stringify({ id:currentSessionId, start:recordingStart, ended:false }));
-        addLog('Sesión activa encontrada. Cargando historial...', 'mqtt');
-        await loadSessionData(currentSessionId);
-        restoreRecordingUI();
-        return;
+    if(!sb) return;
+    addLog('Buscando sesión activa...','mqtt');
+    var r=await sb.from('sesiones').select('*').eq('ended',false).order('start_ts',{ascending:false}).limit(1);
+    if(!r.error&&r.data&&r.data.length>0){
+        var ses=r.data[0]; currentSessionId=ses.session_id; recordingStart=ses.start_ts;
+        localStorage.setItem('biorreactor_session',JSON.stringify({id:currentSessionId,start:recordingStart,ended:false}));
+        addLog('Sesión activa encontrada. Cargando historial...','mqtt');
+        await loadSessionData(currentSessionId); restoreRecordingUI(); return;
     }
+    addLog('No hay sesión activa. Cargando última sesión...','');
+    var lr=await sb.from('sesiones').select('*').eq('ended',true).order('start_ts',{ascending:false}).limit(1);
+    if(!lr.error&&lr.data&&lr.data.length>0){ await loadSessionData(lr.data[0].session_id); addLog('Última sesión cargada.','mqtt'); }
+    else { addLog('No hay sesiones registradas.',''); }
+}
 
-    // 2. No hay sesión activa → cargar la última sesión finalizada para exportar/ver gráficas
-    addLog('No hay sesión activa. Cargando última sesión...', '');
-    var lastResult = await sb.from('sesiones')
-        .select('*')
-        .eq('ended', true)
-        .order('start_ts', { ascending: false })
-        .limit(1);
+function restoreRecordingUI(){
+    var btn=document.getElementById('btn-start');
+    btn.innerHTML='■ Finalizar'; btn.style.background='rgba(239,68,68,0.25)'; btn.style.borderColor='rgba(239,68,68,0.6)'; btn.style.color='#fca5a5';
+}
 
-    if (!lastResult.error && lastResult.data && lastResult.data.length > 0) {
-        var lastSes = lastResult.data[0];
-        await loadSessionData(lastSes.session_id);
-        addLog('Última sesión cargada. Puedes exportar o ver las gráficas.', 'mqtt');
+async function loadSessionData(sessionId){
+    if(!sb) return;
+    var r=await sb.from('registros').select('*').eq('session_id',sessionId).order('ts',{ascending:true});
+    if(r.error||!r.data||r.data.length===0){ addLog('Sin datos previos en la sesión.',''); return; }
+    var rows=r.data.map(function(x){ return {time:x.time,ts:x.ts,temp:x.temp,ph:x.ph,orp:x.orp,do:x.do}; });
+    recordingHistory=rows; lastSessionHistory=rows.slice();
+    if(rows.length>0) lastRecordingEnd=rows[rows.length-1].ts;
+    Object.keys(charts).forEach(function(k){ refreshChart(k); });
+    addLog('Historial cargado: '+r.data.length+' registros.','mqtt');
+}
+
+var saveTimers={};
+function scheduleSave(entry){ var k=entry.ts; if(saveTimers[k]) clearTimeout(saveTimers[k]); saveTimers[k]=setTimeout(function(){ delete saveTimers[k]; saveRow(entry); },3000); }
+
+var supabaseFirstSave=false;
+async function saveRow(entry){
+    if(!sb||!currentSessionId) return;
+    var row={ts:entry.ts,time:entry.time,temp:entry.temp||null,ph:entry.ph||null,orp:entry.orp||null,do:entry.do||null,session_id:currentSessionId};
+    var r=await sb.from('registros').insert(row);
+    if(r.error){ if(!r.error.message||r.error.message.indexOf('duplicate')===-1){ pendingRows.push(row); if(!supabaseFirstSave) addLog('Error BD: '+r.error.message,'alarm'); } }
+    else { if(!supabaseFirstSave){ supabaseFirstSave=true; addLog('Datos guardándose en la nube correctamente.','mqtt'); } }
+}
+
+async function flushPending(){ if(!sb||pendingRows.length===0) return; var b=pendingRows.splice(0,50); var r=await sb.from('registros').insert(b); if(r.error) pendingRows=b.concat(pendingRows); }
+setInterval(flushPending,10000);
+
+setInterval(async function(){
+    if(!recordingStart||!sb||!currentSessionId) return;
+    var r=await sb.from('sesiones').select('ended').eq('session_id',currentSessionId).limit(1);
+    if(r.error||!r.data||r.data.length===0) return;
+    if(r.data[0].ended===true){
+        addLog('Registro finalizado desde otro dispositivo.','alarm');
+        recordingStart=null; recordingEnd=Date.now();
+        localStorage.setItem('biorreactor_session',JSON.stringify({id:currentSessionId,ended:true}));
+        currentSessionId=null;
+        var el=document.getElementById('stat-uptime'); if(el) el.textContent='00:00:00';
+        var btn=document.getElementById('btn-start'); btn.innerHTML='▶ Iniciar registro'; btn.style.background='rgba(255,255,255,0.12)'; btn.style.borderColor='rgba(255,255,255,0.3)'; btn.style.color='#fff';
+    }
+},10000);
+
+function startUptime(){ setInterval(function(){ if(!recordingStart) return; var s=Math.floor((Date.now()-recordingStart)/1000),h=Math.floor(s/3600),m=Math.floor((s%3600)/60),sec=s%60; var el=document.getElementById('stat-uptime'); if(el) el.textContent=pad(h)+':'+pad(m)+':'+pad(sec); },1000); }
+function pad(n){ return n<10?'0'+n:''+n; }
+
+async function startRecording(){
+    var btn=document.getElementById('btn-start');
+    if(!recordingStart){
+        recordingStart=Date.now(); recordingEnd=null; recordingHistory=[]; lastSessionHistory=[]; lastRecordingEnd=null;
+        currentSessionId='ses_'+recordingStart; supabaseFirstSave=false;
+        localStorage.setItem('biorreactor_session',JSON.stringify({id:currentSessionId,start:recordingStart,ended:false}));
+        if(sb){ var sr=await sb.from('sesiones').insert({session_id:currentSessionId,start_ts:recordingStart,ended:false}); if(sr.error) addLog('Error creando sesión: '+sr.error.message,'alarm'); else addLog('Sesión creada en la nube.','mqtt'); }
+        Object.keys(charts).forEach(function(k){ charts[k].data.labels=[]; charts[k].data.datasets[0].data=[]; charts[k].update('none'); });
+        btn.innerHTML='■ Finalizar'; btn.style.background='rgba(239,68,68,0.25)'; btn.style.borderColor='rgba(239,68,68,0.6)'; btn.style.color='#fca5a5';
+        addLog('Registro de datos iniciado.','mqtt');
     } else {
-        addLog('No hay sesiones registradas.', '');
+        recordingEnd=Date.now();
+        var elapsed=Math.floor((recordingEnd-recordingStart)/1000),hh=Math.floor(elapsed/3600),mm=Math.floor((elapsed%3600)/60),ss=elapsed%60;
+        var ts=(hh>0?pad(hh)+'h ':'')+pad(mm)+'m '+pad(ss)+'s';
+        if(sb){ var er=await sb.from('sesiones').update({ended:true}).eq('session_id',currentSessionId); if(er.error) addLog('Error finalizando: '+er.error.message,'alarm'); }
+        lastSessionHistory=recordingHistory.slice(); lastRecordingEnd=recordingEnd;
+        recordingStart=null; recordingEnd=null;
+        localStorage.setItem('biorreactor_session',JSON.stringify({id:currentSessionId,ended:true}));
+        currentSessionId=null;
+        var el=document.getElementById('stat-uptime'); if(el) el.textContent='00:00:00';
+        btn.innerHTML='▶ Iniciar registro'; btn.style.background='rgba(255,255,255,0.12)'; btn.style.borderColor='rgba(255,255,255,0.3)'; btn.style.color='#fff';
+        Object.keys(charts).forEach(function(k){ refreshChart(k); });
+        addLog('Registro finalizado — Tiempo activo: '+ts,'alarm');
     }
 }
 
-function restoreRecordingUI() {
-    var btn = document.getElementById('btn-start');
-    btn.innerHTML         = '■ Finalizar';
-    btn.style.background  = 'rgba(239,68,68,0.25)';
-    btn.style.borderColor = 'rgba(239,68,68,0.6)';
-    btn.style.color       = '#fca5a5';
-}
-
-async function loadSessionData(sessionId) {
-    if (!sb) return;
-    var result = await sb.from('registros').select('*').eq('session_id', sessionId).order('ts', { ascending: true });
-    if (result.error || !result.data || result.data.length === 0) {
-        addLog('Sin datos previos en la sesión.', '');
-        return;
-    }
-    var rows = result.data.map(function(r) {
-        return { time:r.time, ts:r.ts, temp:r.temp, ph:r.ph, orp:r.orp, do:r.do };
-    });
-    recordingHistory   = rows;
-    lastSessionHistory = rows.slice();
-    // Guardar timestamp del último registro como fin de sesión
-    if (rows.length > 0) lastRecordingEnd = rows[rows.length-1].ts;
-    Object.keys(charts).forEach(function(key){ refreshChart(key); });
-    addLog('Historial cargado: ' + result.data.length + ' registros.', 'mqtt');
-}
-
-// Debounce por ts: espera 3s antes de insertar para que lleguen todos los sensores
-var saveTimers = {};
-function scheduleSave(entry) {
-    var key = entry.ts;
-    if (saveTimers[key]) clearTimeout(saveTimers[key]);
-    saveTimers[key] = setTimeout(function() {
-        delete saveTimers[key];
-        saveRow(entry);
-    }, 3000);
-}
-
-var supabaseFirstSave = false;
-async function saveRow(entry) {
-    if (!sb || !currentSessionId) return;
-    var row = { ts:entry.ts, time:entry.time, temp:entry.temp||null, ph:entry.ph||null, orp:entry.orp||null, do:entry.do||null, session_id:currentSessionId };
-    var result = await sb.from('registros').insert(row);
-    if (result.error) {
-        if (!result.error.message || result.error.message.indexOf('duplicate') === -1) {
-            pendingRows.push(row);
-            if (!supabaseFirstSave) addLog('Error guardando en BD: ' + result.error.message, 'alarm');
-        }
-    } else {
-        if (!supabaseFirstSave) { supabaseFirstSave = true; addLog('Datos guardándose en la nube correctamente.', 'mqtt'); }
-    }
-}
-
-async function flushPending() {
-    if (!sb || pendingRows.length === 0) return;
-    var batch = pendingRows.splice(0, 50);
-    var result = await sb.from('registros').insert(batch);
-    if (result.error) pendingRows = batch.concat(pendingRows);
-}
-setInterval(flushPending, 10000);
-
-// Comprobar cada 10s si la sesión fue finalizada desde otro dispositivo
-setInterval(async function() {
-    if (!recordingStart || !sb || !currentSessionId) return;
-    var result = await sb.from('sesiones')
-        .select('ended')
-        .eq('session_id', currentSessionId)
-        .limit(1);
-    if (result.error || !result.data || result.data.length === 0) return;
-    if (result.data[0].ended === true) {
-        addLog('Registro finalizado desde otro dispositivo.', 'alarm');
-        recordingStart = null;
-        recordingEnd   = Date.now();
-        localStorage.setItem('biorreactor_session', JSON.stringify({ id:currentSessionId, ended:true }));
-        currentSessionId = null;
-        var el = document.getElementById('stat-uptime');
-        if (el) el.textContent = '00:00:00';
-        var btn = document.getElementById('btn-start');
-        btn.innerHTML         = '▶ Iniciar registro';
-        btn.style.background  = 'rgba(255,255,255,0.12)';
-        btn.style.borderColor = 'rgba(255,255,255,0.3)';
-        btn.style.color       = '#fff';
-    }
-}, 10000);
-
-// ── UPTIME ──
-function startUptime() {
-    setInterval(function() {
-        if (!recordingStart) return;
-        var s = Math.floor((Date.now()-recordingStart)/1000);
-        var h = Math.floor(s/3600), m = Math.floor((s%3600)/60), sec = s%60;
-        var el = document.getElementById('stat-uptime');
-        if (el) el.textContent = pad(h)+':'+pad(m)+':'+pad(sec);
-    }, 1000);
-}
-function pad(n) { return n<10?'0'+n:''+n; }
-
-// ── REGISTRO ──
-async function startRecording() {
-    var btn = document.getElementById('btn-start');
-    if (!recordingStart) {
-        // INICIAR
-        recordingStart   = Date.now();
-        recordingEnd     = null;
-        recordingHistory = [];
-        lastSessionHistory = [];
-        lastRecordingEnd   = null;
-        currentSessionId = 'ses_' + recordingStart;
-        supabaseFirstSave = false;
-        localStorage.setItem('biorreactor_session', JSON.stringify({ id:currentSessionId, start:recordingStart, ended:false }));
-        // Crear sesión en Supabase
-        if (sb) {
-            var sesResult = await sb.from('sesiones').insert({ session_id:currentSessionId, start_ts:recordingStart, ended:false });
-            if (sesResult.error) {
-                addLog('Error creando sesión en BD: ' + sesResult.error.message, 'alarm');
-            } else {
-                addLog('Sesión creada en la nube.', 'mqtt');
-            }
-        }
-        Object.keys(charts).forEach(function(key) {
-            charts[key].data.labels = [];
-            charts[key].data.datasets[0].data = [];
-            charts[key].update('none');
-        });
-        btn.innerHTML         = '■ Finalizar';
-        btn.style.background  = 'rgba(239,68,68,0.25)';
-        btn.style.borderColor = 'rgba(239,68,68,0.6)';
-        btn.style.color       = '#fca5a5';
-        addLog('Registro de datos iniciado.', 'mqtt');
-    } else {
-        // FINALIZAR
-        recordingEnd = Date.now();
-        var elapsed  = Math.floor((recordingEnd - recordingStart) / 1000);
-        var hh = Math.floor(elapsed/3600), mm = Math.floor((elapsed%3600)/60), ss = elapsed%60;
-        var tiempoStr = (hh>0 ? pad(hh)+'h ' : '') + pad(mm)+'m ' + pad(ss)+'s';
-        // Marcar sesión como finalizada en Supabase
-        if (sb) {
-            var endResult = await sb.from('sesiones').update({ ended:true }).eq('session_id', currentSessionId);
-            if (endResult.error) addLog('Error finalizando sesión en BD: ' + endResult.error.message, 'alarm');
-        }
-        // Preservar historial ANTES de limpiar
-        lastSessionHistory = recordingHistory.slice();
-        lastRecordingEnd   = recordingEnd;
-        recordingStart = null;
-        recordingEnd   = null; // resetear para que las gráficas usen lastRecordingEnd
-        localStorage.setItem('biorreactor_session', JSON.stringify({ id:currentSessionId, ended:true }));
-        currentSessionId = null;
-        var el = document.getElementById('stat-uptime');
-        if (el) el.textContent = '00:00:00';
-        btn.innerHTML         = '▶ Iniciar registro';
-        btn.style.background  = 'rgba(255,255,255,0.12)';
-        btn.style.borderColor = 'rgba(255,255,255,0.3)';
-        btn.style.color       = '#fff';
-        // Refrescar gráficas con datos de la sesión finalizada
-        Object.keys(charts).forEach(function(key){ refreshChart(key); });
-        addLog('Registro finalizado — Tiempo activo: ' + tiempoStr, 'alarm');
-    }
-}
-
-// ── CHARTS ──
-function initCharts() {
-    Object.keys(chartConfigs).forEach(function(key) {
-        var cfg = chartConfigs[key];
-        charts[key] = new Chart(document.getElementById('chart-'+key), {
+function initCharts(){
+    Object.keys(chartConfigs).forEach(function(k){
+        var c=chartConfigs[k];
+        charts[k]=new Chart(document.getElementById('chart-'+k),{
             type:'line',
-            data:{ labels:[], datasets:[
-                { data:[], borderColor:cfg.color, backgroundColor:cfg.color+'18', fill:true, tension:0.4, borderWidth:2, pointRadius:3, pointHoverRadius:5, pointBackgroundColor:cfg.color, pointBorderColor:cfg.color, label:'Valor', spanGaps:true }
-            ]},
-            options:{ responsive:true, maintainAspectRatio:false, plugins:{ legend:{ display:false } },
-                scales:{ y:{ min:cfg.min, max:cfg.max, grid:{ color:'rgba(0,0,0,0.05)' }, ticks:{ font:{ size:10, family:"'JetBrains Mono'", weight:'600' }, color:'#334155' }, title:{ display:true, text:cfg.unit, font:{ size:10, weight:'700' }, color:'#1e293b' } }, x:{ ticks:{ display:true, maxTicksLimit:6, font:{ size:9, family:"'JetBrains Mono'" }, color:'#64748b', maxRotation:0 }, grid:{ display:false } } }
-            }
+            data:{labels:[],datasets:[{data:[],borderColor:c.color,backgroundColor:c.color+'18',fill:true,tension:0.4,borderWidth:2,pointRadius:3,pointHoverRadius:5,pointBackgroundColor:c.color,pointBorderColor:c.color,label:'Valor',spanGaps:true}]},
+            options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false}},
+                scales:{y:{min:c.min,max:c.max,grid:{color:'rgba(0,0,0,0.05)'},ticks:{font:{size:10,family:"'JetBrains Mono'",weight:'600'},color:'#334155'},title:{display:true,text:c.unit,font:{size:10,weight:'700'},color:'#1e293b'}},x:{ticks:{display:true,maxTicksLimit:6,font:{size:9,family:"'JetBrains Mono'"},color:'#64748b',maxRotation:0},grid:{display:false}}}}
         });
     });
 }
 
-// ── MQTT ──
-function connectMQTT() {
+function connectMQTT(){
     try {
-        var client = mqtt.connect(MQTT_BROKER, { clientId:'uva_'+Math.random().toString(16).substr(2,8), reconnectPeriod:5000, connectTimeout:10000 });
-        client.on('connect', function() {
-            addLog('Conexión establecida - esperando dispositivo...', 'mqtt');
-            Object.values(MQTT_TOPICS).forEach(function(t){ client.subscribe(t); });
+        var client=mqtt.connect(MQTT_BROKER,{clientId:'uva_'+Math.random().toString(16).substr(2,8),reconnectPeriod:5000,connectTimeout:10000});
+        client.on('connect',function(){ addLog('Conexión establecida - esperando dispositivo...','mqtt'); Object.values(MQTT_TOPICS).forEach(function(t){ client.subscribe(t); }); });
+        client.on('message',function(topic,msg){
+            var value=parseFloat(msg.toString()); if(isNaN(value)) return;
+            var key=Object.keys(MQTT_TOPICS).find(function(k){ return MQTT_TOPICS[k]===topic; }); if(!key) return;
+            if(!realDataReceived[key]){ realDataReceived[key]=true; addLog('Datos reales recibidos: '+sensorNames[key],'mqtt'); if(Object.values(realDataReceived).some(function(v){ return v; })){ var d=document.getElementById('device-dot'),l=document.getElementById('mqtt-label'); d.style.background='#4ade80'; d.style.boxShadow='0 0 8px #4ade80'; d.style.animationDuration='2s'; l.textContent='Dispositivo conectado'; } }
+            updateWidget(key,value,true);
         });
-        client.on('message', function(topic,msg) {
-            var value = parseFloat(msg.toString()); if(isNaN(value)) return;
-            var key = Object.keys(MQTT_TOPICS).find(function(k){ return MQTT_TOPICS[k]===topic; });
-            if(!key) return;
-            if(!realDataReceived[key]) {
-                realDataReceived[key] = true;
-                addLog('Datos reales recibidos: '+sensorNames[key], 'mqtt');
-                if(Object.values(realDataReceived).some(function(v){ return v; })) {
-                    var dot = document.getElementById('device-dot');
-                    var lbl = document.getElementById('mqtt-label');
-                    dot.style.background = '#4ade80'; dot.style.boxShadow = '0 0 8px #4ade80'; dot.style.animationDuration = '2s';
-                    lbl.textContent = 'Dispositivo conectado';
-                }
-            }
-            updateWidget(key, value, true);
-        });
-        client.on('offline',   function(){});
-        client.on('reconnect', function(){});
-    } catch(e) { document.getElementById('mqtt-label').textContent = 'MQTT no disponible'; }
+        client.on('offline',function(){}); client.on('reconnect',function(){});
+    } catch(e){ document.getElementById('mqtt-label').textContent='MQTT no disponible'; }
 }
 
-// ── SIMULADOR ──
-function startSimulator() {
-    setInterval(function() {
-        var sim = { temp:parseFloat((36.8+Math.random()*0.4).toFixed(1)), ph:parseFloat((6.5+Math.random()*1.8).toFixed(2)), orp:parseFloat((255+Math.random()*15).toFixed(0)), do:parseFloat((7.8+Math.random()*0.3).toFixed(1)) };
-        Object.keys(sim).forEach(function(key){ if(!realDataReceived[key]) updateWidget(key, sim[key], false); });
-    }, 2000);
+function startSimulator(){
+    setInterval(function(){
+        var sim={temp:parseFloat((36.8+Math.random()*0.4).toFixed(1)),ph:parseFloat((6.5+Math.random()*1.8).toFixed(2)),orp:parseFloat((255+Math.random()*15).toFixed(0)),do:parseFloat((7.8+Math.random()*0.3).toFixed(1))};
+        Object.keys(sim).forEach(function(k){ if(!realDataReceived[k]) updateWidget(k,sim[k],false); });
+    },2000);
 }
 
-// ── UPDATE WIDGET ──
-function updateWidget(key, value, isReal) {
-    var now    = new Date();
-    var nowStr = now.toLocaleTimeString('es-ES',{hour:'2-digit',minute:'2-digit',second:'2-digit'});
-    var valEl=document.getElementById('val-'+key), updEl=document.getElementById('upd-'+key), srcEl=document.getElementById('src-'+key);
-    if(valEl) valEl.childNodes[0].nodeValue = value;
-    if(updEl) updEl.textContent = nowStr;
-    if(srcEl){ srcEl.textContent = isReal?'EN VIVO':'SIM'; srcEl.className = 'src-badge '+(isReal?'real':'sim'); }
-
-    checkThreshold(key, value);
-
-    // Historial tiempo real (siempre)
-    var rtEntry = realtimeHistory[realtimeHistory.length-1];
-    if(!rtEntry || rtEntry.time !== nowStr){ rtEntry = {time:nowStr, ts:now.getTime()}; realtimeHistory.push(rtEntry); }
-    rtEntry[key] = value;
-    if(realtimeHistory.length > 50) realtimeHistory.shift();
-
-    // Historial de registro (solo si activo)
-    if(recordingStart && !recordingEnd) {
-        var entry = recordingHistory[recordingHistory.length-1];
-        if(!entry || entry.time !== nowStr){ entry = {time:nowStr, ts:now.getTime()}; recordingHistory.push(entry); }
-        entry[key] = value;
-        if(recordingHistory.length > 50000) recordingHistory.shift();
-        scheduleSave(entry); // guardar en Supabase con debounce
+function updateWidget(key,value,isReal){
+    var now=new Date(), nowStr=now.toLocaleTimeString('es-ES',{hour:'2-digit',minute:'2-digit',second:'2-digit'});
+    var vE=document.getElementById('val-'+key),uE=document.getElementById('upd-'+key),sE=document.getElementById('src-'+key);
+    if(vE) vE.childNodes[0].nodeValue=value;
+    if(uE) uE.textContent=nowStr;
+    if(sE){ sE.textContent=isReal?'EN VIVO':'SIM'; sE.className='src-badge '+(isReal?'real':'sim'); }
+    checkThreshold(key,value);
+    // Derivados
+    lastVals[key]=value;
+    if(lastVals.temp!==null&&lastVals.ph!==null&&lastVals.orp!==null&&lastVals.do!==null) calcDerived();
+    // Historial RT
+    var rt=realtimeHistory[realtimeHistory.length-1];
+    if(!rt||rt.time!==nowStr){ rt={time:nowStr,ts:now.getTime()}; realtimeHistory.push(rt); }
+    rt[key]=value; if(realtimeHistory.length>50) realtimeHistory.shift();
+    // Historial registro
+    if(recordingStart&&!recordingEnd){
+        var en=recordingHistory[recordingHistory.length-1];
+        if(!en||en.time!==nowStr){ en={time:nowStr,ts:now.getTime()}; recordingHistory.push(en); }
+        en[key]=value; if(recordingHistory.length>50000) recordingHistory.shift();
+        scheduleSave(en);
     }
     refreshChart(key);
 }
 
-// ── ALERTAS ──
-function checkThreshold(key, value) {
-    var th   = alertThresholds[key];
-    var card = document.getElementById('card-'+key);
-    var now  = Date.now();
-    var COOLDOWN = 30000;
-    var triggered = false, msg = '';
-    if(th.min !== null && value < th.min) {
-        msg = 'ALERTA: '+sensorNames[key]+' bajo el mínimo ('+value+' '+sensorUnits[key]+' < '+th.min+' '+sensorUnits[key]+')';
-        triggered = true;
-    } else if(th.max !== null && value > th.max) {
-        msg = 'ALERTA: '+sensorNames[key]+' sobre el máximo ('+value+' '+sensorUnits[key]+' > '+th.max+' '+sensorUnits[key]+')';
-        triggered = true;
-    }
-    if(triggered) {
-        if(!alertCooldown[key] || now - alertCooldown[key] > COOLDOWN){ alertCooldown[key]=now; addLog(msg,'alarm'); }
-        if(card) card.classList.add('alarm');
-    } else {
-        if(card) card.classList.remove('alarm');
-    }
+function checkThreshold(key,value){
+    var th=alertThresholds[key],card=document.getElementById('card-'+key),now=Date.now(),COOL=30000,tri=false,msg='';
+    if(th.min!==null&&value<th.min){ msg='ALERTA: '+sensorNames[key]+' bajo el mínimo ('+value+' '+sensorUnits[key]+' < '+th.min+' '+sensorUnits[key]+')'; tri=true; }
+    else if(th.max!==null&&value>th.max){ msg='ALERTA: '+sensorNames[key]+' sobre el máximo ('+value+' '+sensorUnits[key]+' > '+th.max+' '+sensorUnits[key]+')'; tri=true; }
+    if(tri){ if(!alertCooldown[key]||now-alertCooldown[key]>COOL){ alertCooldown[key]=now; addLog(msg,'alarm'); } if(card) card.classList.add('alarm'); }
+    else { if(card) card.classList.remove('alarm'); }
 }
 
-// ── CHART REFRESH ──
-function refreshChart(key) {
-    var chart = charts[key]; if(!chart) return;
-    var filtered;
-    var isActive = recordingStart && !recordingEnd;
-    if(currentPeriodMs === 0) {
-        filtered = realtimeHistory.slice(-30);
-    } else if(isActive) {
-        var cutoff = Date.now();
-        var windowStart = cutoff - currentPeriodMs;
-        filtered = recordingHistory.filter(function(d){ return d.ts >= windowStart && d.ts <= cutoff; });
-    } else {
-        var endTs = lastRecordingEnd || (lastSessionHistory.length > 0 ? lastSessionHistory[lastSessionHistory.length-1].ts : Date.now());
-        var windowStart = endTs - currentPeriodMs;
-        filtered = lastSessionHistory.filter(function(d){ return d.ts >= windowStart && d.ts <= endTs; });
-    }
-    // Filtrar solo entradas con valor válido para este sensor → elimina discontinuidades
-    var withVal = filtered.filter(function(d){ return d[key] !== null && d[key] !== undefined; });
-    chart.data.labels = withVal.map(function(d){ return d.time; });
-    chart.data.datasets[0].data = withVal.map(function(d){ return d[key]; });
+function refreshChart(key){
+    var chart=charts[key]; if(!chart) return;
+    var filtered,isActive=recordingStart&&!recordingEnd;
+    if(currentPeriodMs===0){ filtered=realtimeHistory.slice(-30); }
+    else if(isActive){ var co=Date.now(),ws=co-currentPeriodMs; filtered=recordingHistory.filter(function(d){ return d.ts>=ws&&d.ts<=co; }); }
+    else { var eTs=lastRecordingEnd||(lastSessionHistory.length>0?lastSessionHistory[lastSessionHistory.length-1].ts:Date.now()),ws2=eTs-currentPeriodMs; filtered=lastSessionHistory.filter(function(d){ return d.ts>=ws2&&d.ts<=eTs; }); }
+    var wv=filtered.filter(function(d){ return d[key]!==null&&d[key]!==undefined; });
+    chart.data.labels=wv.map(function(d){ return d.time; });
+    chart.data.datasets[0].data=wv.map(function(d){ return d[key]; });
     chart.update('none');
 }
 
-// ── LOG ──
-function addLog(msg, type) {
-    var log  = document.getElementById('event-log');
-    var time = new Date().toLocaleTimeString('es-ES',{hour:'2-digit',minute:'2-digit',second:'2-digit'});
-    var div  = document.createElement('div'); div.className = 'log-entry';
-    var cls  = type==='alarm'?'log-alarm':type==='mqtt'?'log-mqtt':'';
-    div.innerHTML = '<span class="log-t">['+time+']</span><span class="'+cls+'">'+msg+'</span>';
-    log.prepend(div);
-    if(log.children.length > 100) log.removeChild(log.lastChild);
+function addLog(msg,type){
+    var log=document.getElementById('event-log'),time=new Date().toLocaleTimeString('es-ES',{hour:'2-digit',minute:'2-digit',second:'2-digit'});
+    var div=document.createElement('div'); div.className='log-entry';
+    var cls=type==='alarm'?'log-alarm':type==='mqtt'?'log-mqtt':'';
+    div.innerHTML='<span class="log-t">['+time+']</span><span class="'+cls+'">'+msg+'</span>';
+    log.prepend(div); if(log.children.length>100) log.removeChild(log.lastChild);
 }
 
-// ── PERIODO ──
-function setPeriod(ms, btn) {
-    currentPeriodMs = ms;
-    document.querySelectorAll('.period-btn').forEach(function(b){ b.classList.remove('active'); });
-    btn.classList.add('active');
-    Object.keys(charts).forEach(function(key){ refreshChart(key); });
+function setPeriod(ms,btn){ currentPeriodMs=ms; document.querySelectorAll('.period-btn').forEach(function(b){ b.classList.remove('active'); }); btn.classList.add('active'); Object.keys(charts).forEach(function(k){ refreshChart(k); }); }
+
+function downloadCSV(){
+    var isActive=recordingStart&&!recordingEnd, ed=isActive?recordingHistory:lastSessionHistory;
+    if(ed.length===0){ addLog('No hay datos para exportar.','alarm'); return; }
+    var csv='Hora,Temp,pH,ORP,DO\n';
+    ed.forEach(function(r){ csv+=(r.time||'')+','+(r.temp||'')+','+(r.ph||'')+','+(r.orp||'')+','+(r.do||'')+'\n'; });
+    var a=document.createElement('a'); a.href=URL.createObjectURL(new Blob([csv],{type:'text/csv'})); a.download='datos_biorreactor.csv'; a.click();
+    addLog('Datos exportados ('+ed.length+' registros).','');
 }
 
-// ── CSV ──
-function downloadCSV() {
-    var isActive = recordingStart && !recordingEnd;
-    var exportData = isActive ? recordingHistory : lastSessionHistory;
-    if (exportData.length === 0) { addLog('No hay datos para exportar.', 'alarm'); return; }
-    var csv = 'Hora,Temp,pH,ORP,DO\n';
-    exportData.forEach(function(r){ csv += (r.time||'')+','+(r.temp||'')+','+(r.ph||'')+','+(r.orp||'')+','+(r.do||'')+'\n'; });
-    var a = document.createElement('a');
-    a.href = URL.createObjectURL(new Blob([csv],{type:'text/csv'}));
-    a.download = 'datos_biorreactor.csv'; a.click();
-    addLog('Datos exportados (' + exportData.length + ' registros).', '');
+function toggleInfo(){ var p=document.getElementById('info-panel'),b=document.getElementById('btn-info'); var o=p.classList.toggle('open'); b.classList.toggle('open',o); }
+function openAlertModal(){ ['temp','ph','orp','do'].forEach(function(k){ document.getElementById('al-'+k+'-min').value=alertThresholds[k].min!==null?alertThresholds[k].min:''; document.getElementById('al-'+k+'-max').value=alertThresholds[k].max!==null?alertThresholds[k].max:''; }); document.getElementById('modal-alerts').classList.add('open'); }
+function closeAlertModal(){ document.getElementById('modal-alerts').classList.remove('open'); }
+function saveAlerts(){
+    var hasAny=false;
+    ['temp','ph','orp','do'].forEach(function(k){ var mn=document.getElementById('al-'+k+'-min').value.trim(),mx=document.getElementById('al-'+k+'-max').value.trim(); alertThresholds[k].min=mn!==''?parseFloat(mn):null; alertThresholds[k].max=mx!==''?parseFloat(mx):null; if(alertThresholds[k].min!==null||alertThresholds[k].max!==null) hasAny=true; });
+    alertCooldown={}; document.getElementById('btn-alerts').classList.toggle('active',hasAny); closeAlertModal(); addLog('Configuración de alertas actualizada.','mqtt');
 }
-
-// ── MODAL ALERTAS ──
-function toggleInfo() {
-    var panel = document.getElementById('info-panel');
-    var btn   = document.getElementById('btn-info');
-    var open  = panel.classList.toggle('open');
-    btn.classList.toggle('open', open);
-}
-function openAlertModal() {
-    ['temp','ph','orp','do'].forEach(function(k) {
-        document.getElementById('al-'+k+'-min').value = alertThresholds[k].min !== null ? alertThresholds[k].min : '';
-        document.getElementById('al-'+k+'-max').value = alertThresholds[k].max !== null ? alertThresholds[k].max : '';
-    });
-    document.getElementById('modal-alerts').classList.add('open');
-}
-function closeAlertModal() { document.getElementById('modal-alerts').classList.remove('open'); }
-function saveAlerts() {
-    var hasAny = false;
-    ['temp','ph','orp','do'].forEach(function(k) {
-        var minVal = document.getElementById('al-'+k+'-min').value.trim();
-        var maxVal = document.getElementById('al-'+k+'-max').value.trim();
-        alertThresholds[k].min = minVal !== '' ? parseFloat(minVal) : null;
-        alertThresholds[k].max = maxVal !== '' ? parseFloat(maxVal) : null;
-        if(alertThresholds[k].min !== null || alertThresholds[k].max !== null) hasAny = true;
-    });
-    alertCooldown = {};
-    document.getElementById('btn-alerts').classList.toggle('active', hasAny);
-    closeAlertModal();
-    addLog('Configuración de alertas actualizada.', 'mqtt');
-}
-function resetAlertInputs() {
-    ['temp','ph','orp','do'].forEach(function(k) {
-        document.getElementById('al-'+k+'-min').value = '';
-        document.getElementById('al-'+k+'-max').value = '';
-    });
-}
-document.getElementById('modal-alerts').addEventListener('click', function(e) {
-    if(e.target === this) closeAlertModal();
-});
+function resetAlertInputs(){ ['temp','ph','orp','do'].forEach(function(k){ document.getElementById('al-'+k+'-min').value=''; document.getElementById('al-'+k+'-max').value=''; }); }
+document.getElementById('modal-alerts').addEventListener('click',function(e){ if(e.target===this) closeAlertModal(); });
 
 // ── INFORME PDF ──
-// Registro de alertas durante la sesión
-var sessionAlerts = [];
-var originalAddLog = null;
-function trackAlerts() {
-    // Interceptar addLog para registrar alertas
-    var _orig = addLog;
-    window._origAddLog = _orig;
-    window.addLog = function(msg, type) {
-        _orig(msg, type);
-        if (type === 'alarm' && msg.indexOf('ALERTA:') === 0) {
-            sessionAlerts.push({ time: new Date().toLocaleTimeString('es-ES',{hour:'2-digit',minute:'2-digit',second:'2-digit'}), msg: msg });
-        }
-    };
-}
+var sessionAlerts=[];
+function trackAlerts(){ var _o=addLog; window.addLog=function(msg,type){ _o(msg,type); if(type==='alarm'&&msg.indexOf('ALERTA:')===0) sessionAlerts.push({time:new Date().toLocaleTimeString('es-ES',{hour:'2-digit',minute:'2-digit',second:'2-digit'}),msg:msg}); }; }
 trackAlerts();
 
-async function generateReport() {
-    var srcHistory = (recordingHistory.length > 0) ? recordingHistory : lastSessionHistory;
-    if (srcHistory.length === 0) { addLog('No hay datos para generar el informe.', 'alarm'); return; }
-
-    var btn = document.getElementById('btn-report');
-    btn.textContent = 'Generando...'; btn.disabled = true;
-
-    var { jsPDF } = window.jspdf;
-    var doc = new jsPDF({ orientation:'portrait', unit:'mm', format:'a4' });
-    var pageW = 210, margin = 15, contentW = pageW - margin*2;
-    var y = margin;
-
-    // ── Colores
-    var darkBlue = [15, 35, 71];
-    var lightGray = [245, 248, 250];
-    var midGray = [100, 116, 139];
-    var black = [15, 23, 42];
-    var red = [220, 38, 38];
-    var green = [5, 150, 105];
-
-    // ── Cabecera con logos
-    doc.setFillColor(...darkBlue);
-    doc.rect(0, 0, pageW, 36, 'F');
-
-    // Logo App (izquierda) - cargar como imagen
-    try {
-        var logoAppEl = new Image(); logoAppEl.src = 'logoAppC.png';
-        doc.addImage(logoAppEl, 'PNG', margin, 4, 24, 24);
-    } catch(e) {}
-
-    // Texto centrado
-    doc.setTextColor(255,255,255);
-    doc.setFontSize(15); doc.setFont('helvetica','bold');
-    doc.text('Monitor de Biorreactor - UVa', pageW/2, 13, { align:'center' });
+async function generateReport(){
+    var src=recordingHistory.length>0?recordingHistory:lastSessionHistory;
+    if(src.length===0){ addLog('No hay datos para generar el informe.','alarm'); return; }
+    var btn=document.getElementById('btn-report'); btn.textContent='Generando...'; btn.disabled=true;
+    var {jsPDF}=window.jspdf, doc=new jsPDF({orientation:'portrait',unit:'mm',format:'a4'});
+    var pW=210,mg=15,cW=pW-mg*2,y=mg;
+    var dB=[15,35,71],mG=[100,116,139],bk=[15,23,42],rd=[220,38,38],gr=[5,150,105];
+    doc.setFillColor(...dB); doc.rect(0,0,pW,36,'F');
+    try{ var la=new Image(); la.src='logoAppC.png'; doc.addImage(la,'PNG',mg,4,24,24); }catch(e){}
+    doc.setTextColor(255,255,255); doc.setFontSize(15); doc.setFont('helvetica','bold');
+    doc.text('Monitor de Biorreactor - UVa',pW/2,13,{align:'center'});
     doc.setFontSize(8.5); doc.setFont('helvetica','normal');
-    doc.text('Laboratorio de Ingeniería Química - Universidad de Valladolid', pageW/2, 20, { align:'center' });
-    doc.setFontSize(7.5);
-    doc.text('Informe generado el ' + new Date().toLocaleDateString('es-ES',{year:'numeric',month:'long',day:'numeric'}) + ' a las ' + new Date().toLocaleTimeString('es-ES',{hour:'2-digit',minute:'2-digit'}), pageW/2, 27, { align:'center' });
-
-    // Logo UNI (derecha)
-    try {
-        var logoUNIEl = new Image(); logoUNIEl.src = 'logoUNI.png';
-        doc.addImage(logoUNIEl, 'PNG', pageW-margin-24, 4, 24, 24);
-    } catch(e) {}
-
-    y = 44;
-
-    // ── Resumen de sesión
-    doc.setTextColor(...black);
-    doc.setFontSize(12); doc.setFont('helvetica','bold');
-    doc.text('Resumen de la monitorización', margin, y); y += 6;
-    doc.setDrawColor(...darkBlue); doc.setLineWidth(0.4);
-    doc.line(margin, y, pageW-margin, y); y += 5;
-
-    // Hora fin = último dato del historial
-    var startDate = srcHistory[0] ? srcHistory[0].ts : (recordingStart || Date.now());
-    var lastEntry = srcHistory[srcHistory.length-1];
-    var endDate   = lastEntry ? lastEntry.ts : (recordingEnd || Date.now());
-    var elapsed   = Math.floor((endDate - startDate) / 1000);
-    var hh = Math.floor(elapsed/3600), mm2 = Math.floor((elapsed%3600)/60), ss = elapsed%60;
-    var tiempoStr = pad(hh)+'h '+pad(mm2)+'m '+pad(ss)+'s';
-
-    var infoRows = [
-        ['Fecha de inicio', new Date(startDate).toLocaleDateString('es-ES',{year:'numeric',month:'long',day:'numeric'})],
-        ['Hora de inicio', new Date(startDate).toLocaleTimeString('es-ES',{hour:'2-digit',minute:'2-digit',second:'2-digit'})],
-        ['Hora de fin', new Date(endDate).toLocaleTimeString('es-ES',{hour:'2-digit',minute:'2-digit',second:'2-digit'})],
-        ['Tiempo activo', tiempoStr],
-        ['Total de mediciones', srcHistory.length + ' medidas'],
-        ['Alertas generadas', sessionAlerts.length + ' alertas']
-    ];
-    infoRows.forEach(function(row, i) {
-        doc.setFillColor(i%2===0 ? 250 : 255, i%2===0 ? 250 : 255, i%2===0 ? 252 : 255);
-        doc.rect(margin, y-4, contentW, 7, 'F');
-        doc.setFontSize(9); doc.setFont('helvetica','bold'); doc.setTextColor(...darkBlue);
-        doc.text(row[0], margin+2, y);
-        doc.setFont('helvetica','normal'); doc.setTextColor(...black);
-        doc.text(String(row[1]), margin+70, y);
-        y += 7;
-    });
-    y += 6;
-
-    // ── Estadísticas por sensor
-    doc.setFontSize(12); doc.setFont('helvetica','bold'); doc.setTextColor(...black);
-    doc.text('Estadísticas por sensor', margin, y); y += 6;
-    doc.setDrawColor(...darkBlue); doc.line(margin, y, pageW-margin, y); y += 5;
-
-    var sensors = [
-        { key:'temp', label:'Temperatura', unit:'°C',  color:[220,38,38] },
-        { key:'ph',   label:'pH',          unit:'pH',  color:[37,99,235] },
-        { key:'orp',  label:'Potencial Redox', unit:'mV', color:[124,58,237] },
-        { key:'do',   label:'Oxígeno Disuelto', unit:'mg/L', color:[5,150,105] }
-    ];
-
-    // Cabecera tabla
-    doc.setFillColor(...darkBlue);
-    doc.rect(margin, y-4, contentW, 7, 'F');
-    doc.setTextColor(255,255,255); doc.setFontSize(8); doc.setFont('helvetica','bold');
-    doc.text('Sensor', margin+2, y);
-    doc.text('Mínimo', margin+55, y);
-    doc.text('Máximo', margin+85, y);
-    doc.text('Media', margin+115, y);
-    doc.text('Desv. típica', margin+142, y);
-    y += 7;
-
-    sensors.forEach(function(s, i) {
-        var vals = srcHistory.map(function(r){ return r[s.key]; }).filter(function(v){ return v !== null && v !== undefined; });
-        if (vals.length === 0) return;
-        var min  = Math.min.apply(null, vals);
-        var max  = Math.max.apply(null, vals);
-        var mean = vals.reduce(function(a,b){ return a+b; }, 0) / vals.length;
-        var std  = Math.sqrt(vals.reduce(function(a,b){ return a + Math.pow(b-mean,2); },0)/vals.length);
-
-        doc.setFillColor(i%2===0 ? 248 : 255, i%2===0 ? 250 : 255, i%2===0 ? 252 : 255);
-        doc.rect(margin, y-4, contentW, 8, 'F');
-        // Punto de color
-        doc.setFillColor(...s.color); doc.circle(margin+4, y-1, 2, 'F');
-        doc.setTextColor(...black); doc.setFontSize(8); doc.setFont('helvetica','bold');
-        doc.text(s.label + ' (' + s.unit + ')', margin+8, y);
-        doc.setFont('helvetica','normal');
-        doc.text(min.toFixed(2), margin+55, y);
-        doc.text(max.toFixed(2), margin+85, y);
-        doc.text(mean.toFixed(2), margin+115, y);
-        doc.text(std.toFixed(2), margin+142, y);
-        y += 8;
-    });
-    y += 6;
-
-    // ── Umbrales configurados
-    var hasThresholds = Object.keys(alertThresholds).some(function(k){ return alertThresholds[k].min !== null || alertThresholds[k].max !== null; });
-    if (hasThresholds) {
-        doc.setFontSize(12); doc.setFont('helvetica','bold'); doc.setTextColor(...black);
-        doc.text('Umbrales de alerta configurados', margin, y); y += 6;
-        doc.setDrawColor(...darkBlue); doc.line(margin, y, pageW-margin, y); y += 5;
-        sensors.forEach(function(s, i) {
-            var th = alertThresholds[s.key];
-            if (th.min === null && th.max === null) return;
-            doc.setFillColor(i%2===0 ? 248 : 255, i%2===0 ? 250 : 255, i%2===0 ? 252 : 255);
-            doc.rect(margin, y-4, contentW, 7, 'F');
-            doc.setFillColor(...s.color); doc.circle(margin+4, y-1, 2, 'F');
-            doc.setFontSize(9); doc.setFont('helvetica','bold'); doc.setTextColor(...darkBlue);
-            doc.text(s.label, margin+8, y);
-            doc.setFont('helvetica','normal'); doc.setTextColor(...black);
-            var thText = '';
-            if (th.min !== null) thText += 'Mín: ' + th.min + ' ' + s.unit + '  ';
-            if (th.max !== null) thText += 'Máx: ' + th.max + ' ' + s.unit;
-            doc.text(thText, margin+60, y);
-            y += 7;
-        });
-        y += 6;
-    }
-
-    // ── Alertas registradas (siempre se muestra la sección)
-    if (y > 220) { doc.addPage(); y = margin; }
-    doc.setFontSize(12); doc.setFont('helvetica','bold'); doc.setTextColor(...black);
-    doc.text('Alertas registradas durante la sesión', margin, y); y += 6;
-    doc.setDrawColor(...darkBlue); doc.line(margin, y, pageW-margin, y); y += 5;
-
-    if (sessionAlerts.length === 0) {
-        doc.setFillColor(240, 253, 244);
-        doc.rect(margin, y-4, contentW, 8, 'F');
-        doc.setFontSize(9); doc.setFont('helvetica','normal'); doc.setTextColor(...green);
-        doc.text('No se registraron alertas durante esta sesión.', margin+4, y);
-        y += 12;
-    } else {
-        // Filtrar alertas hasta la hora fin de la sesión
-        var endTimeStr = new Date(endDate).toLocaleTimeString('es-ES',{hour:'2-digit',minute:'2-digit',second:'2-digit'});
-        var alertsInSession = sessionAlerts.filter(function(a){ return a.time <= endTimeStr; });
-        alertsInSession.slice(0, 20).forEach(function(a, i) {
-            if (y > 270) { doc.addPage(); y = margin; }
-            doc.setFillColor(255, 242, 242);
-            doc.rect(margin, y-4, contentW, 7, 'F');
-            doc.setFontSize(8); doc.setFont('helvetica','bold'); doc.setTextColor(...red);
-            doc.text('[' + a.time + ']', margin+2, y);
-            doc.setFont('helvetica','normal'); doc.setTextColor(...black);
-            doc.text(a.msg.replace('ALERTA: ',''), margin+22, y, { maxWidth: contentW-24 });
-            y += 7;
-        });
-        if (alertsInSession.length > 20) {
-            doc.setFontSize(8); doc.setTextColor(...midGray);
-            doc.text('... y ' + (alertsInSession.length-20) + ' alertas más.', margin, y); y += 7;
-        }
-        y += 4;
-    }
-
-    // ── Gráficas
-    doc.addPage(); y = margin;
-    doc.setFontSize(12); doc.setFont('helvetica','bold'); doc.setTextColor(...black);
-    doc.text('Evolución de los parámetros medidos', margin, y); y += 6;
-    doc.setDrawColor(...darkBlue); doc.line(margin, y, pageW-margin, y); y += 6;
-
-    var chartIds = ['chart-temp','chart-ph','chart-orp','chart-do'];
-    var chartLabels = ['Temperatura (°C)','pH','Potencial Redox (mV)','Oxígeno Disuelto (mg/L)'];
-    var chartKeys   = ['temp','ph','orp','do'];
-
-    // Renderizar gráficas de 24h en canvas ocultos para el informe
-    var ms24h = 86400000;
-    for (var ci = 0; ci < chartIds.length; ci++) {
-        var key24 = chartKeys[ci];
-        var cfg24 = chartConfigs[key24];
-        // Filtrar datos de las últimas 24h hasta endDate
-        var ws24 = endDate - ms24h;
-        var data24 = srcHistory.filter(function(d){ return d.ts >= ws24 && d.ts <= endDate && d[key24] !== null && d[key24] !== undefined; });
-        var labels24 = data24.map(function(d){ return d.time; });
-        var vals24   = data24.map(function(d){ return d[key24]; });
-
-        // Crear canvas temporal
-        var tmpCanvas = document.createElement('canvas');
-        tmpCanvas.width = 900; tmpCanvas.height = 280;
-        document.body.appendChild(tmpCanvas);
-        var tmpChart = new Chart(tmpCanvas, {
-            type:'line',
-            data:{ labels:labels24, datasets:[{ data:vals24, borderColor:cfg24.color, backgroundColor:cfg24.color+'18', fill:true, tension:0.4, borderWidth:2, pointRadius:2, spanGaps:true }]},
-            options:{ responsive:false, animation:false, plugins:{ legend:{ display:false } },
-                scales:{ y:{ min:cfg24.min, max:cfg24.max, grid:{ color:'rgba(0,0,0,0.05)' }, ticks:{ font:{ size:11 }, color:'#334155' }, title:{ display:true, text:cfg24.unit, font:{ size:11, weight:'bold' }, color:'#1e293b' } }, x:{ ticks:{ maxTicksLimit:8, font:{ size:9 }, color:'#64748b', maxRotation:0 }, grid:{ display:false } } }
-            }
-        });
-        tmpChart.update();
-
-        var imgData = tmpCanvas.toDataURL('image/png');
-        tmpChart.destroy();
-        document.body.removeChild(tmpCanvas);
-
-        var imgH = 44;
-        if (y + imgH + 12 > 285) { doc.addPage(); y = margin; }
-        doc.setFontSize(9); doc.setFont('helvetica','bold'); doc.setTextColor(...darkBlue);
-        doc.text(chartLabels[ci], margin, y); y += 4;
-        doc.addImage(imgData, 'PNG', margin, y, contentW, imgH);
-        y += imgH + 8;
-    }
-
-    // ── Pie de página en todas las páginas
-    var totalPages = doc.internal.getNumberOfPages();
-    for (var p = 1; p <= totalPages; p++) {
-        doc.setPage(p);
-        doc.setFillColor(...darkBlue);
-        doc.rect(0, 287, pageW, 10, 'F');
-        doc.setFontSize(7); doc.setTextColor(255,255,255); doc.setFont('helvetica','normal');
-        doc.text('Monitor de Biorreactor - Universidad de Valladolid', margin, 293);
-        doc.text('Página ' + p + ' de ' + totalPages, pageW-margin, 293, { align:'right' });
-    }
-
+    doc.text('Laboratorio de Ingeniería Química - Universidad de Valladolid',pW/2,20,{align:'center'});
+    doc.setFontSize(7.5); doc.text('Informe generado el '+new Date().toLocaleDateString('es-ES',{year:'numeric',month:'long',day:'numeric'})+' a las '+new Date().toLocaleTimeString('es-ES',{hour:'2-digit',minute:'2-digit'}),pW/2,27,{align:'center'});
+    try{ var lu=new Image(); lu.src='logoUNI.png'; doc.addImage(lu,'PNG',pW-mg-24,4,24,24); }catch(e){}
+    y=44;
+    doc.setTextColor(...bk); doc.setFontSize(12); doc.setFont('helvetica','bold'); doc.text('Resumen de la monitorización',mg,y); y+=6;
+    doc.setDrawColor(...dB); doc.setLineWidth(0.4); doc.line(mg,y,pW-mg,y); y+=5;
+    var sd=src[0]?src[0].ts:(recordingStart||Date.now()), le=src[src.length-1], ed2=le?le.ts:(recordingEnd||Date.now());
+    var el=Math.floor((ed2-sd)/1000),hh=Math.floor(el/3600),mm2=Math.floor((el%3600)/60),ss=el%60;
+    var tStr=pad(hh)+'h '+pad(mm2)+'m '+pad(ss)+'s';
+    var iR=[['Fecha de inicio',new Date(sd).toLocaleDateString('es-ES',{year:'numeric',month:'long',day:'numeric'})],['Hora de inicio',new Date(sd).toLocaleTimeString('es-ES',{hour:'2-digit',minute:'2-digit',second:'2-digit'})],['Hora de fin',new Date(ed2).toLocaleTimeString('es-ES',{hour:'2-digit',minute:'2-digit',second:'2-digit'})],['Tiempo activo',tStr],['Total de mediciones',src.length+' medidas'],['Alertas generadas',sessionAlerts.length+' alertas']];
+    iR.forEach(function(row,i){ doc.setFillColor(i%2===0?250:255,i%2===0?250:255,i%2===0?252:255); doc.rect(mg,y-4,cW,7,'F'); doc.setFontSize(9); doc.setFont('helvetica','bold'); doc.setTextColor(...dB); doc.text(row[0],mg+2,y); doc.setFont('helvetica','normal'); doc.setTextColor(...bk); doc.text(String(row[1]),mg+70,y); y+=7; }); y+=6;
+    doc.setFontSize(12); doc.setFont('helvetica','bold'); doc.setTextColor(...bk); doc.text('Estadísticas por sensor',mg,y); y+=6;
+    doc.setDrawColor(...dB); doc.line(mg,y,pW-mg,y); y+=5;
+    var sns=[{key:'temp',label:'Temperatura',unit:'°C',color:[220,38,38]},{key:'ph',label:'pH',unit:'pH',color:[37,99,235]},{key:'orp',label:'Potencial Redox',unit:'mV',color:[124,58,237]},{key:'do',label:'Oxígeno Disuelto',unit:'mg/L',color:[5,150,105]}];
+    doc.setFillColor(...dB); doc.rect(mg,y-4,cW,7,'F'); doc.setTextColor(255,255,255); doc.setFontSize(8); doc.setFont('helvetica','bold');
+    doc.text('Sensor',mg+2,y); doc.text('Mínimo',mg+55,y); doc.text('Máximo',mg+85,y); doc.text('Media',mg+115,y); doc.text('Desv. típica',mg+142,y); y+=7;
+    sns.forEach(function(s,i){ var vs=src.map(function(r){ return r[s.key]; }).filter(function(v){ return v!==null&&v!==undefined; }); if(vs.length===0) return; var mn=Math.min.apply(null,vs),mx=Math.max.apply(null,vs),me=vs.reduce(function(a,b){ return a+b; },0)/vs.length,st=Math.sqrt(vs.reduce(function(a,b){ return a+Math.pow(b-me,2); },0)/vs.length); doc.setFillColor(i%2===0?248:255,i%2===0?250:255,i%2===0?252:255); doc.rect(mg,y-4,cW,8,'F'); doc.setFillColor(...s.color); doc.circle(mg+4,y-1,2,'F'); doc.setTextColor(...bk); doc.setFontSize(8); doc.setFont('helvetica','bold'); doc.text(s.label+' ('+s.unit+')',mg+8,y); doc.setFont('helvetica','normal'); doc.text(mn.toFixed(2),mg+55,y); doc.text(mx.toFixed(2),mg+85,y); doc.text(me.toFixed(2),mg+115,y); doc.text(st.toFixed(2),mg+142,y); y+=8; }); y+=6;
+    var hT=Object.keys(alertThresholds).some(function(k){ return alertThresholds[k].min!==null||alertThresholds[k].max!==null; });
+    if(hT){ doc.setFontSize(12); doc.setFont('helvetica','bold'); doc.setTextColor(...bk); doc.text('Umbrales de alerta configurados',mg,y); y+=6; doc.setDrawColor(...dB); doc.line(mg,y,pW-mg,y); y+=5; sns.forEach(function(s,i){ var th=alertThresholds[s.key]; if(th.min===null&&th.max===null) return; doc.setFillColor(i%2===0?248:255,i%2===0?250:255,i%2===0?252:255); doc.rect(mg,y-4,cW,7,'F'); doc.setFillColor(...s.color); doc.circle(mg+4,y-1,2,'F'); doc.setFontSize(9); doc.setFont('helvetica','bold'); doc.setTextColor(...dB); doc.text(s.label,mg+8,y); doc.setFont('helvetica','normal'); doc.setTextColor(...bk); var tt=''; if(th.min!==null) tt+='Mín: '+th.min+' '+s.unit+'  '; if(th.max!==null) tt+='Máx: '+th.max+' '+s.unit; doc.text(tt,mg+60,y); y+=7; }); y+=6; }
+    if(y>220){ doc.addPage(); y=mg; }
+    doc.setFontSize(12); doc.setFont('helvetica','bold'); doc.setTextColor(...bk); doc.text('Alertas registradas durante la sesión',mg,y); y+=6; doc.setDrawColor(...dB); doc.line(mg,y,pW-mg,y); y+=5;
+    if(sessionAlerts.length===0){ doc.setFillColor(240,253,244); doc.rect(mg,y-4,cW,8,'F'); doc.setFontSize(9); doc.setFont('helvetica','normal'); doc.setTextColor(...gr); doc.text('No se registraron alertas durante esta sesión.',mg+4,y); y+=12; }
+    else { var etStr=new Date(ed2).toLocaleTimeString('es-ES',{hour:'2-digit',minute:'2-digit',second:'2-digit'}); var aIs=sessionAlerts.filter(function(a){ return a.time<=etStr; }); aIs.slice(0,20).forEach(function(a){ if(y>270){ doc.addPage(); y=mg; } doc.setFillColor(255,242,242); doc.rect(mg,y-4,cW,7,'F'); doc.setFontSize(8); doc.setFont('helvetica','bold'); doc.setTextColor(...rd); doc.text('['+a.time+']',mg+2,y); doc.setFont('helvetica','normal'); doc.setTextColor(...bk); doc.text(a.msg.replace('ALERTA: ',''),mg+22,y,{maxWidth:cW-24}); y+=7; }); if(aIs.length>20){ doc.setFontSize(8); doc.setTextColor(...mG); doc.text('... y '+(aIs.length-20)+' alertas más.',mg,y); y+=7; } y+=4; }
+    doc.addPage(); y=mg; doc.setFontSize(12); doc.setFont('helvetica','bold'); doc.setTextColor(...bk); doc.text('Evolución de los parámetros medidos',mg,y); y+=6; doc.setDrawColor(...dB); doc.line(mg,y,pW-mg,y); y+=6;
+    var cKs=['temp','ph','orp','do'],cLs=['Temperatura (°C)','pH','Potencial Redox (mV)','Oxígeno Disuelto (mg/L)'],ms24h=86400000;
+    for(var ci=0;ci<cKs.length;ci++){ var k24=cKs[ci],cf=chartConfigs[k24],ws24=ed2-ms24h; var d24=src.filter(function(d){ return d.ts>=ws24&&d.ts<=ed2&&d[k24]!==null&&d[k24]!==undefined; }); var tc=document.createElement('canvas'); tc.width=900; tc.height=280; document.body.appendChild(tc); var tCh=new Chart(tc,{type:'line',data:{labels:d24.map(function(d){ return d.time; }),datasets:[{data:d24.map(function(d){ return d[k24]; }),borderColor:cf.color,backgroundColor:cf.color+'18',fill:true,tension:0.4,borderWidth:2,pointRadius:2,spanGaps:true}]},options:{responsive:false,animation:false,plugins:{legend:{display:false}},scales:{y:{min:cf.min,max:cf.max,ticks:{font:{size:11},color:'#334155'},title:{display:true,text:cf.unit,font:{size:11,weight:'bold'},color:'#1e293b'}},x:{ticks:{maxTicksLimit:8,font:{size:9},color:'#64748b',maxRotation:0}}}}}); tCh.update(); var iD=tc.toDataURL('image/png'); tCh.destroy(); document.body.removeChild(tc); if(y+56>285){ doc.addPage(); y=mg; } doc.setFontSize(9); doc.setFont('helvetica','bold'); doc.setTextColor(...dB); doc.text(cLs[ci],mg,y); y+=4; doc.addImage(iD,'PNG',mg,y,cW,44); y+=52; }
+    var tp=doc.internal.getNumberOfPages(); for(var p=1;p<=tp;p++){ doc.setPage(p); doc.setFillColor(...dB); doc.rect(0,287,pW,10,'F'); doc.setFontSize(7); doc.setTextColor(255,255,255); doc.setFont('helvetica','normal'); doc.text('Monitor de Biorreactor - Universidad de Valladolid',mg,293); doc.text('Página '+p+' de '+tp,pW-mg,293,{align:'right'}); }
     doc.save('informe_biorreactor.pdf');
-    btn.innerHTML = '<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><polyline points="10 9 9 9 8 9"/></svg> Generar informe';
-    btn.disabled = false;
-    addLog('Informe PDF generado correctamente.', 'mqtt');
+    btn.innerHTML='<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><polyline points="10 9 9 9 8 9"/></svg> Generar informe';
+    btn.disabled=false; addLog('Informe PDF generado correctamente.','mqtt');
 }
 </script>
 </body>
