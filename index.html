@@ -411,24 +411,62 @@ function initSupabase() {
 }
 
 async function checkActiveSession() {
+    // 1. Buscar primero en localStorage (mismo dispositivo)
     var stored = localStorage.getItem('biorreactor_session');
-    if (!stored) return;
-    var session;
-    try { session = JSON.parse(stored); } catch(e) { return; }
-    if (!session || session.ended) return;
+    var localSession = null;
+    try { localSession = stored ? JSON.parse(stored) : null; } catch(e) {}
 
-    // Hay sesión activa → recuperar
-    currentSessionId = session.id;
-    recordingStart   = session.start;
-    addLog('Sesión activa encontrada. Cargando historial...', 'mqtt');
+    if (localSession && !localSession.ended && localSession.id) {
+        currentSessionId = localSession.id;
+        recordingStart   = localSession.start;
+        addLog('Sesión activa recuperada. Cargando historial...', 'mqtt');
+        await loadSessionData(currentSessionId);
+        restoreRecordingUI();
+        return;
+    }
+
+    // 2. Sin sesión local → buscar en Supabase la sesión activa más reciente
+    if (!sb) return;
+    addLog('Buscando sesión activa en la nube...', 'mqtt');
+    var result = await sb.from('registros')
+        .select('session_id, ts')
+        .order('ts', { ascending: false })
+        .limit(1);
+
+    if (result.error || !result.data || result.data.length === 0) {
+        addLog('No hay sesión activa en la nube.', '');
+        return;
+    }
+
+    var lastRow = result.data[0];
+    // Si el último dato tiene más de 10 minutos, la sesión está finalizada
+    if (Date.now() - lastRow.ts > 600000) {
+        addLog('No hay sesión activa reciente.', '');
+        return;
+    }
+
+    // Sesión activa encontrada → obtener hora de inicio
+    currentSessionId = lastRow.session_id;
+    var firstResult = await sb.from('registros')
+        .select('ts')
+        .eq('session_id', currentSessionId)
+        .order('ts', { ascending: true })
+        .limit(1);
+    recordingStart = (firstResult.data && firstResult.data[0]) ? firstResult.data[0].ts : lastRow.ts;
+
+    // Guardar en localStorage para recargas futuras en este dispositivo
+    localStorage.setItem('biorreactor_session', JSON.stringify({ id:currentSessionId, start:recordingStart, ended:false }));
+    addLog('Sesión activa encontrada en la nube. Cargando historial...', 'mqtt');
     await loadSessionData(currentSessionId);
+    restoreRecordingUI();
+}
 
-    // Restaurar botón
+function restoreRecordingUI() {
     var btn = document.getElementById('btn-start');
-    btn.innerHTML = '■ Finalizar';
-    btn.style.background   = 'rgba(239,68,68,0.25)';
-    btn.style.borderColor  = 'rgba(239,68,68,0.6)';
-    btn.style.color        = '#fca5a5';
+    btn.innerHTML         = '■ Finalizar';
+    btn.style.background  = 'rgba(239,68,68,0.25)';
+    btn.style.borderColor = 'rgba(239,68,68,0.6)';
+    btn.style.color       = '#fca5a5';
 }
 
 async function loadSessionData(sessionId) {
