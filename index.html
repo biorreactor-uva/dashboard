@@ -362,6 +362,7 @@ var charts = {};
 var recordingStart = null;
 var recordingEnd   = null;
 var currentSessionId = null;
+var lastSessionHistory = []; // preserva historial tras finalizar
 var currentPeriodMs  = 0;
 var realtimeHistory  = [];
 var recordingHistory = [];
@@ -450,9 +451,11 @@ async function loadSessionData(sessionId) {
         addLog('Sin datos previos en la sesión.', '');
         return;
     }
-    recordingHistory = result.data.map(function(r) {
+    var rows = result.data.map(function(r) {
         return { time:r.time, ts:r.ts, temp:r.temp, ph:r.ph, orp:r.orp, do:r.do };
     });
+    recordingHistory = rows;
+    lastSessionHistory = rows.slice();
     Object.keys(charts).forEach(function(key){ refreshChart(key); });
     addLog('Historial cargado: ' + result.data.length + ' registros.', 'mqtt');
 }
@@ -558,6 +561,7 @@ async function startRecording() {
             if (endResult.error) addLog('Error finalizando sesión en BD: ' + endResult.error.message, 'alarm');
         }
         recordingStart = null;
+        lastSessionHistory = recordingHistory.slice(); // preservar para CSV y gráficas
         localStorage.setItem('biorreactor_session', JSON.stringify({ id:currentSessionId, ended:true }));
         currentSessionId = null;
         var el = document.getElementById('stat-uptime');
@@ -680,9 +684,11 @@ function refreshChart(key) {
     if(currentPeriodMs === 0) {
         filtered = realtimeHistory.slice(-30);
     } else {
+        // Usar historial activo o el de la última sesión finalizada
+        var sourceHistory = (recordingStart && !recordingEnd) ? recordingHistory : lastSessionHistory;
         var cutoff = recordingEnd ? recordingEnd : Date.now();
         var windowStart = cutoff - currentPeriodMs;
-        filtered = recordingHistory.filter(function(d){ return d.ts >= windowStart && d.ts <= cutoff; });
+        filtered = sourceHistory.filter(function(d){ return d.ts >= windowStart && d.ts <= cutoff; });
     }
     chart.data.labels = filtered.map(function(d){ return d.time; });
     chart.data.datasets[0].data = filtered.map(function(d){ return d[key] !== undefined ? d[key] : null; });
@@ -710,15 +716,18 @@ function setPeriod(ms, btn) {
 
 // ── CSV ──
 function downloadCSV() {
+    // Usar historial activo o el de la última sesión finalizada
+    var sourceHistory = (recordingHistory.length > 0) ? recordingHistory : lastSessionHistory;
     var exportData = recordingEnd
-        ? recordingHistory.filter(function(r){ return r.ts <= recordingEnd; })
-        : recordingHistory;
+        ? sourceHistory.filter(function(r){ return r.ts <= recordingEnd; })
+        : sourceHistory;
+    if (exportData.length === 0) { addLog('No hay datos para exportar.', 'alarm'); return; }
     var csv = 'Hora,Temp,pH,ORP,DO\n';
     exportData.forEach(function(r){ csv += (r.time||'')+','+(r.temp||'')+','+(r.ph||'')+','+(r.orp||'')+','+(r.do||'')+'\n'; });
     var a = document.createElement('a');
     a.href = URL.createObjectURL(new Blob([csv],{type:'text/csv'}));
-    a.download = 'biorreactor_uva.csv'; a.click();
-    addLog('Datos exportados'+(recordingEnd?' (registro completo)':'')+'.', '');
+    a.download = 'datos_biorreactor.csv'; a.click();
+    addLog('Datos exportados (' + exportData.length + ' registros).', '');
 }
 
 // ── MODAL ALERTAS ──
