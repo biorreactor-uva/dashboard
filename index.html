@@ -517,7 +517,7 @@ function startUptime() {
 function pad(n) { return n<10?'0'+n:''+n; }
 
 // ── REGISTRO ──
-function startRecording() {
+async function startRecording() {
     var btn = document.getElementById('btn-start');
     if (!recordingStart) {
         // INICIAR
