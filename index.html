@@ -72,7 +72,7 @@
         .sensor-card.alarm { border-color:var(--red) !important; animation:alarm 2s infinite; }
         @keyframes alarm { 50% { background:var(--red-lt); } }
         /* ── WIDGETS DERIVADOS ── */
-        .derived-grid { display:grid; grid-template-columns:repeat(2,minmax(0,380px)); gap:14px; margin-bottom:24px; }
+        .derived-grid { display:grid; grid-template-columns:1fr 1fr; gap:14px; margin-bottom:24px; }
         .derived-card { background:var(--white); border:1px solid var(--border); border-radius:var(--r2); padding:20px 20px 16px; position:relative; box-shadow:var(--shadow); transition:box-shadow 0.2s,transform 0.2s; }
         .derived-card:hover { box-shadow:var(--shadow2); transform:translateY(-2px); }
         .derived-card::before { content:''; position:absolute; top:0; left:0; right:0; height:3px; border-radius:var(--r2) var(--r2) 0 0; }
