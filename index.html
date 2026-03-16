@@ -520,6 +520,36 @@ async function flushPending() {
 }
 setInterval(flushPending, 10000);
 
+// Comprobar cada 15s si la sesión fue finalizada desde otro dispositivo
+setInterval(async function() {
+    if (!recordingStart || !sb || !currentSessionId) return;
+
+    // Buscar el último dato de esta sesión en Supabase
+    var result = await sb.from('registros')
+        .select('ts')
+        .eq('session_id', currentSessionId)
+        .order('ts', { ascending: false })
+        .limit(1);
+    if (result.error || !result.data || result.data.length === 0) return;
+
+    var lastTs = result.data[0].ts;
+    // Si el último dato tiene más de 30 segundos → sesión finalizada remotamente
+    if (Date.now() - lastTs > 30000) {
+        addLog('Registro finalizado desde otro dispositivo.', 'alarm');
+        recordingStart = null;
+        recordingEnd   = Date.now();
+        localStorage.setItem('biorreactor_session', JSON.stringify({ id:currentSessionId, ended:true }));
+        currentSessionId = null;
+        var el = document.getElementById('stat-uptime');
+        if (el) el.textContent = '00:00:00';
+        var btn = document.getElementById('btn-start');
+        btn.innerHTML         = '▶ Iniciar registro';
+        btn.style.background  = 'rgba(255,255,255,0.12)';
+        btn.style.borderColor = 'rgba(255,255,255,0.3)';
+        btn.style.color       = '#fff';
+    }
+}, 15000);
+
 // ── UPTIME ──
 function startUptime() {
     setInterval(function() {
