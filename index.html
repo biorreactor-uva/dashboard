@@ -234,10 +234,10 @@
 
         <!-- SENSORES PRIMARIOS -->
         <div class="sensor-grid">
-            <div class="sensor-card c-temp" id="card-temp"><div class="sensor-label">Temperatura</div><div class="sensor-value" id="val-temp">--<span class="unit">°C</span></div><div class="sensor-footer"><span class="sensor-time" id="upd-temp">—</span><span class="src-badge sim" id="src-temp">SIM</span></div></div>
-            <div class="sensor-card c-ph" id="card-ph"><div class="sensor-label">Nivel de pH</div><div class="sensor-value" id="val-ph">--<span class="unit">pH</span></div><div class="sensor-footer"><span class="sensor-time" id="upd-ph">—</span><span class="src-badge sim" id="src-ph">SIM</span></div></div>
-            <div class="sensor-card c-orp" id="card-orp"><div class="sensor-label">Potencial Redox</div><div class="sensor-value" id="val-orp">--<span class="unit">mV</span></div><div class="sensor-footer"><span class="sensor-time" id="upd-orp">—</span><span class="src-badge sim" id="src-orp">SIM</span></div></div>
-            <div class="sensor-card c-do" id="card-do"><div class="sensor-label">Oxígeno Disuelto</div><div class="sensor-value" id="val-do">--<span class="unit">mg/L</span></div><div class="sensor-footer"><span class="sensor-time" id="upd-do">—</span><span class="src-badge sim" id="src-do">SIM</span></div></div>
+            <div class="sensor-card c-temp" id="card-temp"><div class="sensor-label">Temperatura</div><div class="sensor-value" id="val-temp">--<span class="unit">°C</span></div><div class="sensor-footer"><span class="sensor-time" id="upd-temp">—</span><span class="src-badge sim" id="src-temp">SIN DATOS</span></div></div>
+            <div class="sensor-card c-ph" id="card-ph"><div class="sensor-label">Nivel de pH</div><div class="sensor-value" id="val-ph">--<span class="unit">pH</span></div><div class="sensor-footer"><span class="sensor-time" id="upd-ph">—</span><span class="src-badge sim" id="src-ph">SIN DATOS</span></div></div>
+            <div class="sensor-card c-orp" id="card-orp"><div class="sensor-label">Potencial Redox</div><div class="sensor-value" id="val-orp">--<span class="unit">mV</span></div><div class="sensor-footer"><span class="sensor-time" id="upd-orp">—</span><span class="src-badge sim" id="src-orp">SIN DATOS</span></div></div>
+            <div class="sensor-card c-do" id="card-do"><div class="sensor-label">Oxígeno Disuelto</div><div class="sensor-value" id="val-do">--<span class="unit">mg/L</span></div><div class="sensor-footer"><span class="sensor-time" id="upd-do">—</span><span class="src-badge sim" id="src-do">SIN DATOS</span></div></div>
         </div>
 
         <!-- WIDGETS DERIVADOS -->
@@ -343,6 +343,13 @@ var muHistory=[], muRecording=[];
 var sensorNames={ temp:'Temperatura', ph:'pH', orp:'Potencial Redox', do:'Oxígeno Disuelto' };
 var sensorUnits={ temp:'°C', ph:'pH', orp:'mV', do:'mg/L' };
 
+// ── Timeout de desconexión del dispositivo ──
+// Si no llega ningún mensaje MQTT nuevo en este intervalo, se marca
+// el dispositivo como desconectado y las tarjetas vuelven a "--".
+var DEVICE_TIMEOUT_MS = 15000; // 15 segundos sin datos = desconectado
+var lastMessageTs = null;
+var deviceConnected = false;
+
 var params=new URLSearchParams(window.location.search);
 if(params.get('token')===SECRET_TOKEN){ document.getElementById('dashboard').style.display='block'; window.addEventListener('DOMContentLoaded',initDashboard); }
 else { document.getElementById('access-screen').style.display='flex'; }
@@ -361,7 +368,31 @@ function initDashboard() {
             }
         }
     } catch(e) {}
-    initCharts(); initSupabase(); connectMQTT(); startUptime(); //startSimulator();
+    initCharts(); initSupabase(); connectMQTT(); startUptime(); startDeviceWatchdog();
+}
+
+// ── VIGILANCIA DE CONEXIÓN DEL DISPOSITIVO ──
+// Revisa cada segundo si ha pasado demasiado tiempo desde el último
+// mensaje MQTT real. Si es así, marca el dispositivo como desconectado.
+function startDeviceWatchdog(){
+    setInterval(function(){
+        if(lastMessageTs===null) return; // nunca llegó ningún mensaje
+        var elapsed = Date.now() - lastMessageTs;
+        if(elapsed > DEVICE_TIMEOUT_MS && deviceConnected){
+            deviceConnected = false;
+            var d=document.getElementById('device-dot'), l=document.getElementById('mqtt-label');
+            d.style.background='#f87171'; d.style.boxShadow='0 0 8px #f87171'; d.style.animationDuration='1.2s';
+            l.textContent='Dispositivo desconectado';
+            addLog('Sin datos del dispositivo en '+Math.round(DEVICE_TIMEOUT_MS/1000)+'s. Marcado como desconectado.','alarm');
+            // Limpiar tarjetas y badges
+            ['temp','ph','orp','do'].forEach(function(k){
+                realDataReceived[k]=false;
+                var vE=document.getElementById('val-'+k), sE=document.getElementById('src-'+k);
+                if(vE) vE.childNodes[0].nodeValue='--';
+                if(sE){ sE.textContent='SIN DATOS'; sE.className='src-badge sim'; }
+            });
+        }
+    },1000);
 }
 
 // ── PARÁMETROS DERIVADOS ──
@@ -562,18 +593,24 @@ function connectMQTT(){
         client.on('message',function(topic,msg){
             var value=parseFloat(msg.toString()); if(isNaN(value)) return;
             var key=Object.keys(MQTT_TOPICS).find(function(k){ return MQTT_TOPICS[k]===topic; }); if(!key) return;
-            if(!realDataReceived[key]){ realDataReceived[key]=true; addLog('Datos reales recibidos: '+sensorNames[key],'mqtt'); if(Object.values(realDataReceived).some(function(v){ return v; })){ var d=document.getElementById('device-dot'),l=document.getElementById('mqtt-label'); d.style.background='#4ade80'; d.style.boxShadow='0 0 8px #4ade80'; d.style.animationDuration='2s'; l.textContent='Dispositivo conectado'; } }
+
+            // Marca de tiempo del último mensaje real — usada por el watchdog
+            lastMessageTs = Date.now();
+
+            if(!realDataReceived[key]){
+                realDataReceived[key]=true;
+                addLog('Datos reales recibidos: '+sensorNames[key],'mqtt');
+            }
+            if(!deviceConnected){
+                deviceConnected = true;
+                var d=document.getElementById('device-dot'),l=document.getElementById('mqtt-label');
+                d.style.background='#4ade80'; d.style.boxShadow='0 0 8px #4ade80'; d.style.animationDuration='2s';
+                l.textContent='Dispositivo conectado';
+            }
             updateWidget(key,value,true);
         });
         client.on('offline',function(){}); client.on('reconnect',function(){});
     } catch(e){ document.getElementById('mqtt-label').textContent='MQTT no disponible'; }
-}
-
-function startSimulator(){
-    setInterval(function(){
-        var sim={temp:parseFloat((36.8+Math.random()*0.4).toFixed(1)),ph:parseFloat((6.5+Math.random()*1.8).toFixed(2)),orp:parseFloat((255+Math.random()*15).toFixed(0)),do:parseFloat((7.8+Math.random()*0.3).toFixed(1))};
-        Object.keys(sim).forEach(function(k){ if(!realDataReceived[k]) updateWidget(k,sim[k],false); });
-    },2000);
 }
 
 function updateWidget(key,value,isReal){
@@ -581,7 +618,7 @@ function updateWidget(key,value,isReal){
     var vE=document.getElementById('val-'+key),uE=document.getElementById('upd-'+key),sE=document.getElementById('src-'+key);
     if(vE) vE.childNodes[0].nodeValue=value;
     if(uE) uE.textContent=nowStr;
-    if(sE){ sE.textContent=isReal?'EN VIVO':'SIM'; sE.className='src-badge '+(isReal?'real':'sim'); }
+    if(sE){ sE.textContent=isReal?'EN VIVO':'SIN DATOS'; sE.className='src-badge '+(isReal?'real':'sim'); }
     checkThreshold(key,value);
     // Derivados
     lastVals[key]=value;
