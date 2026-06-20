@@ -385,7 +385,7 @@ function startDeviceWatchdog(){
             var d=document.getElementById('device-dot'), l=document.getElementById('mqtt-label');
             d.style.background='#f87171'; d.style.boxShadow='0 0 8px #f87171'; d.style.animationDuration='1.2s';
             l.textContent='Dispositivo desconectado';
-            addLog('Sin datos del dispositivo en '+Math.round(DEVICE_TIMEOUT_MS/1000)+'s. Marcado como desconectado.','alarm');
+            addLog('Sin datos del dispositivo en '+Math.round(DEVICE_TIMEOUT_MS/1000)+'s. Disponitivo no conectado.','alarm');
             // Limpiar tarjetas y badges
             ['temp','ph','orp','do'].forEach(function(k){
                 realDataReceived[k]=false;
@@ -611,7 +611,7 @@ function initCharts(){
 function connectMQTT(){
     try {
         var client=mqtt.connect(MQTT_BROKER,{clientId:'uva_'+Math.random().toString(16).substr(2,8),reconnectPeriod:5000,connectTimeout:10000});
-        client.on('connect',function(){ addLog('Conexión establecida - esperando dispositivo...','mqtt'); Object.values(MQTT_TOPICS).forEach(function(t){ client.subscribe(t); }); });
+        client.on('connect',function(){ addLog('Esperando dispositivo...','mqtt'); Object.values(MQTT_TOPICS).forEach(function(t){ client.subscribe(t); }); });
         client.on('message',function(topic,msg){
             var value=parseFloat(msg.toString()); if(isNaN(value)) return;
             var key=Object.keys(MQTT_TOPICS).find(function(k){ return MQTT_TOPICS[k]===topic; }); if(!key) return;
