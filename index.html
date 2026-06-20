@@ -619,18 +619,19 @@ function connectMQTT(){
             // Marca de tiempo del último mensaje real — usada por el watchdog
             lastMessageTs = Date.now();
 
+            // Cuenta mensajes seguidos por sensor. El primer mensaje tras
+            // conectar suele ser el "retenido" (retain) del broker con el
+            // último valor antes de apagarse — no lo pintamos todavía, y
+            // tampoco marcamos el dispositivo como conectado todavía.
+            messageCount[key]++;
+            if(messageCount[key] < MIN_MESSAGES_TO_SHOW) return;
+
             if(!deviceConnected){
                 deviceConnected = true;
                 var d=document.getElementById('device-dot'),l=document.getElementById('mqtt-label');
                 d.style.background='#4ade80'; d.style.boxShadow='0 0 8px #4ade80'; d.style.animationDuration='2s';
                 l.textContent='Dispositivo conectado';
             }
-
-            // Cuenta mensajes seguidos por sensor. El primer mensaje tras
-            // conectar suele ser el "retenido" (retain) del broker con el
-            // último valor antes de apagarse — no lo pintamos todavía.
-            messageCount[key]++;
-            if(messageCount[key] < MIN_MESSAGES_TO_SHOW) return;
 
             if(!realDataReceived[key]){
                 realDataReceived[key]=true;
