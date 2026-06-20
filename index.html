@@ -635,7 +635,7 @@ function connectMQTT(){
 
             if(!realDataReceived[key]){
                 realDataReceived[key]=true;
-                addLog('Datos reales recibidos: '+sensorNames[key],'mqtt');
+                addLog('Recibiendo datos de '+sensorNames[key],'mqtt');
             }
             updateWidget(key,value,true);
         });
