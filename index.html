@@ -329,6 +329,8 @@ var sb=null, charts={}, recordingStart=null, recordingEnd=null, currentSessionId
 var lastSessionHistory=[], lastRecordingEnd=null, currentPeriodMs=0;
 var realtimeHistory=[], recordingHistory=[];
 var realDataReceived={ temp:false, ph:false, orp:false, do:false };
+var messageCount={ temp:0, ph:0, orp:0, do:0 }; // cuenta mensajes recibidos por sensor
+var MIN_MESSAGES_TO_SHOW = 2; // nº de mensajes seguidos antes de pintar el valor (descarta el retenido inicial)
 var alertThresholds={ temp:{min:null,max:null}, ph:{min:null,max:null}, orp:{min:null,max:null}, do:{min:null,max:null} };
 var alertCooldown={}, pendingRows=[];
 var lastVals={ temp:null, ph:null, orp:null, do:null };
@@ -387,12 +389,32 @@ function startDeviceWatchdog(){
             // Limpiar tarjetas y badges
             ['temp','ph','orp','do'].forEach(function(k){
                 realDataReceived[k]=false;
+                messageCount[k]=0;
+                lastVals[k]=null;
                 var vE=document.getElementById('val-'+k), sE=document.getElementById('src-'+k);
                 if(vE) vE.childNodes[0].nodeValue='--';
                 if(sE){ sE.textContent='SIN DATOS'; sE.className='src-badge sim'; }
             });
+            clearDerivedWidgets();
         }
     },1000);
+}
+
+// Resetea los widgets derivados (Actividad Microbiana y Estado Redox) a su
+// estado inicial "sin datos" cuando el dispositivo se desconecta.
+function clearDerivedWidgets(){
+    var vM=document.getElementById('val-mic'); if(vM) vM.childNodes[0].nodeValue='--';
+    var sM=document.getElementById('sub-mic'); if(sM) sM.textContent='Esperando los 4 sensores...';
+    var bM=document.getElementById('bar-mic'); if(bM){ bM.style.width='0%'; }
+
+    var badge=document.getElementById('redox-badge'), lbl=document.getElementById('redox-label'), dot=document.getElementById('redox-dot'), subR=document.getElementById('sub-redox');
+    if(badge){ badge.style.background='#f1f5f9'; badge.style.color='#64748b'; }
+    if(lbl) lbl.textContent='Sin datos';
+    if(dot) dot.style.background='#94a3b8';
+    if(subR) subR.textContent='Esperando los 4 sensores...';
+
+    var muFaseBadge=document.getElementById('mu-fase-badge');
+    if(muFaseBadge){ muFaseBadge.textContent='--'; muFaseBadge.style.background='#f1f5f9'; muFaseBadge.style.color='#64748b'; }
 }
 
 // ── PARÁMETROS DERIVADOS ──
@@ -597,15 +619,22 @@ function connectMQTT(){
             // Marca de tiempo del último mensaje real — usada por el watchdog
             lastMessageTs = Date.now();
 
-            if(!realDataReceived[key]){
-                realDataReceived[key]=true;
-                addLog('Datos reales recibidos: '+sensorNames[key],'mqtt');
-            }
             if(!deviceConnected){
                 deviceConnected = true;
                 var d=document.getElementById('device-dot'),l=document.getElementById('mqtt-label');
                 d.style.background='#4ade80'; d.style.boxShadow='0 0 8px #4ade80'; d.style.animationDuration='2s';
                 l.textContent='Dispositivo conectado';
+            }
+
+            // Cuenta mensajes seguidos por sensor. El primer mensaje tras
+            // conectar suele ser el "retenido" (retain) del broker con el
+            // último valor antes de apagarse — no lo pintamos todavía.
+            messageCount[key]++;
+            if(messageCount[key] < MIN_MESSAGES_TO_SHOW) return;
+
+            if(!realDataReceived[key]){
+                realDataReceived[key]=true;
+                addLog('Datos reales recibidos: '+sensorNames[key],'mqtt');
             }
             updateWidget(key,value,true);
         });
