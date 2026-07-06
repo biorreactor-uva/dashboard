@@ -371,6 +371,7 @@ function initDashboard() {
         }
     } catch(e) {}
     initCharts(); initSupabase(); connectMQTT(); startUptime(); startDeviceWatchdog();
+    setInterval(function(){ if(sb) sb.from('sesiones').select('session_id').limit(1); }, 60000);
 }
 
 // ── VIGILANCIA DE CONEXIÓN DEL DISPOSITIVO ──
