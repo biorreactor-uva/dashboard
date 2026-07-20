@@ -1,13 +1,13 @@
 name: Keep Supabase alive
 on:
   schedule:
-    - cron: '0 9 */2 * *'  # cada 2 días a las 9:00 UTC
-  workflow_dispatch:        # permite ejecución manual
+    - cron: '0 9 * * *'  # cada día a las 9:00 UTC
+  workflow_dispatch:
 jobs:
   ping:
     runs-on: ubuntu-latest
     steps:
-      - name: Ping Supabase con escritura
+      - name: Insertar fila keepalive
         run: |
           curl -s -X POST \
             "https://xxqsxspxzmpiyihefdpx.supabase.co/rest/v1/sesiones" \
@@ -16,3 +16,9 @@ jobs:
             -H "Content-Type: application/json" \
             -H "Prefer: return=minimal" \
             -d '{"session_id":"keepalive_ping","start_ts":0,"ended":true}'
+      - name: Borrar fila keepalive
+        run: |
+          curl -s -X DELETE \
+            "https://xxqsxspxzmpiyihefdpx.supabase.co/rest/v1/sesiones?session_id=eq.keepalive_ping" \
+            -H "apikey: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Inh4cXN4c3B4em1waXlpaGVmZHB4Iiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImlhdCI6MTc3MzY1MjgzMiwiZXhwIjoyMDg5MjI4ODMyfQ.oZwQM30tjR-5gGdO_AN52mi8t8svAllumAlwcIULyko" \
+            -H "Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Inh4cXN4c3B4em1waXlpaGVmZHB4Iiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImlhdCI6MTc3MzY1MjgzMiwiZXhwIjoyMDg5MjI4ODMyfQ.oZwQM30tjR-5gGdO_AN52mi8t8svAllumAlwcIULyko"
