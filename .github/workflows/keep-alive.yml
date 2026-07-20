@@ -11,8 +11,8 @@ jobs:
         run: |
           curl -s -X POST \
             "https://xxqsxspxzmpiyihefdpx.supabase.co/rest/v1/sesiones" \
-            -H "apikey: sb_publishable_eWprfzTeOlHhJ8K2KoA-bg_8EqkRlBe" \
-            -H "Authorization: Bearer sb_publishable_eWprfzTeOlHhJ8K2KoA-bg_8EqkRlBe" \
+            -H "apikey: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Inh4cXN4c3B4em1waXlpaGVmZHB4Iiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImlhdCI6MTc3MzY1MjgzMiwiZXhwIjoyMDg5MjI4ODMyfQ.oZwQM30tjR-5gGdO_AN52mi8t8svAllumAlwcIULyko" \
+            -H "Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Inh4cXN4c3B4em1waXlpaGVmZHB4Iiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImlhdCI6MTc3MzY1MjgzMiwiZXhwIjoyMDg5MjI4ODMyfQ.oZwQM30tjR-5gGdO_AN52mi8t8svAllumAlwcIULyko" \
             -H "Content-Type: application/json" \
             -H "Prefer: return=minimal" \
             -d '{"session_id":"keepalive_ping","start_ts":0,"ended":true}'
