@@ -123,6 +123,7 @@
         .log-t { color:#0f2347; margin-right:7px; font-weight:600; }
         .log-alarm { color:#dc2626; font-weight:600; }
         .log-mqtt  { color:#059669; font-weight:700; }
+        .log-bold  { color:#0f172a; font-weight:700; }
         /* modal */
         .modal-overlay { display:none; position:fixed; inset:0; background:rgba(0,0,0,0.55); z-index:999; align-items:center; justify-content:center; }
         .modal-overlay.open { display:flex; }
@@ -571,8 +572,10 @@ function pad(n){ return n<10?'0'+n:''+n; }
 // La fila keepalive_ping nunca se toca.
 async function cleanOldSessions(){
     if(!sb) return;
-    var r=await sb.from('sesiones').select('session_id,start_ts').neq('session_id','keepalive_ping').order('start_ts',{ascending:true});
+    // Solo cuenta sesiones finalizadas (ended:true) — no toca la sesión activa ni keepalive_ping
+    var r=await sb.from('sesiones').select('session_id,start_ts').neq('session_id','keepalive_ping').eq('ended',true).order('start_ts',{ascending:true});
     if(r.error||!r.data||r.data.length<=1) return;
+    // Borra todas las finalizadas excepto la más reciente
     var toDelete=r.data.slice(0,r.data.length-1);
     for(var s of toDelete){
         var dr=await sb.from('registros').delete().eq('session_id',s.session_id);
@@ -592,7 +595,7 @@ async function startRecording(){
         if(sb){ var sr=await sb.from('sesiones').insert({session_id:currentSessionId,start_ts:recordingStart,ended:false}); if(sr.error) addLog('Error creando sesión: '+sr.error.message,'alarm'); else addLog('Sesión creada en la nube.','mqtt'); }
         Object.keys(charts).forEach(function(k){ charts[k].data.labels=[]; charts[k].data.datasets[0].data=[]; charts[k].update('none'); });
         btn.innerHTML='■ Finalizar'; btn.style.background='rgba(239,68,68,0.25)'; btn.style.borderColor='rgba(239,68,68,0.6)'; btn.style.color='#fca5a5';
-        addLog('Registro de datos iniciado.','mqtt');
+        addLog('Registro de datos iniciado.','bold');
     } else {
         recordingEnd=Date.now();
         var elapsed=Math.floor((recordingEnd-recordingStart)/1000),hh=Math.floor(elapsed/3600),mm=Math.floor((elapsed%3600)/60),ss=elapsed%60;
@@ -615,7 +618,7 @@ async function startRecording(){
             charts['mu'].update('none');
         }
         if(guardadoOk){
-            addLog('Registro finalizado y guardado correctamente en la nube — Duración: '+ts,'mqtt');
+            addLog('Registro finalizado y guardado correctamente en la nube — Duración: '+ts,'bold');
         } else {
             addLog('Registro finalizado — Duración: '+ts+' (error al guardar en la nube)','alarm');
         }
