@@ -596,7 +596,8 @@ async function startRecording(){
         recordingEnd=Date.now();
         var elapsed=Math.floor((recordingEnd-recordingStart)/1000),hh=Math.floor(elapsed/3600),mm=Math.floor((elapsed%3600)/60),ss=elapsed%60;
         var ts=(hh>0?pad(hh)+'h ':'')+pad(mm)+'m '+pad(ss)+'s';
-        if(sb){ var er=await sb.from('sesiones').update({ended:true}).eq('session_id',currentSessionId); if(er.error) addLog('Error finalizando: '+er.error.message,'alarm'); }
+        var guardadoOk=true;
+        if(sb){ var er=await sb.from('sesiones').update({ended:true}).eq('session_id',currentSessionId); if(er.error){ guardadoOk=false; addLog('Error finalizando sesión en la nube: '+er.error.message,'alarm'); } }
         lastSessionHistory=recordingHistory.slice(); lastRecordingEnd=recordingEnd;
         // muRecording ya tiene los datos — se preserva para los rangos de tiempo
         recordingStart=null; recordingEnd=null;
@@ -612,7 +613,11 @@ async function startRecording(){
             charts['mu'].data.datasets[0].data=wv.map(function(d){ return d.mu; });
             charts['mu'].update('none');
         }
-        addLog('Registro finalizado — Tiempo activo: '+ts,'alarm');
+        if(guardadoOk){
+            addLog('Registro finalizado y guardado correctamente en la nube — Duración: '+ts,'mqtt');
+        } else {
+            addLog('Registro finalizado — Duración: '+ts+' (error al guardar en la nube)','alarm');
+        }
     }
 }
 
