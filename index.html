@@ -567,9 +567,24 @@ setInterval(async function(){
 function startUptime(){ setInterval(function(){ if(!recordingStart) return; var s=Math.floor((Date.now()-recordingStart)/1000),h=Math.floor(s/3600),m=Math.floor((s%3600)/60),sec=s%60; var el=document.getElementById('stat-uptime'); if(el) el.textContent=pad(h)+':'+pad(m)+':'+pad(sec); },1000); }
 function pad(n){ return n<10?'0'+n:''+n; }
 
+// Limpia sesiones antiguas manteniendo solo las 2 más recientes.
+// La fila keepalive_ping nunca se toca.
+async function cleanOldSessions(){
+    if(!sb) return;
+    var r=await sb.from('sesiones').select('session_id,start_ts').neq('session_id','keepalive_ping').order('start_ts',{ascending:true});
+    if(r.error||!r.data||r.data.length<=2) return;
+    var toDelete=r.data.slice(0,r.data.length-2);
+    for(var s of toDelete){
+        await sb.from('registros').delete().eq('session_id',s.session_id);
+        await sb.from('sesiones').delete().eq('session_id',s.session_id);
+        addLog('Sesión antigua eliminada (límite 2 sesiones).','');
+    }
+}
+
 async function startRecording(){
     var btn=document.getElementById('btn-start');
     if(!recordingStart){
+        await cleanOldSessions();
         recordingStart=Date.now(); recordingEnd=null; recordingHistory=[]; lastSessionHistory=[]; lastRecordingEnd=null; muRecording=[];
         currentSessionId='ses_'+recordingStart; supabaseFirstSave=false;
         localStorage.setItem('biorreactor_session',JSON.stringify({id:currentSessionId,start:recordingStart,ended:false}));
