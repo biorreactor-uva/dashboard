@@ -572,8 +572,8 @@ function pad(n){ return n<10?'0'+n:''+n; }
 async function cleanOldSessions(){
     if(!sb) return;
     var r=await sb.from('sesiones').select('session_id,start_ts').neq('session_id','keepalive_ping').order('start_ts',{ascending:true});
-    if(r.error||!r.data||r.data.length<=2) return;
-    var toDelete=r.data.slice(0,r.data.length-2);
+    if(r.error||!r.data||r.data.length<=1) return;
+    var toDelete=r.data.slice(0,r.data.length-1);
     for(var s of toDelete){
         var dr=await sb.from('registros').delete().eq('session_id',s.session_id);
         if(dr.error) addLog('Error borrando registros de sesión antigua: '+dr.error.message,'alarm');
