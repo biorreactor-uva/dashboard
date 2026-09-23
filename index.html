@@ -575,9 +575,10 @@ async function cleanOldSessions(){
     if(r.error||!r.data||r.data.length<=2) return;
     var toDelete=r.data.slice(0,r.data.length-2);
     for(var s of toDelete){
-        await sb.from('registros').delete().eq('session_id',s.session_id);
-        await sb.from('sesiones').delete().eq('session_id',s.session_id);
-        addLog('Sesión antigua eliminada (límite 2 sesiones).','');
+        var dr=await sb.from('registros').delete().eq('session_id',s.session_id);
+        if(dr.error) addLog('Error borrando registros de sesión antigua: '+dr.error.message,'alarm');
+        var ds=await sb.from('sesiones').delete().eq('session_id',s.session_id);
+        if(ds.error) addLog('Error borrando sesión antigua: '+ds.error.message,'alarm');
     }
 }
 
