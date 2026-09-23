@@ -1,24 +1,33 @@
 name: Keep Supabase alive
 on:
   schedule:
-    - cron: '0 9 * * *'  # cada día a las 9:00 UTC
+    - cron: '0 9 * * *'
   workflow_dispatch:
 jobs:
   ping:
     runs-on: ubuntu-latest
     steps:
-      - name: Insertar fila keepalive
+      - name: Checkout repositorio
+        uses: actions/checkout@v3
+
+      - name: Upsert fila keepalive en Supabase
         run: |
           curl -s -X POST \
             "https://xxqsxspxzmpiyihefdpx.supabase.co/rest/v1/sesiones" \
             -H "apikey: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Inh4cXN4c3B4em1waXlpaGVmZHB4Iiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImlhdCI6MTc3MzY1MjgzMiwiZXhwIjoyMDg5MjI4ODMyfQ.oZwQM30tjR-5gGdO_AN52mi8t8svAllumAlwcIULyko" \
             -H "Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Inh4cXN4c3B4em1waXlpaGVmZHB4Iiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImlhdCI6MTc3MzY1MjgzMiwiZXhwIjoyMDg5MjI4ODMyfQ.oZwQM30tjR-5gGdO_AN52mi8t8svAllumAlwcIULyko" \
             -H "Content-Type: application/json" \
-            -H "Prefer: return=minimal" \
-            -d '{"session_id":"keepalive_ping","start_ts":0,"ended":true}'
-      - name: Borrar fila keepalive
+            -H "Prefer: resolution=merge-duplicates" \
+            -d "{\"session_id\":\"keepalive_ping\",\"start_ts\":$(date +%s000),\"ended\":true}"
+
+      - name: Commit para mantener repositorio activo (cada 30 días)
         run: |
-          curl -s -X DELETE \
-            "https://xxqsxspxzmpiyihefdpx.supabase.co/rest/v1/sesiones?session_id=eq.keepalive_ping" \
-            -H "apikey: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Inh4cXN4c3B4em1waXlpaGVmZHB4Iiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImlhdCI6MTc3MzY1MjgzMiwiZXhwIjoyMDg5MjI4ODMyfQ.oZwQM30tjR-5gGdO_AN52mi8t8svAllumAlwcIULyko" \
-            -H "Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Inh4cXN4c3B4em1waXlpaGVmZHB4Iiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImlhdCI6MTc3MzY1MjgzMiwiZXhwIjoyMDg5MjI4ODMyfQ.oZwQM30tjR-5gGdO_AN52mi8t8svAllumAlwcIULyko"
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          DAY=$(date +%d)
+          if [ "$DAY" = "01" ] || [ "$DAY" = "15" ]; then
+            echo "Keepalive $(date)" >> .keepalive
+            git add .keepalive
+            git commit -m "chore: keepalive $(date +%Y-%m-%d)"
+            git push
+          fi
