@@ -701,6 +701,18 @@ function checkThreshold(key,value){
     else { if(card) card.classList.remove('alarm'); }
 }
 
+function refreshMuChart(){
+    var chart=charts['mu']; if(!chart) return;
+    var filtered,isActive=recordingStart&&!recordingEnd;
+    if(currentPeriodMs===0){ filtered=muHistory.slice(-30); }
+    else if(isActive){ var co=Date.now(),ws=co-currentPeriodMs; filtered=muRecording.filter(function(d){ return d.ts>=ws&&d.ts<=co; }); }
+    else { var eTs=lastRecordingEnd||(muRecording.length>0?muRecording[muRecording.length-1].ts:Date.now()),ws2=eTs-currentPeriodMs; filtered=muRecording.filter(function(d){ return d.ts>=ws2&&d.ts<=eTs; }); }
+    var wv=filtered.filter(function(d){ return d.mu!==null&&d.mu!==undefined; });
+    chart.data.labels=wv.map(function(d){ return d.time; });
+    chart.data.datasets[0].data=wv.map(function(d){ return d.mu; });
+    chart.update('none');
+}
+
 function refreshChart(key){
     if(key==='mu'){ refreshMuChart(); return; }
     var chart=charts[key]; if(!chart) return;
