@@ -553,6 +553,15 @@ setInterval(flushPending,10000);
 
 setInterval(async function(){
     if(!recordingStart||!sb||!currentSessionId) return;
+
+    // Finalizar automáticamente si el registro lleva más de 48 horas activo
+    var elapsed=Date.now()-recordingStart;
+    if(elapsed > 48*60*60*1000){
+        addLog('Registro finalizado automáticamente — límite de 48 horas alcanzado.','alarm');
+        await startRecording();
+        return;
+    }
+
     var r=await sb.from('sesiones').select('ended').eq('session_id',currentSessionId).limit(1);
     if(r.error||!r.data||r.data.length===0) return;
     if(r.data[0].ended===true){
