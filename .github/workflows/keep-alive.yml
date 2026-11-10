@@ -1,33 +1,39 @@
 name: Keep Supabase alive
 on:
   schedule:
-    - cron: '0 9 * * *'
+    - cron: '0 */6 * * *'
   workflow_dispatch:
+permissions:
+  contents: write
 jobs:
   ping:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout repositorio
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
 
-      - name: Upsert fila keepalive en Supabase
+      - name: Actividad en Supabase
+        env:
+          URL: ${{ secrets.SUPABASE_URL }}
+          KEY: ${{ secrets.SUPABASE_KEY }}
         run: |
-          curl -s -X POST \
-            "https://xxqsxspxzmpiyihefdpx.supabase.co/rest/v1/sesiones" \
-            -H "apikey: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Inh4cXN4c3B4em1waXlpaGVmZHB4Iiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImlhdCI6MTc3MzY1MjgzMiwiZXhwIjoyMDg5MjI4ODMyfQ.oZwQM30tjR-5gGdO_AN52mi8t8svAllumAlwcIULyko" \
-            -H "Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Inh4cXN4c3B4em1waXlpaGVmZHB4Iiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImlhdCI6MTc3MzY1MjgzMiwiZXhwIjoyMDg5MjI4ODMyfQ.oZwQM30tjR-5gGdO_AN52mi8t8svAllumAlwcIULyko" \
-            -H "Content-Type: application/json" \
-            -H "Prefer: resolution=merge-duplicates" \
+          H1="apikey: $KEY"
+          H2="Authorization: Bearer $KEY"
+          H3="Content-Type: application/json"
+          curl -s "$URL/rest/v1/sesiones?select=session_id&limit=5" -H "$H1" -H "$H2" > /dev/null
+          curl -s "$URL/rest/v1/registros?select=id&limit=5" -H "$H1" -H "$H2" > /dev/null
+          curl -s -X DELETE "$URL/rest/v1/sesiones?session_id=eq.keepalive_ping" -H "$H1" -H "$H2" > /dev/null
+          curl -s -X POST "$URL/rest/v1/sesiones" -H "$H1" -H "$H2" -H "$H3" -H "Prefer: return=minimal" \
             -d "{\"session_id\":\"keepalive_ping\",\"start_ts\":$(date +%s000),\"ended\":true}"
+          curl -s "$URL/rest/v1/sesiones?select=id&limit=1" -H "$H1" -H "$H2" > /dev/null
 
-      - name: Commit para mantener repositorio activo (cada 30 días)
+      - name: Commit mensual para mantener el repositorio activo
         run: |
-          git config user.name "github-actions[bot]"
-          git config user.email "github-actions[bot]@users.noreply.github.com"
           DAY=$(date +%d)
           if [ "$DAY" = "01" ] || [ "$DAY" = "15" ]; then
-            echo "Keepalive $(date)" >> .keepalive
+            git config user.name "github-actions[bot]"
+            git config user.email "github-actions[bot]@users.noreply.github.com"
+            echo "Keepalive $(date +%Y-%m-%d)" > .keepalive
             git add .keepalive
-            git commit -m "chore: keepalive $(date +%Y-%m-%d)"
-            git push
+            git diff --cached --quiet || (git commit -m "chore: keepalive $(date +%Y-%m-%d)" && git push)
           fi
